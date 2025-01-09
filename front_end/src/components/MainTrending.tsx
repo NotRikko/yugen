@@ -42,9 +42,10 @@ function MainTrending() {
                 }
             },
             {
-                breakpoint: 500,
+                breakpoint: 480,
                 settings: {
-                    centerPadding: "0%"
+                    centerPadding: "0%",
+                    arrows: false
                 }
             }
         ]
@@ -52,7 +53,7 @@ function MainTrending() {
     return(
         <div className="w-full h-svh flex flex-col items-center justify-center gap-10 overflow-hidden ">
             <h1 className="text-4xl">Trending Products</h1>
-            <Slider {...settings} className="w-full">
+            <Slider {...settings} className="w-full md:px-8">
                 {trendingProducts.map((product, index) => (
                 <div
                     key={index}
