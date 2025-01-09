@@ -1,18 +1,73 @@
+import { useState } from "react"
+import Slider from 'react-slick'
+import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick-theme.css";
+import "./ReactSlickStyle.css"
+
+
+
 function MainTrending() {
+    const [trendingProducts, setTrendingProducts] = useState([
+        {
+            title: "Robin",
+            artist: "Hoyoverse",
+            image: "https://images7.alphacoders.com/135/1354522.jpeg"
+        },
+        {
+            title: "Stelle",
+            artist: "Hoyoverse",
+            image: "https://upload-os-bbs.hoyolab.com/upload/2024/05/02/96651055/5736a86b9c810ffb89064756f8b0a01a_7907253663743125350.png"
+        },
+        {
+            title: "Robin",
+            artist: "Hoyoverse",
+            image: "https://64.media.tumblr.com/2a9dfaaf80772eadb29867173d34255d/4cade513756e5fe0-95/s1280x1920/4beea084ef85f25dcac7ca4a38ba0d6e447e5c36.png"
+        }
+    ])
+
+    const settings = {
+        className: "center",
+        centerMode: true,
+        infinite: true,
+        centerPadding: "25%",
+        slidesToShow: 1,
+        speed: 500,
+        dots: true,
+        responsive:[
+            {
+                breakpoint: 1000,
+                settings: {
+                    slidesToShow: 1,
+                    centerPadding: "10%"
+                }
+            },
+            {
+                breakpoint: 500,
+                settings: {
+                    centerPadding: "0%"
+                }
+            }
+        ]
+    }
     return(
-        <div className="w-full h-4/5 s:h-full lg:h-screen flex flex-col items-center  gap-5 overflow-hidden">
-            <h1 className="text-2xl">Trending Pieces</h1>
-            <div className="w-4/5 flex justify-center gap-5">
-                {[...Array(4)].map((_, index) => (
-                    <div key={index} className="w-1/2 aspect-square">
-                        <img className="h-full w-full object-cover rounded-md overflow-hidden" src="https://i.pinimg.com/736x/a5/ff/46/a5ff4626697504cb24acc1b1139b5f6c.jpg" />
-                        <div>
-                        <h2>Firefly</h2>
-                        <h2>Hoyoverse</h2>
-                        </div>
-                    </div>
+        <div className="w-full h-svh flex flex-col items-center justify-center gap-10 overflow-hidden ">
+            <h1 className="text-4xl">Trending Products</h1>
+            <Slider {...settings} className="w-full">
+                {trendingProducts.map((product, index) => (
+                <div
+                    key={index}
+                    className="p-8 outline-none flex flex-col  h-96 md:h-[400px] lg:h-[580px] w-full bg-white rounded-lg "
+                >
+                    <img
+                    src={product.image}
+                    alt={product.title}
+                    className="h-full w-full object-cover rounded-md"
+                    />
+                    <h3 className="text-lg font-semibold mt-4">{product.title}</h3>
+                    <h3 className="text-sm text-gray-500">{product.artist}</h3>
+                </div>
                 ))}
-            </div>
+            </Slider>
         </div>
     )
 }

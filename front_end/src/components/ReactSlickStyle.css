@@ -1,0 +1,16 @@
+.slick-prev, .slick-next {
+    @apply absolute top-1/2 transform -translate-y-1/2 text-black z-10;
+  }
+  
+.slick-prev {
+@apply left-10; 
+}
+
+.slick-next {
+@apply right-16; 
+}
+
+.slick-prev:before, .slick-next:before {
+@apply text-5xl;  
+}
+

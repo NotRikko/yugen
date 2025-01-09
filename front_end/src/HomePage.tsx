@@ -26,7 +26,7 @@ function HomePage() {
     <>
       <Navbar/>
       <div className="relative h-screen w-full">
-        <div className="h-3/4 w-full sm:h-full overflow-hidden relative">
+        <div className="h-full w-full overflow-hidden relative">
           <div className="absolute top-1/2 left-0 right-0 z-30 flex justify-between px-10">
             <button
               onClick={handlePrev}
