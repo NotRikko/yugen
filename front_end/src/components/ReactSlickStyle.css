@@ -14,3 +14,12 @@
 @apply text-5xl;  
 }
 
+.slick-slider {
+  margin-inline: -30px;  
+}
+
+.slick-slide {
+  >div { 
+    margin-inline: 15px;  
+  }
+}

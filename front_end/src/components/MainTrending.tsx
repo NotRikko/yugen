@@ -29,10 +29,11 @@ function MainTrending() {
         className: "center",
         centerMode: true,
         infinite: true,
-        centerPadding: "25%",
+        centerPadding: "30%",
         slidesToShow: 1,
         speed: 500,
         dots: true,
+        focusOnSelect: true,
         responsive:[
             {
                 breakpoint: 1000,
@@ -51,18 +52,18 @@ function MainTrending() {
         ]
     }
     return(
-        <div className="w-full h-svh flex flex-col items-center justify-center gap-10 overflow-hidden ">
+        <div className="w-full h-svh flex flex-col items-center justify-center gap-10 overflow-x-hidden">
             <h1 className="text-4xl">Trending Products</h1>
             <Slider {...settings} className="w-full md:px-8">
                 {trendingProducts.map((product, index) => (
                 <div
                     key={index}
-                    className="p-8 outline-none flex flex-col  h-96 md:h-[400px] lg:h-[580px] w-full bg-white rounded-lg "
+                    className="outline-none flex flex-col  h-96 md:h-[500px] lg:h-[580px] w-full bg-white rounded-lg overflow-y-visible"
                 >
                     <img
                     src={product.image}
                     alt={product.title}
-                    className="h-full w-full object-cover rounded-md"
+                    className="h-[85%] w-full object-cover rounded-md"
                     />
                     <h3 className="text-lg font-semibold mt-4">{product.title}</h3>
                     <h3 className="text-sm text-gray-500">{product.artist}</h3>

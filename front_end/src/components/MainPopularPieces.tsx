@@ -1,6 +1,6 @@
 function MainPopularPieces() {
     return (
-        <div className="w-full h-screen overflow-hidden flex justify-center items-center mt-6">
+        <div className="w-full h-screen overflow-hidden flex justify-center items-center mt-[-2rem]">
           <div className="w-10/12 flex flex-col items-center h-5/6 relative">
             <div className="flex flex-1 items-center gap-14  w-2/5 z-10 absolute left-72 h-2/5">
               <img className="h-full w-5/6 object-cover shadow-xl hover:scale-110 transition-transform duration-300 ease-in-out" src="https://i.redd.it/5t43owoaw3g91.jpg"/>

@@ -26,7 +26,7 @@ function HomePage() {
     <>
       <Navbar/>
       <div className="relative h-screen w-full">
-        <div className="h-full w-full overflow-hidden relative">
+        <div className=" h-[calc(100vh-4rem)] w-full overflow-hidden relative">
           <div className="absolute top-1/2 left-0 right-0 z-30 flex justify-between px-10">
             <button
               onClick={handlePrev}
@@ -41,10 +41,13 @@ function HomePage() {
               <ArrowForwardIosIcon fontSize="inherit" color="inherit"/>
             </button>
           </div>
-          {screens[currentScreenIndex]} 
+          {screens[currentScreenIndex]}
         </div>
       </div>
       <MainTrending/>
+      <div className="h-32 s:h-56 text-black bg-slate-200 flex justify-center items-center">
+        <h1 className="text-2xl">@2025 Yugen</h1>   
+      </div>
     </>
   )
 }
