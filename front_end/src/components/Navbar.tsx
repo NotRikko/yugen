@@ -1,4 +1,5 @@
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useState, useEffect } from "react";
 
 
@@ -33,6 +34,7 @@ function Navbar() {
                         <ul className="flex flex-col  md:text-xl mr-10">
                         <li>Products</li>
                         <li>Artists</li>
+                        <li><AccountCircleIcon/></li>
                         <li><ShoppingBagIcon/></li>
                         </ul>
                     )}
@@ -40,10 +42,10 @@ function Navbar() {
                     </>
                 ) : (
                     <ul className="flex justify-end gap-x-9 md:text-xl mr-10 items-center">
-                    <li>Home</li>
                     <li>Products</li>
                     <li>Artists</li>
-                    <li><ShoppingBagIcon/></li>
+                    <li><AccountCircleIcon sx={{ fontSize: 28 }}/></li>
+                    <li><ShoppingBagIcon sx={{ fontSize: 28 }}/></li>
                     </ul>
                 )
             }
