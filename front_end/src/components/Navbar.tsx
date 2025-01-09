@@ -1,6 +1,7 @@
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useState, useEffect } from "react";
+import { NavLink } from 'react-router-dom';
 
 
 
@@ -20,7 +21,7 @@ function Navbar() {
       }, []);
     return(
         <nav className="sticky top-0 z-50 h-16 absolute w-full top-0 z-10 text-white text-xl flex justify-between items-center bg-black/90">
-            <h2 className="jusitfy-self-start ml-10">Yugen</h2>
+            <NavLink to="/"><h2 className="jusitfy-self-start ml-10">Yugen</h2></NavLink>
             {
                 isMobile ? (
                     <>
@@ -32,7 +33,7 @@ function Navbar() {
                     </button>
                     {isMenuOpen && (
                         <ul className="flex flex-col  md:text-xl mr-10">
-                        <li>Products</li>
+                        <NavLink to="/collections"><li>Products</li></NavLink>
                         <li>Artists</li>
                         <li><AccountCircleIcon/></li>
                         <li><ShoppingBagIcon/></li>
@@ -42,7 +43,7 @@ function Navbar() {
                     </>
                 ) : (
                     <ul className="flex justify-end gap-x-9 md:text-xl mr-10 items-center">
-                    <li>Products</li>
+                    <NavLink to="/collections"><li>Products</li></NavLink>
                     <li>Artists</li>
                     <li><AccountCircleIcon sx={{ fontSize: 28 }}/></li>
                     <li><ShoppingBagIcon sx={{ fontSize: 28 }}/></li>
