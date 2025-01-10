@@ -19,8 +19,9 @@ function Navbar() {
     
         return () => window.removeEventListener("resize", checkScreenSize);
       }, []);
+
     return(
-        <nav className="sticky top-0 z-50 h-16 absolute w-full top-0 z-10 text-white text-xl flex justify-between items-center bg-black/90">
+        <nav className="sticky top-0 z-50 h-16 w-full top-0 z-10 text-white text-xl flex justify-between items-center bg-black/90">
             <NavLink to="/"><h2 className="jusitfy-self-start ml-10">Yugen</h2></NavLink>
             {
                 isMobile ? (
