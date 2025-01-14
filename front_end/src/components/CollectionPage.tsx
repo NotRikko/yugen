@@ -12,7 +12,7 @@ function CollectionPage() {
             category: "Anime",
             price: 29.99,
             description: "High-quality anime figure with intricate details.",
-            image: "https://i.pinimg.com/736x/fb/cc/ae/fbccae37175c5761b82f4367e183c34a.jpg",
+            image: "https://i.pinimg.com/736x/53/0e/68/530e6805edd40c7b25e27be219d919e6.jpg",
             stock: 10,
         },
         {
@@ -51,6 +51,24 @@ function CollectionPage() {
             image: "https://i.pinimg.com/originals/95/92/56/959256de9c40038c8e5db8f7be0d02b2.jpg",
             stock: 5,
         },
+        {
+            id: 6,
+            name: "Original Artwork",
+            category: "Original",
+            price: 199.99,
+            description: "Limited edition hand-painted artwork.",
+            image: "https://i.pinimg.com/originals/95/92/56/959256de9c40038c8e5db8f7be0d02b2.jpg",
+            stock: 5,
+        },
+        {
+            id: 7,
+            name: "Original Artwork",
+            category: "Original",
+            price: 199.99,
+            description: "Limited edition hand-painted artwork.",
+            image: "https://i.pinimg.com/originals/95/92/56/959256de9c40038c8e5db8f7be0d02b2.jpg",
+            stock: 5,
+        },
     ]);
 
     return(
@@ -61,10 +79,10 @@ function CollectionPage() {
                 <h1 className="text-4xl capitalize">
                     {collectionName} 
                 </h1>
-                <div className="grid lg:grid-cols-4 gap-5">
+                <div className="grid grid-cols-2 lg:grid-cols-4 auto-rows-fr gap-5 md:p-10 justify-start">
                     {products.map((product) => (
-                        <div key={product.id} className="p-10 w-full h-full flex flex-col items-center">
-                            <img src={product.image} className="h-5/6"/>
+                        <div key={product.id} className="sm:p-6 w-full h-4/5 flex flex-col items-center">
+                            <img src={product.image} className="w-full h-4/5"/>
                             <h2>{product.name}</h2>
                             <h3>${product.price}</h3>
                         </div>

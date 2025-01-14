@@ -24,9 +24,9 @@ function HomePage() {
 
   return (
     <>
-      <div className="h-screen w-full">
+      <div className="h-full w-full">
         <Navbar/>
-        <div className=" h-full w-full overflow-hidden relative">
+        <div className="h-3/5 sm:h-screen w-full overflow-hidden relative">
           <div className="absolute top-1/2 left-0 right-0 z-30 flex justify-between px-10">
             <button
               onClick={handlePrev}
