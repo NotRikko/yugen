@@ -13,11 +13,15 @@ public class Artist {
     private Long id;
 
     private String artistName;
-    private String description;
+    private String bio;
     private String image;
 
     @OneToMany(mappedBy = "artist", cascade= CascadeType.ALL, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
+
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, unique = true)  
+    private User user;
 
     //Getters and Setters
     public Long getId() {
@@ -36,12 +40,12 @@ public class Artist {
         this.artistName = artistName;
     }
 
-    public String getDescription() {
-        return description;
+    public String getBio() {
+        return bio;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 
     public String getImage() {
@@ -50,6 +54,14 @@ public class Artist {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

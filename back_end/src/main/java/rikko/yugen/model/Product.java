@@ -101,9 +101,7 @@ public class Product {
     
     public void setArtist(Artist artist) {
         this.artist = artist;
-    }
-
-    
+    } 
 
 
 }
