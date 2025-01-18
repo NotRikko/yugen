@@ -2,19 +2,3 @@
 @tailwind components;
 @tailwind utilities;
 
-.slick-prev, .slick-next {
-    @apply absolute top-1/2 transform -translate-y-1/2 text-black z-10;
-  }
-  
-  .slick-prev {
-    @apply left-4;  /* Position the 'previous' button to the left */
-  }
-  
-  .slick-next {
-    @apply right-4; /* Position the 'next' button to the right */
-  }
-  
-  /* Optional: Increase the size of the arrows for better visibility */
-  .slick-prev:before, .slick-next:before {
-    @apply text-3xl;  /* Adjust the size of the arrow icons */
-  }
