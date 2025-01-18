@@ -70,7 +70,7 @@ function ArtistsMain() {
     return (
         <>
             <Navbar/>
-            <div className="w-full h-full flex flex-col">
+            <div className="w-full h-full flex flex-col gap-6">
                 <div className="h-full self-center flex flex-col items-center">
                     <h2>Featured Artist</h2>
                     <div className="w-3/4 flex items-center p-28">
@@ -81,22 +81,31 @@ function ArtistsMain() {
                         </div>
                     </div>
                 </div>
-                <div className="h-full w-full">
-                    <div>
-                        <ul>
+                <div className="h-full w-full flex justify-around">
+                    <div className="sticky top-[64px] h-screen">
+                        <ul className="flex flex-col justify-center h-full gap-4 text-lg">
                             <li>All</li>
                             <li>Trending</li>
                             <li>New</li>
                         </ul>
                     </div>
-                    <div className="grid">
-                        {products.map((product) => (
-                            <div key={product.id} className="sm:p-6 w-full h-4/5 flex flex-col items-center">
-                                <img src={product.image} className="w-full h-4/5"/>
-                                <h2>{product.name}</h2>
-                                <h3>${product.price}</h3>
-                            </div>
-                        ))}
+                    <div className="w-4/5 p-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-center justify-center">
+                            {products.map((product) => (
+                                <div
+                                    key={product.id}
+                                    className="sm:p-6 w-full h-full flex flex-col items-center justify-center"
+                                    style={{
+                                        height: '500px', // Ensures all items have the same height
+                                    }}
+                                    
+                                >
+                                    <img src={product.image} className="object-contain h-3/4" />
+                                    <h2>{product.name}</h2>
+                                    <h3>${product.price}</h3>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>

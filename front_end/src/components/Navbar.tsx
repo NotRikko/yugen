@@ -34,20 +34,22 @@ function Navbar() {
                     </button>
                     {isMenuOpen && (
                         <ul className="flex flex-col  md:text-xl mr-10">
-                        <NavLink to="/collections"><li>Collections</li></NavLink>
-                        <NavLink to="/artists"><li>Artists</li></NavLink>
-                        <li><AccountCircleIcon/></li>
-                        <li><ShoppingBagIcon/></li>
+                            <li>Feed</li>
+                            <NavLink to="/collections"><li>Collections</li></NavLink>
+                            <NavLink to="/artists"><li>Artists</li></NavLink>
+                            <li><AccountCircleIcon/></li>
+                            <li><ShoppingBagIcon/></li>
                         </ul>
                     )}
                     
                     </>
                 ) : (
                     <ul className="flex justify-end gap-x-9 md:text-xl mr-10 items-center">
-                    <NavLink to="/collections"><li>Collections</li></NavLink>
-                    <NavLink to="/artists"><li>Artists</li></NavLink>
-                    <li><AccountCircleIcon sx={{ fontSize: 28 }}/></li>
-                    <li><ShoppingBagIcon sx={{ fontSize: 28 }}/></li>
+                        <li>Feed</li>
+                        <NavLink to="/collections"><li>Collections</li></NavLink>
+                        <NavLink to="/artists"><li>Artists</li></NavLink>
+                        <li><AccountCircleIcon sx={{ fontSize: 28 }}/></li>
+                        <li><ShoppingBagIcon sx={{ fontSize: 28 }}/></li>
                     </ul>
                 )
             }
