@@ -3,12 +3,13 @@ import { useState, useEffect } from 'react'
 
 interface Artist {
     id: number;
-    artistName: string;
+    name: string;
     image: string;
 }
 
 function ArtistsMain(): JSX.Element {
-    const [artists, setArtists] = useState<Artist[]>([]);
+    const [artists, setArtists] = useState<Artist[]>([
+        ]);
         
         useEffect(() => {
             const fetchArtists = async () => {
@@ -27,7 +28,7 @@ function ArtistsMain(): JSX.Element {
              
             };
             fetchArtists();
-        })
+        }, [])
 
 
     return (
@@ -38,11 +39,19 @@ function ArtistsMain(): JSX.Element {
                     <div className="flex flex-col items-center gap-16 h-full sm:p-28">
                         <h2 className="text-3xl">Featured Artist</h2>
                         <div className="w-4/5 sm:w-3/4 flex flex-col sm:flex-row items-center">
-                            <img className="aspect-square h-3/4"src={artists[0].image}/>
-                            <div className="sm:p-14 flex sm:flex-col gap-4">
-                                <h3 className="text-2xl">Yueko</h3>
-                                <p>A short description is a brief summary of a topic that conveys the most important information in a clear and concise way. It can be used for books, movies, products, or other topics.</p>
+                        {artists.length > 0 ? (
+                            <>
+                                <img className="aspect-square h-3/4" src={artists[0].image} alt={artists[0].name} />
+                                <div className="sm:p-14 flex sm:flex-col gap-4">
+                                    <h3 className="text-2xl">{artists[0].name}</h3>
+                                    <p>A short description is a brief summary of a topic that conveys the most important information in a clear and concise way. It can be used for books, movies, products, or other topics.</p>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="text-center">
+                                <p>Loading featured artist...</p>
                             </div>
+                        )}
                         </div>
                     </div>
                 </div>
