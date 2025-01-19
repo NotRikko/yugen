@@ -1,8 +1,18 @@
 import Navbar from '../components/Navbar'
 import { useState } from 'react'
 
-function ArtistsMain() {
-    const [products, setProducts] = useState([
+interface Product {
+    id: number;
+    name: string;
+    category: string;
+    price: number;
+    description: string;
+    image: string;
+    stock: number;
+}
+
+function ArtistsMain(): JSX.Element {
+    const [products, setProducts] = useState<Product[]>([
             {
                 id: 1,
                 name: "Anime Figure",

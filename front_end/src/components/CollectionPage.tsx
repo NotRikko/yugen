@@ -2,10 +2,20 @@ import Navbar from "./Navbar";
 import { useParams } from "react-router-dom";
 import { useState } from "react";
 
-function CollectionPage() {
+interface Product {
+    id: number;
+    name: string;
+    category: string;
+    price: number;
+    description: string;
+    image: string;
+    stock: number;
+}
+
+function CollectionPage(): JSX.Element {
     const { collectionName } = useParams();
 
-    const [products, setProducts] = useState([
+    const [products, setProducts] = useState<Product[]>([
         {
             id: 1,
             name: "Anime Figure",
