@@ -1,93 +1,46 @@
 import Navbar from '../components/Navbar'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
-interface Product {
+interface Artist {
     id: number;
-    name: string;
-    category: string;
-    price: number;
-    description: string;
+    artistName: string;
     image: string;
-    stock: number;
 }
 
 function ArtistsMain(): JSX.Element {
-    const [products, setProducts] = useState<Product[]>([
-            {
-                id: 1,
-                name: "Anime Figure",
-                category: "Anime",
-                price: 29.99,
-                description: "High-quality anime figure with intricate details.",
-                image: "https://i.pinimg.com/736x/53/0e/68/530e6805edd40c7b25e27be219d919e6.jpg",
-                stock: 10,
-            },
-            {
-                id: 2,
-                name: "Gaming Mouse",
-                category: "Games",
-                price: 49.99,
-                description: "Ergonomic gaming mouse with customizable buttons.",
-                image: "https://upload-os-bbs.hoyolab.com/upload/2024/08/01/317655736/ed4a0f70ca2f008550cfe94cfc6ad0be_2084020113092877590.jpg",
-                stock: 25,
-            },
-            {
-                id: 3,
-                name: "Original Artwork",
-                category: "Original",
-                price: 199.99,
-                description: "Limited edition hand-painted artwork.",
-                image: "https://i.pinimg.com/originals/95/92/56/959256de9c40038c8e5db8f7be0d02b2.jpg",
-                stock: 5,
-            },
-            {
-                id: 4,
-                name: "Original Artwork",
-                category: "Original",
-                price: 199.99,
-                description: "Limited edition hand-painted artwork.",
-                image: "https://i.pinimg.com/originals/95/92/56/959256de9c40038c8e5db8f7be0d02b2.jpg",
-                stock: 5,
-            },
-            {
-                id: 5,
-                name: "Original Artwork",
-                category: "Original",
-                price: 199.99,
-                description: "Limited edition hand-painted artwork.",
-                image: "https://i.pinimg.com/originals/95/92/56/959256de9c40038c8e5db8f7be0d02b2.jpg",
-                stock: 5,
-            },
-            {
-                id: 6,
-                name: "Original Artwork",
-                category: "Original",
-                price: 199.99,
-                description: "Limited edition hand-painted artwork.",
-                image: "https://i.pinimg.com/originals/95/92/56/959256de9c40038c8e5db8f7be0d02b2.jpg",
-                stock: 5,
-            },
-            {
-                id: 7,
-                name: "Original Artwork",
-                category: "Original",
-                price: 199.99,
-                description: "Limited edition hand-painted artwork.",
-                image: "https://i.pinimg.com/originals/95/92/56/959256de9c40038c8e5db8f7be0d02b2.jpg",
-                stock: 5,
-            },
-        ]);
+    const [artists, setArtists] = useState<Artist[]>([]);
+        
+        useEffect(() => {
+            const fetchArtists = async () => {
+                try {
+                    const artistsResponse = await fetch("http://localhost:8080/artists/all", { mode: "cors"});
+
+                    if (!artistsResponse.ok) {
+                        throw new Error("Issue with network response")
+                    }
+
+                    const artistsData = await artistsResponse.json()
+                    setArtists(artistsData);
+                } catch (error) {
+                    console.error("Error fetching artists", error)
+                }
+             
+            };
+            fetchArtists();
+        })
+
+
     return (
         <>
             <Navbar/>
             <div className="sm:w-full h-full flex flex-col gap-6">
                 <div className="h-full self-center flex flex-col items-center w-full">
                     <div className="flex flex-col items-center gap-16 h-full sm:p-28">
-                        <h2 className="text-2xl">Featured Artist</h2>
+                        <h2 className="text-3xl">Featured Artist</h2>
                         <div className="w-4/5 sm:w-3/4 flex flex-col sm:flex-row items-center">
-                            <img className="aspect-square h-3/4"src={products[0].image}/>
-                            <div className="sm:p-14">
-                                <h3>Artist Name</h3>
+                            <img className="aspect-square h-3/4"src={artists[0].image}/>
+                            <div className="sm:p-14 flex sm:flex-col gap-4">
+                                <h3 className="text-2xl">Yueko</h3>
                                 <p>A short description is a brief summary of a topic that conveys the most important information in a clear and concise way. It can be used for books, movies, products, or other topics.</p>
                             </div>
                         </div>
@@ -103,18 +56,17 @@ function ArtistsMain(): JSX.Element {
                     </div>
                     <div className="w-4/5 p-4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-center justify-center">
-                            {products.map((product) => (
+                            {artists.map((artist) => (
                                 <div
-                                    key={product.id}
+                                    key={artist.id}
                                     className="sm:p-6 w-full h-full flex flex-col items-center justify-center"
                                     style={{
                                         height: '500px', // Ensures all items have the same height
                                     }}
                                     
                                 >
-                                    <img src={product.image} className="object-contain h-3/4" />
-                                    <h2>{product.name}</h2>
-                                    <h3>${product.price}</h3>
+                                    <img src={artist.image} className="aspect-square h-3/4" />
+                                    <h2>{artist.name}</h2>
                                 </div>
                             ))}
                         </div>
