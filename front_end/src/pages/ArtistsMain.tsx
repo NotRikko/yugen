@@ -70,20 +70,22 @@ function ArtistsMain() {
     return (
         <>
             <Navbar/>
-            <div className="w-full h-full flex flex-col gap-6">
-                <div className="h-full self-center flex flex-col items-center">
-                    <h2>Featured Artist</h2>
-                    <div className="w-3/4 flex items-center p-28">
-                        <img className="aspect-square h-3/4"src={products[0].image}/>
-                        <div className="p-14">
-                            <h3>Artist Name</h3>
-                            <p>A short description is a brief summary of a topic that conveys the most important information in a clear and concise way. It can be used for books, movies, products, or other topics.</p>
+            <div className="sm:w-full h-full flex flex-col gap-6">
+                <div className="h-full self-center flex flex-col items-center w-full">
+                    <div className="flex flex-col items-center gap-16 h-full sm:p-28">
+                        <h2 className="text-2xl">Featured Artist</h2>
+                        <div className="w-4/5 sm:w-3/4 flex flex-col sm:flex-row items-center">
+                            <img className="aspect-square h-3/4"src={products[0].image}/>
+                            <div className="sm:p-14">
+                                <h3>Artist Name</h3>
+                                <p>A short description is a brief summary of a topic that conveys the most important information in a clear and concise way. It can be used for books, movies, products, or other topics.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div className="h-full w-full flex justify-around">
-                    <div className="sticky top-[64px] h-screen">
-                        <ul className="flex flex-col justify-center h-full gap-4 text-lg">
+                <div className="h-full w-full flex">
+                    <div className="sticky top-[64px] h-screen w-1/5">
+                        <ul className="hidden sm:flex flex-col ml-14 mt-32 h-full gap-4 text-lg">
                             <li>All</li>
                             <li>Trending</li>
                             <li>New</li>
