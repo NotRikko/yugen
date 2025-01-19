@@ -1,6 +1,7 @@
 package rikko.yugen.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,10 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import rikko.yugen.dto.ArtistDTO;
 import rikko.yugen.model.Artist;
 import rikko.yugen.service.ArtistService;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/artists")
 public class ArtistController {
     
@@ -28,13 +31,17 @@ public class ArtistController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Artist>> getAllArtists() {
-        List<Artist> artists = artistService.getAllArtists();
-        return ResponseEntity.ok(artists);
+    public ResponseEntity<List<ArtistDTO>> getAllArtists() {
+        List<ArtistDTO> artistDTOs = artistService.getAllArtists().stream()
+        .map(ArtistDTO::new)
+        .collect(Collectors.toList());
+        return ResponseEntity.ok(artistDTOs);
     }
+    /* 
 
     @PostMapping("/create")
     public ResponseEntity<String> createArtist(@RequestBody request) {
         artistService.create(request.)
     }
+    */
 }

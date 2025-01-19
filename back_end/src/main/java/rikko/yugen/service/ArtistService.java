@@ -14,9 +14,9 @@ public class ArtistService {
     @Autowired
     private ArtistRepository artistRepository;
 
-    public Artist getArtistByName(String name) {
-        return artistRepository.findByName(name)
-            .orElseThrow(() -> new RuntimeException("Artist not found with name: " + name));
+    public Artist getArtistByName(String artistName) {
+        return artistRepository.findByName(artistName)
+            .orElseThrow(() -> new RuntimeException("Artist not found with name: " + artistName));
     }
 
     public List<Artist> getAllArtists() {
@@ -24,9 +24,9 @@ public class ArtistService {
     }
 
     public Artist createArtist(Artist artist) {
-        artistRepository.findByName(artist.getArtistName())
+        artistRepository.findByName(artist.getName())
                 .ifPresent(existingArtist -> {
-                    throw new RuntimeException("Artist with name '" + existingArtist.getArtistName() + "' already exists.");
+                    throw new RuntimeException("Artist with name '" + existingArtist.getName() + "' already exists.");
                 });
 
         return artistRepository.save(artist);

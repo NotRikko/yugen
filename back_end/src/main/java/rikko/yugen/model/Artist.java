@@ -12,10 +12,10 @@ public class Artist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String artistName;
+    private String name;
     private String bio;
     private String image;
-
+    
     @OneToMany(mappedBy = "artist", cascade= CascadeType.ALL, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
 
@@ -32,12 +32,12 @@ public class Artist {
         this.id = id;
     }
 
-    public String getArtistName() {
-        return artistName;
+    public String getName() {
+        return name;
     }
 
-    public void setArtistName(String artistName) {
-        this.artistName = artistName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getBio() {
