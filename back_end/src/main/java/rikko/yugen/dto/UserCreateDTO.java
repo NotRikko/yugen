@@ -1,31 +1,14 @@
-package rikko.yugen.model;
+package rikko.yugen.dto;
 
-import jakarta.persistence.*;
 
-@Entity
-@Table(name = "users")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class UserCreateDTO {
     private String username;
     private String name;
-    private String email;
     private String password;
+    private String email;
     private String image;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Artist artist;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    
+    //Getters and Setters
     public String getUsername() {
         return username;
     }
@@ -37,7 +20,7 @@ public class User {
     public String getName() {
         return name;
     }
-    
+
     public void setName(String name) {
         this.name = name;
     }
@@ -64,14 +47,6 @@ public class User {
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public Artist getArtist() {
-        return artist;
-    }
-
-    public void setArtist(Artist artist) {
-        this.artist = artist;
     }
 }
 

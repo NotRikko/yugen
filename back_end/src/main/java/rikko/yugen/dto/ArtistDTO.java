@@ -3,10 +3,10 @@ package rikko.yugen.dto;
 import rikko.yugen.model.Artist;
 
 public class ArtistDTO {
-    private Long id;
-    private String name;
-    private String image;
-    private String username; 
+    private final Long id;
+    private final String name;
+    private final String image;
+    private final String username; 
 
     public ArtistDTO(Artist artist) {
         this.id = artist.getId();
