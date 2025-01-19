@@ -6,14 +6,16 @@ public class ArtistDTO {
     private final Long id;
     private final String name;
     private final String image;
-    private final String username; 
+    private final UserDTO user;
 
     public ArtistDTO(Artist artist) {
         this.id = artist.getId();
         this.name = artist.getName();
         this.image = artist.getImage();
-        this.username = artist.getUser() != null ? artist.getUser().getUsername() : null;
+        this.user= artist.getUser() != null ? new UserDTO(artist.getUser()) : null;
     }
+
+    //Getters
 
     public Long getId() {
         return id;
@@ -27,7 +29,7 @@ public class ArtistDTO {
         return image;
     }
 
-    public String getUsername() {
-        return username;
+    public UserDTO getUser() {
+        return user;
     }
 }

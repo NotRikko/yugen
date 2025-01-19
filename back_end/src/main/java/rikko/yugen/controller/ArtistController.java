@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import rikko.yugen.dto.ArtistDTO;
+import rikko.yugen.dto.ArtistCreateDTO;
 import rikko.yugen.model.Artist;
 import rikko.yugen.service.ArtistService;
 
@@ -38,11 +39,15 @@ public class ArtistController {
         .collect(Collectors.toList());
         return ResponseEntity.ok(artistDTOs);
     }
-    /* 
+    
 
     @PostMapping("/create")
-    public ResponseEntity<String> createArtist(@RequestBody request) {
-        artistService.create(request.)
+    public ResponseEntity<ArtistDTO> createArtist(@RequestBody ArtistCreateDTO artistCreateDTO) {
+        Artist createdArtist = artistService.createArtist(artistCreateDTO);
+
+        ArtistDTO artistDTO = new ArtistDTO(createdArtist);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(artistDTO);
     }
-    */
+    
 }
