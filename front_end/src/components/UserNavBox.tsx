@@ -1,4 +1,5 @@
 import { useUser } from "../UserProvider";
+import { NavLink } from 'react-router-dom';
 
 function UserNavBox({ onClose }: { onClose: () => void }) {
     const { isLoggedIn, user } = useUser();
@@ -17,7 +18,7 @@ function UserNavBox({ onClose }: { onClose: () => void }) {
                 {isLoggedIn ? null :
                     <div>
                         <h2>Log In</h2>
-                        <h2>Sign Up</h2>
+                        <NavLink to="/signup"><h2>Sign Up</h2></NavLink>
                     </div>
                 }
             </div>

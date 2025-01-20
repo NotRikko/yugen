@@ -62,7 +62,7 @@ function MainTrending(): JSX.Element {
     }
     return(
         <div className="w-full h-svh flex flex-col items-center justify-center gap-10 overflow-x-hidden">
-            <h1 className="text-4xl">Trending Products</h1>
+            <h1 className="text-4xl">Trending Right Now</h1>
             <Slider {...settings} className="w-full md:px-8 ">
                 {trendingProducts.map((product, index) => (
                 <div

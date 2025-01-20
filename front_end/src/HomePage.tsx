@@ -6,7 +6,7 @@ import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useState } from "react"
 
-function HomePage() {
+function HomePage(): JSX.Element {
   const screens = [<MainNewRelease />, <MainPopularPieces />];
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0);
 

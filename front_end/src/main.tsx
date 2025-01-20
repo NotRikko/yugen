@@ -4,6 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import './index.css'
 import HomePage from './HomePage.tsx'
 import ArtistsMain from "./pages/ArtistsMain.tsx"
+import SignupPage from './pages/SignupPage.tsx'
 import { UserProvider } from './UserProvider.tsx'
 
 const router = createBrowserRouter([
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
   {
     path: '/artists',
     element: <ArtistsMain />
+  },
+  {
+    path: '/signup',
+    element: <SignupPage />
   }
 ])
 
