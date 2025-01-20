@@ -59,7 +59,7 @@ function SignupPage():JSX.Element {
     return (
         <div className="bg-slate-100 h-screen flex flex-col items-center">
             <Navbar/>
-            <div className="flex flex-col justify-center items-center bg-white w-1/4 h-full m-24 gap-12 ">
+            <div className="flex flex-col justify-center items-center bg-white w-1/3 h-full my-20 px-8 gap-12 ">
                 <h1 className="text-3xl">Signup for Yugen</h1>
                 <form className="flex flex-col gap-7 w-full px-14" onSubmit={handleSubmit}>
                     <div className="flex flex-col gap-2">
@@ -126,6 +126,11 @@ function SignupPage():JSX.Element {
                             onChange={handleChange}
                             required
                         />
+                    </div>
+
+                    <div className="flex flex-col items-center gap-2">
+                        <label htmlFor="isArtist">Signup as an Artist?</label>
+                        <input type="checkbox"></input>
                     </div>
 
                     <button className="text-white bg-sky-500 self-center border border-gray-400 p-2 w-full"type="submit">Create Account</button>
