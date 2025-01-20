@@ -5,9 +5,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import rikko.yugen.repository.UserRepository;
+import rikko.yugen.dto.UserCreateDTO;
 import rikko.yugen.model.User;
 
 @Service
@@ -30,16 +31,26 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    /* 
-    public User createUser(User user) {
-        userRepository.findByUsername(user.getUsername())
+     
+    public User createUser(UserCreateDTO userCreateDTO) {
+        userRepository.findByUsername(userCreateDTO.getUsername())
             .ifPresent(existingUser -> {
                 throw new RuntimeException("User with username '" + existingUser.getUsername() + "' already exists." );
             });
-        String hashedPassword = PasswordEncoder.encode(user.getPassword());
+
+        User user = new User();
+    
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        String hashedPassword = passwordEncoder.encode(userCreateDTO.getPassword());
+
         user.setPassword(hashedPassword);
+        user.setUsername(userCreateDTO.getUsername());
+        user.setName(userCreateDTO.getName());
+        user.setEmail(userCreateDTO.getEmail());
+        user.setImage(userCreateDTO.getImage());
+
 
         return userRepository.save(user);
     }
-    */
+    
 }

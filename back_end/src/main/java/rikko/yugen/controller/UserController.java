@@ -9,9 +9,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.ResponseEntity;
 
+import rikko.yugen.dto.UserCreateDTO;
 import rikko.yugen.dto.UserDTO;
 import rikko.yugen.model.User;
 import rikko.yugen.service.UserService;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
@@ -38,4 +42,12 @@ public class UserController {
         .collect(Collectors.toList());
         return ResponseEntity.ok(userDTOs);
     }
+
+    @PostMapping("/create")
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserCreateDTO userCreateDTO ) {
+        User createdUser = userService.createUser(userCreateDTO);
+        UserDTO userDTO = new UserDTO(createdUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
+    }
+    
 }

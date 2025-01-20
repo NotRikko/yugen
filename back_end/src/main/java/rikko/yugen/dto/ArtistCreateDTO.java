@@ -1,8 +1,15 @@
 package rikko.yugen.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
+
 public class ArtistCreateDTO {
+
+    @NotBlank(message = "Name is required")
     private String name;
     private String image;
+
+    @NotBlank(message = "User ID is required")
     private Long userId;
 
     //Getters and Setters
