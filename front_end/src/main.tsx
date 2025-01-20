@@ -6,7 +6,7 @@ import HomePage from './HomePage.tsx'
 import ProductsMain from "./pages/ProductsMain"
 import CollectionPage from './components/CollectionPage.tsx'
 import ArtistsMain from "./pages/ArtistsMain.tsx"
-
+import { UserProvider } from './UserProvider.tsx'
 
 const router = createBrowserRouter([
   {
@@ -29,6 +29,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <UserProvider>
+      <RouterProvider router={router} />
+    </UserProvider>
   </StrictMode>,
 )

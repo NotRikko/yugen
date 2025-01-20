@@ -2,12 +2,14 @@ import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useState, useEffect } from "react";
 import { NavLink } from 'react-router-dom';
+import UserNavBox from "./UserNavBox";
 
 
 
 function Navbar() {
     const [isMobile, setIsMobile] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [viewingAccountBar, setIsViewingAccountBar] = useState(false);
 
     useEffect(() => {
         const checkScreenSize = () => {
@@ -19,6 +21,10 @@ function Navbar() {
     
         return () => window.removeEventListener("resize", checkScreenSize);
       }, []);
+
+    const handleViewingAccountBar = () => {
+        setIsViewingAccountBar(prevViewingAccountBar => !prevViewingAccountBar);
+    };
 
     return(
         <nav className="sticky top-0 z-50 h-16 w-full top-0 z-10 text-white text-xl flex justify-between items-center bg-black/90">
@@ -37,7 +43,7 @@ function Navbar() {
                             <li>Feed</li>
                             <NavLink to="/collections"><li>Collections</li></NavLink>
                             <NavLink to="/artists"><li>Artists</li></NavLink>
-                            <li><AccountCircleIcon/></li>
+                            <li onClick={handleViewingAccountBar}><AccountCircleIcon/></li>
                             <li><ShoppingBagIcon/></li>
                         </ul>
                     )}
@@ -48,11 +54,12 @@ function Navbar() {
                         <li>Feed</li>
                         <NavLink to="/collections"><li>Collections</li></NavLink>
                         <NavLink to="/artists"><li>Artists</li></NavLink>
-                        <li><AccountCircleIcon sx={{ fontSize: 28 }}/></li>
+                        <li onClick={handleViewingAccountBar}><AccountCircleIcon sx={{ fontSize: 28 }}/></li>
                         <li><ShoppingBagIcon sx={{ fontSize: 28 }}/></li>
                     </ul>
                 )
             }
+            {viewingAccountBar ? <UserNavBox onClose={handleViewingAccountBar}/> : null}
         </nav>
 
     )
