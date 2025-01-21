@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 public class ArtistCreateDTO {
 
     @NotBlank(message = "Name is required")
-    private String name;
+    private String artistName;
     private String image;
 
     @NotBlank(message = "User ID is required")
@@ -14,12 +14,12 @@ public class ArtistCreateDTO {
 
     //Getters and Setters
 
-    public String getName() {
-        return name;
+    public String getArtistName() {
+        return artistName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setArtistName(String artistName) {
+        this.artistName = artistName;
     }
 
     public String getImage() {

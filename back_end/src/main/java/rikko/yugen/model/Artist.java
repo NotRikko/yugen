@@ -12,7 +12,9 @@ public class Artist {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    @Column(name = "artist_name")
+    private String artistName;
+    
     private String bio;
     private String image;
     
@@ -32,12 +34,12 @@ public class Artist {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getArtistName() {
+        return artistName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setArtistName(String artistName) {
+        this.artistName = artistName;
     }
 
     public String getBio() {

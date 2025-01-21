@@ -23,10 +23,10 @@ public class ArtistController {
     private ArtistService artistService;
 
     @GetMapping("/artist")
-    public ResponseEntity<Artist> getArtist(@RequestParam String name) {
-        Artist artist = artistService.getArtistByName(name);
+    public ResponseEntity<Artist> getArtist(@RequestParam String artistName) {
+        Artist artist = artistService.getArtistByName(artistName);
         if (artist == null) {
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Artist not found with name: " + name);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Artist not found with name: " + artistName);
         }
         return ResponseEntity.ok(artist);
     }

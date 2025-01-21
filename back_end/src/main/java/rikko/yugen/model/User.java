@@ -10,7 +10,9 @@ public class User {
     private Long id;
 
     private String username;
-    private String name;
+
+    @Column(name = "display_name")
+    private String displayName;
     private String email;
     private String password;
     private String image;
@@ -34,12 +36,12 @@ public class User {
         this.username = username;
     }
 
-    public String getName() {
-        return name;
+    public String getDisplayName() {
+        return displayName;
     }
     
-    public void setName(String name) {
-        this.name = name;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getEmail() {

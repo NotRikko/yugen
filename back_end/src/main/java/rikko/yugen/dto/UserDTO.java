@@ -5,14 +5,14 @@ import rikko.yugen.model.User;
 public class UserDTO {
     private final Long id;
     private final String username;
-    private final String name;
+    private final String displayName;
     private final String email;
     private final String image;
 
     public UserDTO(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
-        this.name = user.getName();
+        this.displayName = user.getDisplayName();
         this.email = user.getEmail();
         this.image = user.getImage();
     }
@@ -27,8 +27,8 @@ public class UserDTO {
         return username;
     }
 
-    public String getName() {
-        return name;
+    public String getDisplayName() {
+        return displayName;
     }
 
     public String getEmail() {

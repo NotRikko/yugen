@@ -9,7 +9,7 @@ public class UserCreateDTO {
     private String username;
 
     @NotBlank(message = "Name is required")
-    private String name;
+    private String displayName;
 
     @NotBlank(message = "Password is required")
     @Size(min = 8, message = "Password must be at least 8 characters")
@@ -31,12 +31,12 @@ public class UserCreateDTO {
         this.username = username;
     }
 
-    public String getName() {
-        return name;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     public String getEmail() {

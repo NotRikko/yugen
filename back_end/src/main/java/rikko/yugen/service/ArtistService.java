@@ -21,7 +21,7 @@ public class ArtistService {
     private UserRepository userRepository;
 
     public Artist getArtistByName(String artistName) {
-        return artistRepository.findByName(artistName)
+        return artistRepository.findByArtistName(artistName)
             .orElseThrow(() -> new RuntimeException("Artist not found with name: " + artistName));
     }
 
@@ -30,16 +30,16 @@ public class ArtistService {
     }
 
     public Artist createArtist(ArtistCreateDTO artistCreateDTO) {
-        artistRepository.findByName(artistCreateDTO.getName())
+        artistRepository.findByArtistName(artistCreateDTO.getArtistName())
                 .ifPresent(existingArtist -> {
-                    throw new RuntimeException("Artist with name '" + existingArtist.getName() + "' already exists.");
+                    throw new RuntimeException("Artist with name '" + existingArtist.getArtistName() + "' already exists.");
                 });
 
         User user = userRepository.findById(artistCreateDTO.getUserId())
                                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Artist artist = new Artist();
-        artist.setName(artistCreateDTO.getName());
+        artist.setArtistName(artistCreateDTO.getArtistName());
         artist.setImage(artistCreateDTO.getImage());
         artist.setUser(user); 
 

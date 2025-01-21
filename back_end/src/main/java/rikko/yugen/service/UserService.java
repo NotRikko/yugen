@@ -17,9 +17,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User getUserByName(String name) {
-        return userRepository.findByName(name)
-            .orElseThrow(() -> new RuntimeException("User not found with name" + name));
+    public User getUserByDisplayName(String displayName) {
+        return userRepository.findByDisplayName(displayName)
+            .orElseThrow(() -> new RuntimeException("User not found with name" + displayName));
     }
 
     public User getUserByUsername(String username) {
@@ -45,7 +45,7 @@ public class UserService {
 
         user.setPassword(hashedPassword);
         user.setUsername(userCreateDTO.getUsername());
-        user.setName(userCreateDTO.getName());
+        user.setDisplayName(userCreateDTO.getDisplayName());
         user.setEmail(userCreateDTO.getEmail());
         user.setImage(userCreateDTO.getImage());
 
