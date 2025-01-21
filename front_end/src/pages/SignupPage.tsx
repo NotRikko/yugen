@@ -3,20 +3,20 @@ import Navbar from "../components/Navbar"
 
 interface UserSignupData {
     username: string;
-    name: string;
+    displayName: string;
     email: string;
     password: string;
     confirmPassword: string;
 }
   
 interface ArtistSignupData extends UserSignupData {
-    name: string;
+    artistName: string;
     bio: string;
 }
   
 type SignupFormData = (UserSignupData | ArtistSignupData) & {
     isArtistSignup: boolean; 
-    bio?: string;
+    artistName?: string;
 };
 
 
@@ -62,12 +62,12 @@ function SignupPage():JSX.Element {
                         <input
                             className="h-9 border border-gray-400 focus:border-blue-500 focus:outline-none"
                             type="text"
-                            {...register("name", { 
+                            {...register("displayName", { 
                                 required: "Display name is required", 
                                 maxLength: { value: 15, message: "Display name can not exceed 15 characters"}
                             })}
                         />
-                        {errors.name && <span className="text-red-500">{errors.name.message}</span>}
+                        {errors.displayName && <span className="text-red-500">{errors.displayName.message}</span>}
                     </div>
 
                     <div className="flex flex-col gap-2">
@@ -120,12 +120,18 @@ function SignupPage():JSX.Element {
 
                     {isArtistSignup && (
                         <div className="flex flex-col gap-2">
-                            <label htmlFor="bio">Artist Bio</label>
-                            <textarea
-                                className="h-20 border border-gray-400 focus:border-blue-500 focus:outline-none"
-                                {...register("bio", { required: isArtistSignup && "Bio is required" })}
-                            ></textarea>
-                            {errors.bio && <span className="text-red-500">{errors.bio.message}</span>}
+                            <label htmlFor="artistName">Artist Name</label>
+                            <input
+                                className="h-9 border border-gray-400 focus:border-blue-500 focus:outline-none"
+                                type="text"
+                                {...register("artistName", {
+                                    required: isArtistSignup ? "Artist name is required" : false,
+                                    maxLength: isArtistSignup
+                                        ? { value: 15, message: "Artist name cannot exceed 15 characters" }
+                                        : undefined,
+                                })}
+                            ></input>
+                            {errors.artistName && <span className="text-red-500">{errors.artistName.message}</span>}
                         </div>
                     )}
 
