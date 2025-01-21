@@ -19,7 +19,7 @@ public class Product {
     private String image;
 
     @ManyToOne
-    @JoinColumn(name = "artist_id")
+    @JoinColumn(name = "artist_id", nullable = false)
     private Artist artist;
 
     @ManyToMany
