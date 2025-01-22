@@ -12,7 +12,6 @@ public class Product {
     private Long id;
 
     private String name;
-    private String collection;
     private String description;
     private Float price;
     private Integer quantity_in_stock;

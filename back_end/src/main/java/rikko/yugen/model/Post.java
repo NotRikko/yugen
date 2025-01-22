@@ -27,4 +27,45 @@ public class Post {
     @JoinColumn(name = "product_id")
     private Product product;
     
+    //Getters and Setters
+
+    public Long getId() {
+        return id;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public List<Like> getLikes() {
+        return likes;
+    }
+    
+    public void setLikes(List<Like> likes) {
+        this.likes = likes;
+    }
+    
+    public String getContent() {
+        return content;
+    }
+    
+    public void setContent(String content) {
+        this.content = content;
+    }
+    
+    public Artist getArtist() {
+        return artist;
+    }
+    
+    public void setArtist(Artist artist) {
+        this.artist = artist;
+    }
+    
+    public Product getProduct() {
+        return product;
+    }
+    
+    public void setProduct(Product product) {
+        this.product = product;
+    }
 }

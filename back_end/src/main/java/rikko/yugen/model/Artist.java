@@ -14,11 +14,11 @@ public class Artist {
 
     @Column(name = "artist_name")
     private String artistName;
-    
+
     private String bio;
     private String image;
     
-    @OneToMany(mappedBy = "artist", cascade= CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
 
     @OneToOne
