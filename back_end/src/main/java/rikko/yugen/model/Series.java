@@ -1,4 +1,5 @@
 package rikko.yugen.model;
+import java.util.HashSet;
 import java.util.Set;
 
 import jakarta.persistence.*;
@@ -15,7 +16,7 @@ public class Series {
     private String description;
 
     @ManyToMany(mappedBy = "series")
-    private Set<Product> products;
+    private Set<Product> products = new HashSet<>();
 
     //Getters and Setters
 

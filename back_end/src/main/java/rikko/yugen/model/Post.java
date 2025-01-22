@@ -1,7 +1,7 @@
 package rikko.yugen.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.*;
 
@@ -13,7 +13,7 @@ public class Post {
     private Long id;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Like> likes = new ArrayList<>();
+    private Set<Like> likes = new HashSet<>();
 
 
     @Column(nullable = false)
@@ -37,11 +37,11 @@ public class Post {
         this.id = id;
     }
     
-    public List<Like> getLikes() {
+    public Set<Like> getLikes() {
         return likes;
     }
     
-    public void setLikes(List<Like> likes) {
+    public void setLikes(HashSet<Like> likes) {
         this.likes = likes;
     }
     
