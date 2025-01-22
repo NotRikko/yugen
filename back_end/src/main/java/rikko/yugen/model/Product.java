@@ -54,12 +54,20 @@ public class Product {
         this.name = name;
     }
 
-    public String getCollection() {
-        return collection;
+    public Set<Series> getSeries() {
+        return series;
     }
     
-    public void setCollection(String collection) {
-        this.collection = collection;
+    public void setSeries(Set<Series> series) {
+        this.series = series;
+    }
+
+    public Set<Collection> getCollections() {
+        return collections;
+    }
+    
+    public void setCollections(Set<Collection> collections) {
+        this.collections = collections;
     }
     
     public String getDescription() {
@@ -101,6 +109,4 @@ public class Product {
     public void setArtist(Artist artist) {
         this.artist = artist;
     } 
-
-
 }

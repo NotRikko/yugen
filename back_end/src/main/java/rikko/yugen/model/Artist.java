@@ -1,7 +1,7 @@
 package rikko.yugen.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import jakarta.persistence.*;
 
@@ -19,7 +19,7 @@ public class Artist {
     private String image;
     
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Product> products = new ArrayList<>();
+    private Set<Product> products = new HashSet<>();
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)  
@@ -56,6 +56,14 @@ public class Artist {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public Set<Product> getProducts() {
+        return products;
+    }
+    
+    public void setProducts(Set<Product> products) {
+        this.products = products;
     }
 
     public User getUser() {

@@ -1,5 +1,8 @@
 package rikko.yugen.dto;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import rikko.yugen.model.Product;
 
 public class ProductDTO {
@@ -10,8 +13,8 @@ public class ProductDTO {
     private final Integer quantity_in_stock;
     private final String image;
     private final ArtistDTO artist;
-    private final List<SeriesDTO> series;
-    private final List<CollectionDTO> collections;
+    private final Set<SeriesDTO> series;
+    private final Set<CollectionDTO> collections;
 
     public ProductDTO(Product product) {
         this.id = product.getId();
@@ -22,10 +25,14 @@ public class ProductDTO {
         this.image = product.getImage();
         this.artist = product.getArtist() != null ? new ArtistDTO(product.getArtist()) : null;
         this.series = product.getSeries() != null
-                    ? product.getSeries().stream().map(SeriesDTO::new).toList()
+                    ? product.getSeries().stream()
+                        .map(SeriesDTO::new)
+                        .collect(Collectors.toSet())
                     : null;
-        this.collections = product.getCollection() != null
-                    ? product.getCollection().stream().map(CollectionDTO::new).toList()
+        this.collections = product.getCollections() != null
+                    ? product.getCollections().stream()
+                    .map(CollectionDTO::new)
+                    .collect(Collectors.toSet())
                     : null;
     }
 
@@ -58,11 +65,11 @@ public class ProductDTO {
         return artist;
     }
 
-    public List<SeriesDTO> getSeries() {
+    public Set<SeriesDTO> getSeries() {
         return series;
     }
 
-    public List<CollectionDTO> getCollections() {
+    public Set<CollectionDTO> getCollections() {
         return collections;
     }
 }
