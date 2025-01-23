@@ -1,5 +1,6 @@
 package rikko.yugen.dto;
 
+import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -28,12 +29,13 @@ public class ProductDTO {
                     ? product.getSeries().stream()
                         .map(SeriesDTO::new)
                         .collect(Collectors.toSet())
-                    : null;
+                    : Collections.emptySet();
+
         this.collections = product.getCollections() != null
                     ? product.getCollections().stream()
                     .map(CollectionDTO::new)
                     .collect(Collectors.toSet())
-                    : null;
+                    : Collections.emptySet();
     }
 
     //Getters
