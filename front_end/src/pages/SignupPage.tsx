@@ -27,16 +27,31 @@ function SignupPage():JSX.Element {
 
     const isArtistSignup = watch("isArtistSignup");
 
-    const onSubmit = (data: SignupFormData) => {
+    const onSubmit = async (data: SignupFormData) => {
         if (isArtistSignup) {
           const artistData = data as ArtistSignupData;
-          console.log("Artist Signup Data:", artistData);
+          const response = await fetch("http://localhost:8080/users/create", {
+            mode: "cors",
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(artistData),
+          });
+          console.log(await response.json());
         } else {
-          const regularData = data as UserSignupData; 
-          console.log("Regular Signup Data:", regularData);
+          const regularData = data as UserSignupData;
+          const response = await fetch("http://localhost:8080/users/create", {
+            mode: "cors",
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(regularData),
+          });
+          console.log(await response.json());
         }
-    };
-
+      };
     return (
         <div className="bg-slate-100 h-screen flex flex-col items-center">
             <Navbar/>
