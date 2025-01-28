@@ -28,30 +28,25 @@ function SignupPage():JSX.Element {
     const isArtistSignup = watch("isArtistSignup");
 
     const onSubmit = async (data: SignupFormData) => {
-        if (isArtistSignup) {
-          const artistData = data as ArtistSignupData;
+        const payload = isArtistSignup ? (data as ArtistSignupData) : (data as UserSignupData);
+      
+        try {
           const response = await fetch("http://localhost:8080/users/create", {
             mode: "cors",
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify(artistData),
+            body: JSON.stringify(payload),
           });
+      
+          // Log the response
           console.log(await response.json());
-        } else {
-          const regularData = data as UserSignupData;
-          const response = await fetch("http://localhost:8080/users/create", {
-            mode: "cors",
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(regularData),
-          });
-          console.log(await response.json());
+        } catch (error) {
+          console.error("Error during signup:", error);
         }
       };
+
     return (
         <div className="bg-slate-100 h-screen flex flex-col items-center">
             <Navbar/>
