@@ -40,7 +40,6 @@ function SignupPage():JSX.Element {
             body: JSON.stringify(payload),
           });
       
-          // Log the response
           console.log(await response.json());
         } catch (error) {
           console.error("Error during signup:", error);
