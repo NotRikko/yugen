@@ -11,13 +11,38 @@ interface Like {
     likedAt: string;
 }
 
-interface Post {
-    userId: number;
-    content: string;
+interface Artist {
+    id: number;
+    artistName: string;
     image: string;
-    artist: string;
-    likes: Like[] | null;
-    comments: Comment[] | null;
+    user: {
+        id: number;
+        username: string;
+        displayName: string;
+        email: string;
+        image: string;
+    };
+}
+
+interface Product {
+    id: number;
+    name: string;
+    description: string;
+    price: number;
+    image: string;
+    artist: Artist;
+    series: any[]; 
+    collections: any[];
+    quantityInStock: number;
+}
+
+interface Post {
+    id: number;
+    content: string;
+    artist: Artist;
+    product: Product;
+    likes: Like[];
+    comments?: Comment[];
 }
 
 interface PostProps {
@@ -29,9 +54,9 @@ function Post({ post }: PostProps) {
     return (
         <>
             <p>{post.content}</p>
-            <img src={post.image} alt={post.artist} />
+            <p>By: {post.artist.artistName}</p>
+            <img src={post.product.image} alt={post.product.name} />
         </>
     );
 }
-
 export default Post
