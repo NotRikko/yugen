@@ -8,10 +8,9 @@ function SignupPage():JSX.Element {
 
     return (
         <div className="w-full h-screen flex flex-col items-center justify-center">
-            <div className="flex items-center  justify-center w-1/2 h-full m-20 border rounded-md">
-                <div className="p-8 w-1/2">
-                    <h1>Yugen</h1>
-                    <h2>Sign Up</h2>
+            <div className="flex items-center  justify-center w-1/2 h-4/5 m-20 border-2 rounded-md">
+                <div className="px-12 w-1/2 h-full flex flex-col justify-center gap-8">
+                    <h1 className="self-center text-2xl ">Yugen</h1>
                     <SignupForm />
                 </div>
                 <img 
