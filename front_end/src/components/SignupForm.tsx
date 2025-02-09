@@ -55,6 +55,7 @@ export default function SignupForm() {
     async function onSubmit(values: z.infer<typeof formSchema>) {
       try {
         const response = await fetch("http://localhost:8080/users/create", {
+          mode: "cors",
           method: "POST",
           headers: {
             "Content-Type": "application/json",
