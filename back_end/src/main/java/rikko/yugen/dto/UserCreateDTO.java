@@ -20,6 +20,8 @@ public class UserCreateDTO {
     private String email;
     
     private String image;
+
+    private Boolean isArtist;
     
     //Getters and Setters
     
@@ -61,6 +63,14 @@ public class UserCreateDTO {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public Boolean getIsArtist() {
+        return isArtist;
+    }
+
+    public void setIsArtist(Boolean isArtist){
+        this.isArtist = isArtist;
     }
 }
 
