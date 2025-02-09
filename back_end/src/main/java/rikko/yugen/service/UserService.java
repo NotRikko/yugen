@@ -58,6 +58,7 @@ public class UserService {
         user.setDisplayName(userCreateDTO.getDisplayName());
         user.setEmail(userCreateDTO.getEmail());
         user.setImage(userCreateDTO.getImage());
+        user.setIsArtist(userCreateDTO.getIsArtist());
 
         User savedUser = userRepository.save(user);
 
