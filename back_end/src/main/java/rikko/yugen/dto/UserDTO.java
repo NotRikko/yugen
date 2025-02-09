@@ -8,6 +8,7 @@ public class UserDTO {
     private final String displayName;
     private final String email;
     private final String image;
+    private final Boolean isArtist;
 
     public UserDTO(User user) {
         this.id = user.getId();
@@ -15,6 +16,7 @@ public class UserDTO {
         this.displayName = user.getDisplayName();
         this.email = user.getEmail();
         this.image = user.getImage();
+        this.isArtist = user.getIsArtist();
     }
 
     //Getters
@@ -37,5 +39,9 @@ public class UserDTO {
 
     public String getImage() {
         return image;
+    }
+
+    public Boolean getIsArtist() {
+        return isArtist;
     }
 }
