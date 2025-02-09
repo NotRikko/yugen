@@ -8,6 +8,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import rikko.yugen.repository.ProductRepository;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.CollectionRepository;
@@ -46,6 +47,7 @@ public class ProductService {
         return productRepository.findByCollections_Name(collectionName);
     }
 
+    @Transactional
     public Product createProduct(ProductCreateDTO productCreateDTO) {
 
         Artist artist = artistRepository.findById(productCreateDTO.getArtistId())
