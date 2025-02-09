@@ -19,6 +19,8 @@ public class User {
     private String email;
     private String password;
     private String image;
+    
+    @Column(name = "is_artist")
     private Boolean isArtist;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
