@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.UserRepository;
 
@@ -31,6 +32,7 @@ public class ArtistService {
         return artistRepository.findAll();
     }
 
+    @Transactional
     public Artist createArtist(ArtistCreateDTO artistCreateDTO) {
         artistRepository.findByArtistName(artistCreateDTO.getArtistName())
                 .ifPresent(existingArtist -> {

@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import rikko.yugen.repository.PostRepository;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.ProductRepository;
@@ -34,6 +35,7 @@ public class PostService {
         return postRepository.findAll();
     }
 
+    @Transactional
     public Post createPost(PostCreateDTO postCreateDTO) {
         Artist artist = artistRepository.findById(postCreateDTO.getArtistId())
                                 .orElseThrow(() -> new RuntimeException("Artist not found"));
