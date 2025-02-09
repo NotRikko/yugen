@@ -19,6 +19,7 @@ public class User {
     private String email;
     private String password;
     private String image;
+    private Boolean isArtist;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Artist artist;
@@ -74,6 +75,14 @@ public class User {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public Boolean getIsArtist() {
+        return isArtist;
+    }
+
+    public void setIsArtist(Boolean isArtist){
+        this.isArtist = isArtist;
     }
 
     public Artist getArtist() {
