@@ -48,18 +48,37 @@ export default function SignupForm() {
         displayName: "",
         email: "",
         password: "",
-        confirm: "",
         isArtist: false,
       },
     })
    
-    function onSubmit(values: z.infer<typeof formSchema>) {
-      console.log(values)
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+      try {
+        const response = await fetch("http://localhost:8080/users/create", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        });
+    
+        const data = await response.json();
+    
+        if (!response.ok) {
+          throw new Error(data.message || "Signup failed");
+        }
+    
+        console.log("Signup successful:", data);
+        // Handle success (e.g., redirect user, show success message)
+      } catch (error) {
+        console.error("Signup error:", error);
+        // Handle error (e.g., display error message)
+      }
     }
 
     return (
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8  mx-auto py-10">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8  mx-auto py-8">
           
           <div className="grid grid-cols-12 gap-4">
             
