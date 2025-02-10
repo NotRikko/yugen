@@ -5,6 +5,7 @@ import './index.css'
 import HomePage from './HomePage.tsx'
 import ArtistsMain from "./pages/ArtistsMain.tsx"
 import SignupPage from './pages/SignupPage.tsx'
+import LoginPage from './pages/LoginPage.tsx'
 import FeedMain from './pages/FeedMain.tsx'
 import { UserProvider } from './UserProvider.tsx'
 
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
   {
     path: '/signup',
     element: <SignupPage />
+  },
+  {
+    path: '/login',
+    element: <LoginPage />
   },
   {
     path: '/feed',

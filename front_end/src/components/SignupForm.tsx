@@ -70,67 +70,59 @@ export default function SignupForm() {
         }
     
         console.log("Signup successful:", data);
-        // Handle success (e.g., redirect user, show success message)
+        // Handle success 
       } catch (error) {
         console.error("Signup error:", error);
-        // Handle error (e.g., display error message)
+        // Handle error 
       }
     }
 
     return (
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8  mx-auto py-8">
-          
           <div className="grid grid-cols-12 gap-4">
-            
-            
             <div className="col-span-6">
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input 
+                      placeholder="Username"
+                      
+                      type="text"
+                      {...field} />
+                    </FormControl>
+                    <FormDescription>This is your username.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="col-span-6">
+              <FormField
+                control={form.control}
+                name="displayName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Display Name</FormLabel>
+                    <FormControl>
+                      <Input 
+                      placeholder="Display"
+                      
+                      type="text"
+                      {...field} />
+                    </FormControl>
+                    <FormDescription>This is your public display name.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           
-              
-          <FormField
-            control={form.control}
-            name="username"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Username</FormLabel>
-                <FormControl>
-                  <Input 
-                  placeholder="Username"
-                  
-                  type="text"
-                  {...field} />
-                </FormControl>
-                <FormDescription>This is your username.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-            </div>
-            
-            <div className="col-span-6">
-              
-          <FormField
-            control={form.control}
-            name="displayName"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Display Name</FormLabel>
-                <FormControl>
-                  <Input 
-                  placeholder="Display"
-                  
-                  type="text"
-                  {...field} />
-                </FormControl>
-                <FormDescription>This is your public display name.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-            </div>
-            
           </div>
-          
           <FormField
             control={form.control}
             name="email"
@@ -149,47 +141,39 @@ export default function SignupForm() {
               </FormItem>
             )}
           />
-          
           <div className="grid grid-cols-12 gap-4">
-            
             <div className="col-span-6">
-              
-          <FormField
-            control={form.control}
-            name="password"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Password</FormLabel>
-                <FormControl>
-                  <Input type="password" placeholder="Placeholder" {...field} />
-                </FormControl>
-                <FormDescription>Enter your password.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Placeholder" {...field} />
+                    </FormControl>
+                    <FormDescription>Enter your password.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-            
             <div className="col-span-6">
-              
-          <FormField
-            control={form.control}
-            name="confirm"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Confirm Password</FormLabel>
-                <FormControl>
-                  <Input type="password" placeholder="Placeholder" {...field} />
-                </FormControl>
-                <FormDescription>Confirm your password.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          
+              <FormField
+                control={form.control}
+                name="confirm"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Placeholder" {...field} />
+                    </FormControl>
+                    <FormDescription>Confirm your password.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-            
           </div>
           <FormField
             control={form.control}

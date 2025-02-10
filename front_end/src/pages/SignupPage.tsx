@@ -4,8 +4,6 @@ import SignupForm from "../components/SignupForm"
 
 function SignupPage():JSX.Element {
   
-   
-
     return (
         <div className="w-full h-screen flex flex-col items-center justify-center">
             <div className="flex items-center  justify-center w-full h-full">
