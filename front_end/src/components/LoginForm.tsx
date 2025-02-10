@@ -22,11 +22,8 @@ import {
 import {
   Input
 } from "@/components/ui/input"
-import {
-  Checkbox
-} from "@/components/ui/checkbox"
 
- 
+
 const formSchema = z.object({
   username: z.string().min(4).max(25),
   password: z.string().min(8).max(30),
@@ -43,7 +40,7 @@ export default function LoginForm() {
    
     async function onSubmit(values: z.infer<typeof formSchema>) {
       try {
-        const response = await fetch("http://localhost:8080/users/create", {
+        const response = await fetch("http://localhost:8080/users/login", {
           mode: "cors",
           method: "POST",
           headers: {
@@ -76,13 +73,13 @@ export default function LoginForm() {
                     <FormItem>
                         <FormLabel>Username</FormLabel>
                         <FormControl>
-                        <Input 
-                        placeholder="Username"
-                        
-                        type="text"
-                        {...field} />
+                            <Input 
+                                placeholder="Username"
+                                type="text"
+                                {...field} 
+                            />
                         </FormControl>
-                        <FormDescription>This is your username.</FormDescription>
+                        <FormDescription>Enter your username.</FormDescription>
                         <FormMessage />
                     </FormItem>
                     )}
@@ -94,7 +91,7 @@ export default function LoginForm() {
                     <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                        <Input type="password" placeholder="Placeholder" {...field} />
+                            <Input type="password" placeholder="Placeholder" {...field} />
                         </FormControl>
                         <FormDescription>Enter your password.</FormDescription>
                         <FormMessage />

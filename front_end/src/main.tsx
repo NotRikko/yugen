@@ -8,11 +8,18 @@ import SignupPage from './pages/SignupPage.tsx'
 import LoginPage from './pages/LoginPage.tsx'
 import FeedMain from './pages/FeedMain.tsx'
 import { UserProvider } from './UserProvider.tsx'
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+
 
 const router = createBrowserRouter([
   {
+    
     path: '/',
-    element: <HomePage />
+    element: (
+      <SidebarProvider className="!block">
+        <HomePage />
+      </SidebarProvider>
+    )
   },
   {
     path: '/artists',

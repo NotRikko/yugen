@@ -24,7 +24,7 @@ function HomePage(): JSX.Element {
 
   return (
     <>
-      <div className="h-full w-full">
+      <div className="h-full w-full flex flex-col">
         <Navbar/>
         <div className="h-3/5 sm:h-screen w-full overflow-hidden relative">
           <div className="absolute top-1/2 left-0 right-0 z-30 flex justify-between px-10">

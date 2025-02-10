@@ -2,7 +2,7 @@ import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useState, useEffect } from "react";
 import { NavLink } from 'react-router-dom';
-import UserNavBox from "./UserNavBox";
+import UserSidebar from './UserSidebar';
 
 
 
@@ -58,7 +58,7 @@ function Navbar() {
                     </ul>
                 )
             }
-            {viewingAccountBar ? <UserNavBox onClose={handleViewingAccountBar}/> : null}
+            {viewingAccountBar ? <UserSidebar /> : null}
         </nav>
 
     )
