@@ -12,7 +12,7 @@ function SignupPage():JSX.Element {
                     <SignupForm />
                 </div>
                 <img 
-                    src="https://64.media.tumblr.com/127053e83f24d3dc142dda81bec22692/d4ee3c438ce28514-d6/s1280x1920/5917556a8d511bda13ae6107874f742905b8b126.png"
+                    src="https://w0.peakpx.com/wallpaper/747/501/HD-wallpaper-summer-anime-scenery-japan.jpg/"
                     className="hidden md:flex h-full w-1/2"
                 />
             </div>

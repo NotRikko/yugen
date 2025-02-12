@@ -52,7 +52,7 @@ export default function LoginForm() {
         const data = await response.json();
     
         if (!response.ok) {
-          throw new Error(data.message || "Signup failed");
+          throw new Error(data.message || "Login failed");
         }
     
         console.log("Login successful:", data);

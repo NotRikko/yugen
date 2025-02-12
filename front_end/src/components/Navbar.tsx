@@ -1,8 +1,9 @@
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { NavLink } from 'react-router-dom';
 import UserSidebar from './UserSidebar';
+import CartSidebar from './CartSidebar';
 
 
 
@@ -10,6 +11,10 @@ function Navbar() {
     const [isMobile, setIsMobile] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [viewingAccountBar, setIsViewingAccountBar] = useState(false);
+    const [viewingCartBar, setIsViewingCartBar] = useState(false); 
+
+    const accountSidebarRef = useRef<HTMLDivElement | null>(null);
+    const cartSidebarRef = useRef<HTMLDivElement | null>(null);
 
     useEffect(() => {
         const checkScreenSize = () => {
@@ -21,9 +26,31 @@ function Navbar() {
     
         return () => window.removeEventListener("resize", checkScreenSize);
       }, []);
+    useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+        if (viewingAccountBar && accountSidebarRef.current && !accountSidebarRef.current.contains(event.target as Node)) {
+            setIsViewingAccountBar(false);
+        }
+        if (viewingCartBar && cartSidebarRef.current && !cartSidebarRef.current.contains(event.target as Node)) {
+            setIsViewingCartBar(false);
+        }
+    };
+
+    if (viewingAccountBar || viewingCartBar) {
+        document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+    };
+    }, [viewingAccountBar, viewingCartBar]);
 
     const handleViewingAccountBar = () => {
         setIsViewingAccountBar(prevViewingAccountBar => !prevViewingAccountBar);
+    };
+
+    const handleViewingCartBar = () => {
+        setIsViewingCartBar(prevViewingCartBar => !prevViewingCartBar);
     };
 
     return(
@@ -54,11 +81,20 @@ function Navbar() {
                         <NavLink to="/feed"><li>Feed</li></NavLink>
                         <NavLink to="/artists"><li>Artists</li></NavLink>
                         <li onClick={handleViewingAccountBar}><AccountCircleIcon sx={{ fontSize: 28 }}/></li>
-                        <li><ShoppingBagIcon sx={{ fontSize: 28 }}/></li>
+                        <li onClick={handleViewingCartBar}><ShoppingBagIcon sx={{ fontSize: 28 }}/></li>
                     </ul>
                 )
             }
-            {viewingAccountBar ? <UserSidebar /> : null}
+            {viewingAccountBar && (
+                <div ref={accountSidebarRef} className="absolute top-16 right-0 z-50">
+                    <UserSidebar />
+                </div>
+            )}
+            {viewingCartBar && (
+                <div ref={cartSidebarRef} className="absolute top-16 right-0 z-50">
+                    <CartSidebar />
+                </div>
+            )}
         </nav>
 
     )
