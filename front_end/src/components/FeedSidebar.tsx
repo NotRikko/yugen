@@ -1,4 +1,4 @@
-import { UserPlus,  Key, } from "lucide-react"
+import { House, } from "lucide-react"
  
 import {
   Sidebar,
@@ -13,21 +13,16 @@ import {
 // Menu items.
 const items = [
   {
-    title: "Login",
-    url: "/login",
-    icon: Key,
-  },
-  {
-    title: "Signup",
-    url: "/signup",
-    icon: UserPlus,
+    title: "Home",
+    url: "/",
+    icon: House,
   },
 ]
  
-export default function UserSidebar() {
+export default function FeedSidebar() {
     return (
-      <div className="fixed">
-        <Sidebar className="w-1/6">
+      <div>
+        <Sidebar className="w-1/5 inset-y-0 left-0">
             <SidebarContent>
             <SidebarGroup>
                 <SidebarGroupContent className="flex flex-col justify-center p-3">

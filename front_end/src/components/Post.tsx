@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 interface Comment {
     userId: number;
     content: string;
@@ -52,11 +50,11 @@ interface PostProps {
 
 function Post({ post }: PostProps) {
     return (
-        <>
+        <div className="p-4 border">
             <p>{post.content}</p>
-            <p>By: {post.artist.artistName}</p>
+            <p>{post.artist.artistName}</p>
             <img src={post.product.image} alt={post.product.name} />
-        </>
+        </div>
     );
 }
 export default Post
