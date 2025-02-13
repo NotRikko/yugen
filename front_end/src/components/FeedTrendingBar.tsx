@@ -24,7 +24,7 @@ function FeedTrendingBar(): JSX.Element {
     }, [])
     
     return(
-        <div className="flex flex-col w-full">
+        <div className="hidden lg:flex flex-col w-full">
             {posts.map((post) => (
                 <Post key={post.id} post={post} />
             ))}
