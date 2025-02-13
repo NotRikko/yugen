@@ -2,8 +2,8 @@ import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useState, useEffect, useRef } from "react";
 import { NavLink } from 'react-router-dom';
-import UserSidebar from './UserSidebar';
-import CartSidebar from './CartSidebar';
+import UserSidebar from '../UserSidebar';
+import CartSidebar from '../features/Cart/CartSidebar';
 
 
 

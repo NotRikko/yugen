@@ -28,7 +28,7 @@ function FeedMain(): JSX.Element {
     return(
         <div className="grid sm:grid-cols-[1fr_2fr] xl:grid-cols-[25%_1fr_25%]">
             <FeedSidebar />
-            <div className="flex flex-col justify-center items-center mx-4 xl:mx-20 my-12">
+            <div className="flex flex-col justify-center items-center mx-4 xl:mx-12 my-12">
                 <div className="flex flex-col gap-4 w-full">
                     {posts.map((post) => (
                         <Post key={post.id} post={post} />
