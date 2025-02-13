@@ -36,8 +36,11 @@ const items = [
  
 export default function FeedSidebar() {
     return (
-        <Sidebar side="left" className="border-r-2">
-            <SidebarContent className="px-12">
+          <Sidebar side="left" className="border-r-2" style={{
+            "--sidebar-width": "25%",
+            "--sidebar-width-mobile": "25rem",
+          }}>
+            <SidebarContent>
               <SidebarGroup>
                   <SidebarGroupContent className="flex flex-col justify-center p-3">
                       <img 
