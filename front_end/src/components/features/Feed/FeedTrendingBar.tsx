@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import Post from "../components/Post"
+import Post from "./Post";
 
 function FeedTrendingBar(): JSX.Element {
     const [posts, setPosts] = useState<Post[]>([]);

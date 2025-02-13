@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
-import Post from "../components/Post"
-import FeedSidebar from "@/components/FeedSidebar";
-import FeedTrendingBar from "@/components/FeedTrendingBar";
+import Post from "../components/features/Feed/Post";
+import FeedSidebar from "@/components/features/Feed/FeedSidebar";
+import FeedTrendingBar from "@/components/features/Feed/FeedTrendingBar";
 
 function FeedMain(): JSX.Element {
     const [posts, setPosts] = useState<Post[]>([]);
