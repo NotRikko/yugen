@@ -3,6 +3,8 @@ import Post from "./Post";
 
 function FeedTrendingBar(): JSX.Element {
     const [posts, setPosts] = useState<Post[]>([]);
+    const [trendingArtists, setTrendingArtists] = useState([]);
+    const [trendingTags, setTrendingTags] = useState([]);
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -24,7 +26,7 @@ function FeedTrendingBar(): JSX.Element {
     }, [])
     
     return(
-        <div className="hidden lg:flex flex-col w-full">
+        <div className="hidden lg:flex flex-col w-full border-l-2 bg-sidebar">
             {posts.map((post) => (
                 <Post key={post.id} post={post} />
             ))}

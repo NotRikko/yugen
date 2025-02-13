@@ -36,7 +36,7 @@ function FeedMain(): JSX.Element {
                 </div>
             </div>
             <FeedTrendingBar />
-         </div>
+        </div>
     )
 }
 
