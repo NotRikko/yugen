@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
 import Post from "../components/Post"
-import PostThumb from "@/components/PostThumb";
 import FeedSidebar from "@/components/FeedSidebar";
 import FeedTrendingBar from "@/components/FeedTrendingBar";
 
@@ -27,18 +26,13 @@ function FeedMain(): JSX.Element {
     }, [])
     
     return(
-        <div className="grid grid-cols-[20%_1fr_20%]">
+        <div className="grid grid-cols-[25%_1fr_25%]">
             <FeedSidebar />
-            <div className="flex flex-col justify-center items-center mx-24 my-12">
-                <div className="grid grid-cols-3 gap-4">
+            <div className="flex flex-col justify-center items-center mx-20 my-12">
+                <div className="flex flex-col gap-4 w-full">
                     {posts.map((post) => (
-                        <PostThumb key={post.id} post={post} />
+                        <Post key={post.id} post={post} />
                     ))}
-                </div>
-                <div className="flex flex-col w-full">
-                {posts.map((post) => (
-                    <Post key={post.id} post={post} />
-                ))}
                 </div>
             </div>
             <FeedTrendingBar />

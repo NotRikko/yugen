@@ -50,10 +50,22 @@ interface PostProps {
 
 function Post({ post }: PostProps) {
     return (
-        <div className="p-4 border">
-            <p>{post.content}</p>
-            <p>{post.artist.artistName}</p>
-            <img src={post.product.image} alt={post.product.name} />
+        <div className="w-5/6 mx-auto p-4 border rounded-lg shadow-md bg-white max-h-[600px]">
+            <div className="flex items-center gap-2">
+                <img 
+                    src={post.artist.image}
+                    className="w-10 h-10 rounded-full object-cover"
+                />
+                <p className="text-blue-500 text-sm font-semibold">{post.artist.artistName}</p>
+             </div>
+            <p className="text-gray-800 text-sm my-2">{post.content}</p>
+            {post.product.image && (
+                <img
+                    src={post.product.image}
+                    alt={post.product.name}
+                    className="w-full max-h-[400px] object-cover mt-2 mb-12 rounded-lg"
+                />
+            )}
         </div>
     );
 }
