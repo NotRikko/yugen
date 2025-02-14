@@ -10,14 +10,16 @@ public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
     
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @Column(nullable = false)
+    private Long contentId; 
+
+    @Column(nullable = false)
+    private String contentType;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -30,20 +32,27 @@ public class Like {
         this.id = id;
     }
 
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
     public User getUser() {
         return user;
     }
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Long getContentId() { 
+        return contentId; 
+    }
+    public void setContentId(Long contentId) { 
+        this.contentId = contentId; 
+    }
+
+    public String getContentType() { 
+        return contentType; 
+    }
+
+    public void setContentType(String contentType) { 
+        this.contentType = contentType; 
     }
 
     public LocalDateTime getCreatedAt() {
