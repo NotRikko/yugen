@@ -4,9 +4,14 @@ A marketplace/social media hybrid web app geared towards the art community.
 
 ## Features
 
-- View art works in a Pinterest inspired format.
+- View art works in a Twitter/BlueSky inspired format.
 - Socialize and connect with fellow art fans and artists themselves.
 - Market your works as an artist to reach a community build towards you.
+
+## Upcoming Features
+
+* User Dashboard
+* Like and commenting functionality
 
 ## Getting Started
 
