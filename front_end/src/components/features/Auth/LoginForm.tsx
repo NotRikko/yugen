@@ -25,8 +25,11 @@ import {
 
 
 const formSchema = z.object({
-  username: z.string().min(4).max(25),
-  password: z.string().min(8).max(30),
+  username: z.string().min(4, "Username must be at least 4 characters").max(25, "Username must be at most 25 characters"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters long")
+    .max(30, "Password must be at most 30 characters long"),
 });
 
 export default function LoginForm() {
@@ -56,10 +59,8 @@ export default function LoginForm() {
         }
     
         console.log("Login successful:", data);
-        // Handle success 
       } catch (error) {
         console.error("Login error:", error);
-        // Handle error 
       }
     }
 

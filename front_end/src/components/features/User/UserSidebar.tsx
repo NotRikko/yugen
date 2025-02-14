@@ -26,9 +26,8 @@ const items = [
  
 export default function UserSidebar() {
     return (
-      <div className="fixed">
-        <Sidebar className="w-1/6">
-            <SidebarContent>
+        <Sidebar className="w-1/6 ">
+            <SidebarContent className="overflow-hidden">
             <SidebarGroup>
                 <SidebarGroupContent className="flex flex-col justify-center p-3">
                     <img 
@@ -56,6 +55,5 @@ export default function UserSidebar() {
             </SidebarGroup>
             </SidebarContent>
         </Sidebar>
-      </div>  
     )
 }
