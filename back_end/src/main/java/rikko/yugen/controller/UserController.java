@@ -43,6 +43,26 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<UserDTO> getAuthenticatedUser(@RequestHeader("Authorization") String token) {
+        // Extract the token 
+        String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+
+        // Extract user information from the token
+        String username = jwtService.extractUsername(jwtToken); // Implement this method in JwtService
+
+        // Get the user from the service
+        User user = userService.getUserByUsername(username);
+
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Authenticated user not found");
+        }
+
+        // Return the user details as a UserDTO
+        UserDTO userDTO = new UserDTO(user);
+        return ResponseEntity.ok(userDTO);
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> userDTOs = userService.getAllUsers()

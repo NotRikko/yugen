@@ -1,12 +1,14 @@
 package rikko.yugen.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.transaction.Transactional;
 
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import rikko.yugen.repository.ArtistRepository;
@@ -27,6 +29,11 @@ public class UserService {
     public User getUserByDisplayName(String displayName) {
         return userRepository.findByDisplayName(displayName)
             .orElseThrow(() -> new RuntimeException("User not found with name" + displayName));
+    }
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
     }
 
     public User getUserByUsername(String username) {
