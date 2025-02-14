@@ -1,7 +1,7 @@
 package rikko.yugen.dto;
 
+import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import rikko.yugen.model.Post;
 
@@ -12,13 +12,9 @@ public class PostDTO {
     private final ArtistDTO artist;
     private final ProductDTO product;
 
-    public PostDTO(Post post) {
+    public PostDTO(Post post, Set<LikeDTO> likes) {
         this.id = post.getId();
-        this.likes = post.getLikes() != null
-                    ? post.getLikes().stream()
-                        .map(LikeDTO::new)
-                        .collect(Collectors.toSet())
-                    : null; 
+        this.likes = likes != null ? likes : new HashSet<>();
         this.content = post.getContent();
         this.artist = post.getArtist() != null ? new ArtistDTO(post.getArtist()) : null;
         this.product = post.getProduct() != null ? new ProductDTO(post.getProduct()) : null;
