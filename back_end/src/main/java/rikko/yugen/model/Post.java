@@ -13,9 +13,6 @@ public class Post {
     private Long id;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Like> likes = new HashSet<>();
-
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
     
     @Column(nullable = false)
@@ -37,14 +34,6 @@ public class Post {
     
     public void setId(Long id) {
         this.id = id;
-    }
-    
-    public Set<Like> getLikes() {
-        return likes;
-    }
-    
-    public void setLikes(HashSet<Like> likes) {
-        this.likes = likes;
     }
     
     public String getContent() {
