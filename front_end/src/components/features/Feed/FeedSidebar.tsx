@@ -31,7 +31,8 @@ const items = [
     title: "Messages",
     url: "/",
     icon: Mail,
-  }
+  },
+  
 ]
  
 export default function FeedSidebar() {
@@ -40,18 +41,18 @@ export default function FeedSidebar() {
             "--sidebar-width": "25%",
             "--sidebar-width-mobile": "25rem",
           }}>
-            <SidebarContent>
+            <SidebarContent  className="px-16">
               <SidebarGroup>
                   <SidebarGroupContent className="flex flex-col justify-center p-3">
                       <img 
                           src="https://i.pinimg.com/236x/05/3b/e5/053be564a7a436ce2846acb98849ea1b.jpg"
-                          className="mx-12 my-3 border rounded-lg"
+                          className="my-3 border rounded-lg"
                       />
-                      <h1 className="text-lg mx-12">User</h1>
+                      <h1 className="text-lg">User</h1>
                   </SidebarGroupContent>
               </SidebarGroup>
               <SidebarGroup>
-                  <SidebarGroupContent className="mx-10 p-3">
+                  <SidebarGroupContent>
                   <SidebarMenu>
                       {items.map((item) => (
                       <SidebarMenuItem key={item.title}>

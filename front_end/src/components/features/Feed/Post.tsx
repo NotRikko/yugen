@@ -1,3 +1,5 @@
+import PostFooter
+ from "./PostFooter";
 interface Comment {
     userId: number;
     content: string;
@@ -22,6 +24,14 @@ interface Artist {
     };
 }
 
+interface Series {
+    id: number;
+}
+
+interface Collection {
+    id: number;
+}
+
 interface Product {
     id: number;
     name: string;
@@ -29,8 +39,8 @@ interface Product {
     price: number;
     image: string;
     artist: Artist;
-    series: any[]; 
-    collections: any[];
+    series: Series[]; 
+    collections: Collection[];
     quantityInStock: number;
 }
 
@@ -40,7 +50,7 @@ interface Post {
     artist: Artist;
     product: Product;
     likes: Like[];
-    comments?: Comment[];
+    comments: Comment[];
 }
 
 interface PostProps {
@@ -63,9 +73,10 @@ function Post({ post }: PostProps) {
                 <img
                     src={post.product.image}
                     alt={post.product.name}
-                    className="w-full max-h-[400px] object-cover mt-2 mb-12 rounded-lg"
+                    className="w-full max-h-[400px] object-cover my-4 rounded-lg"
                 />
             )}
+            <PostFooter post={post} />
         </div>
     );
 }
