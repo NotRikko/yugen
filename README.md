@@ -14,8 +14,11 @@ A marketplace/social media hybrid web app geared towards the art community.
 
 * Clone repository to your local machine
 * Navigate to backend project directory `cd yugen/back_end`
-* Install required dependencies `npm install`
-* Start the development server: `npm run devstart`
+* Create a PostgreSQL database or database of your choice 
+* Update application.properties with your database credentials and connection
+* Build the application `mvn clean install`
+* Run the application `./mvnw spring-boot:run or mvn spring-boot:run`
+
 ### Installing Front End
 
 
