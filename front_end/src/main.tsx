@@ -38,9 +38,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <UserProvider>
-    <SidebarProvider className="!block">
-      <RouterProvider router={router} />
-    </SidebarProvider>
+      <SidebarProvider className="!block">
+        <RouterProvider router={router} />
+      </SidebarProvider>
     </UserProvider>
   </StrictMode>,
 )

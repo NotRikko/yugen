@@ -5,9 +5,21 @@ import { NavLink } from 'react-router-dom';
 import UserSidebar from '../features/User/UserSidebar';
 import CartSidebar from '../features/Cart/CartSidebar';
 
+import { useUser } from "@/UserProvider"
+
+interface User {
+    username: string;
+    displayName: string;
+    email: string;
+    image: string;
+}
+  
+interface UserProps {
+    user: User;
+}
 
 
-function Navbar() {
+function Navbar( {user} : UserProps) {
     const [isMobile, setIsMobile] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [viewingAccountBar, setIsViewingAccountBar] = useState(false);
@@ -87,7 +99,7 @@ function Navbar() {
             }
             {viewingAccountBar && (
                 <div ref={accountSidebarRef} className="absolute top-16 right-0 z-50">
-                    <UserSidebar />
+                    <UserSidebar user={user} />
                 </div>
             )}
             {viewingCartBar && (

@@ -5,10 +5,14 @@ import Navbar from "./components/Layout/Navbar"
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useState } from "react"
+import { useUser } from "@/UserProvider"
+
 
 function HomePage(): JSX.Element {
   const screens = [<MainNewRelease />, <MainPopularPieces />];
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0);
+
+  const {user} = useUser();
 
   const handlePrev = () => {
     setCurrentScreenIndex((prevIndex) =>
@@ -25,7 +29,7 @@ function HomePage(): JSX.Element {
   return (
     <>
       <div className="h-full w-full flex flex-col">
-        <Navbar/>
+        <Navbar user={user}/>
         <div className="h-3/5 sm:h-screen w-full overflow-hidden relative">
           <div className="absolute top-1/2 left-0 right-0 z-30 flex justify-between px-10">
             <button

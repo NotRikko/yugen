@@ -9,6 +9,17 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+
+interface User {
+  username: string;
+  displayName: string;
+  email: string;
+  image: string;
+}
+
+interface UserProps {
+  user: User;
+}
  
 // Menu items.
 const items = [
@@ -35,7 +46,7 @@ const items = [
   
 ]
  
-export default function FeedSidebar() {
+function FeedSidebar({user} : UserProps) {
     return (
           <Sidebar side="left" className="border-r-2" style={{
             "--sidebar-width": "25%",
@@ -48,7 +59,7 @@ export default function FeedSidebar() {
                           src="https://i.pinimg.com/236x/05/3b/e5/053be564a7a436ce2846acb98849ea1b.jpg"
                           className="my-3 border rounded-lg"
                       />
-                      <h1 className="text-xl">User</h1>
+                      <h1 className="text-xl">{user.displayName ? user.displayName : "Guest"}</h1>
                   </SidebarGroupContent>
               </SidebarGroup>
               <SidebarGroup>
@@ -71,3 +82,5 @@ export default function FeedSidebar() {
         </Sidebar>
     )
 }
+
+export default FeedSidebar;

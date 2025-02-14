@@ -22,6 +22,8 @@ import {
 import {
   Input
 } from "@/components/ui/input"
+import { useNavigate } from "react-router-dom"
+import { useUser } from "@/UserProvider"
 
 
 const formSchema = z.object({
@@ -33,6 +35,8 @@ const formSchema = z.object({
 });
 
 export default function LoginForm() {
+    const navigate = useNavigate();
+    const {setUser, setIsLoggedIn} = useUser();
     const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
@@ -53,12 +57,34 @@ export default function LoginForm() {
         });
     
         const data = await response.json();
-    
+        console.log(data);
         if (!response.ok) {
           throw new Error(data.message || "Login failed");
         }
+
+        if(data.token) {
+          localStorage.setItem('accessToken', data.token);
+        }
     
         console.log("Login successful:", data);
+        const userResponse = await fetch("http://localhost:8080/users/me", {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${data.token}`,
+          },
+        });
+    
+        const userData = await userResponse.json();
+    
+        if (!userResponse.ok) {
+          throw new Error(userData.message || "Failed to fetch user data");
+        }
+        localStorage.setItem("user", JSON.stringify(userData));
+        setUser(userData);
+        setIsLoggedIn(true);
+    
+        console.log("User data fetched:", userData);
+        navigate('/feed');
       } catch (error) {
         console.error("Login error:", error);
       }

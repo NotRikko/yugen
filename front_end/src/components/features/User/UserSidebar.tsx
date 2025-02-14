@@ -9,6 +9,17 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+
+interface User {
+    username: string;
+    displayName: string;
+    email: string;
+    image: string;
+  }
+  
+  interface UserProps {
+    user: User;
+  }
  
 // Menu items.
 const items = [
@@ -24,7 +35,7 @@ const items = [
   },
 ]
  
-export default function UserSidebar() {
+export default function UserSidebar({user} : UserProps) {
     return (
         <Sidebar className="w-1/6 ">
             <SidebarContent className="overflow-hidden">
@@ -34,7 +45,7 @@ export default function UserSidebar() {
                         src="https://i.pinimg.com/236x/05/3b/e5/053be564a7a436ce2846acb98849ea1b.jpg"
                         className="mx-6 my-3"
                     />
-                    <h1 className="text-lg mx-6">User</h1>
+                    <h1 className="text-lg mx-6">{user.displayName ? user.displayName : "Guest"}</h1>
                 </SidebarGroupContent>
             </SidebarGroup>
             <SidebarGroup>

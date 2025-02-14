@@ -1,8 +1,8 @@
-import { createContext, useState, useContext, ReactNode } from "react";
+import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 
 interface User {
     username: string;
-    name: string;
+    displayName: string;
     email: string;
     image: string;
 }
@@ -25,11 +25,22 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User>(
         {
             username : "",
-            name: "",
+            displayName: "",
             email: "",
             image: ""
         }
     );
+
+    useEffect(() => {
+        // Check if there's a saved user in localStorage
+        const storedUser = localStorage.getItem("user");
+        const storedToken = localStorage.getItem("accessToken");
+    
+        if (storedUser && storedToken) {
+          setUser(JSON.parse(storedUser));
+          setIsLoggedIn(true);
+        }
+      }, []);
 
     return (
         <UserContext.Provider value={{ isLoggedIn, user, setUser, setIsLoggedIn }}>
