@@ -48,7 +48,7 @@ export default function FeedSidebar() {
                           src="https://i.pinimg.com/236x/05/3b/e5/053be564a7a436ce2846acb98849ea1b.jpg"
                           className="my-3 border rounded-lg"
                       />
-                      <h1 className="text-lg">User</h1>
+                      <h1 className="text-xl">User</h1>
                   </SidebarGroupContent>
               </SidebarGroup>
               <SidebarGroup>
@@ -57,9 +57,9 @@ export default function FeedSidebar() {
                       {items.map((item) => (
                       <SidebarMenuItem key={item.title}>
                           <SidebarMenuButton asChild>
-                          <a href={item.url}>
-                              <item.icon />
-                              <span>{item.title}</span>
+                          <a href={item.url} className="gap-4">
+                              <item.icon className="scale-125"/>
+                              <span className="text-lg">{item.title}</span>
                           </a>
                           </SidebarMenuButton>
                       </SidebarMenuItem>

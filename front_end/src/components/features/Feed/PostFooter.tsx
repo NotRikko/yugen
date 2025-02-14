@@ -14,7 +14,7 @@ interface Like {
   interface Post {
     id: number;
     content: string;
-    likes: Like[]; // ✅ Added 'likes' to match `PostFooter` expectations
+    likes: Like[]; 
     comments: Comment[];
   }
   

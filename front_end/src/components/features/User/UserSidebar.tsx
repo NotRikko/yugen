@@ -44,9 +44,9 @@ export default function UserSidebar() {
                     {items.map((item) => (
                     <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton asChild>
-                        <a href={item.url}>
-                            <item.icon />
-                            <span>{item.title}</span>
+                        <a href={item.url} className="gap-4">
+                            <item.icon  className="scale-125"/>
+                            <span className="text-lg">{item.title}</span>
                         </a>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
