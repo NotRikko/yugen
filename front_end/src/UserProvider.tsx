@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 
 interface User {
+    id: number;
     username: string;
     displayName: string;
     email: string;
@@ -24,6 +25,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<User>(
         {
+            id: 0,
             username : "",
             displayName: "",
             email: "",
