@@ -18,12 +18,15 @@ public class Post {
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = true)
+    private String image;
+
     @ManyToOne
     @JoinColumn(name = "artist_id")
     private Artist artist;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "product_id", nullable = true)
     private Product product;
     
     //Getters and Setters
@@ -42,6 +45,14 @@ public class Post {
     
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
     
     public Artist getArtist() {
