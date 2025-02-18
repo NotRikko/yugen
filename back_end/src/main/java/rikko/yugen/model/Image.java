@@ -1,29 +1,29 @@
 package rikko.yugen.model;
 
-import java.time.LocalDateTime;
-
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "likes")
-public class Like {
+@Table(name = "images")
+public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
 
     @Column(nullable = false)
-    private Long contentId; 
+    private String url; 
+
+    @Column(nullable = false)
+    private Long contentId;
 
     @Column(nullable = false)
     private String contentType;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
-
-    //Getters and Setters
+    // Getters and Setters
     public Long getId() {
         return id;
     }
@@ -32,12 +32,12 @@ public class Like {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public String getUrl() {
+        return url;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public Long getContentId() { 
@@ -55,13 +55,4 @@ public class Like {
     public void setContentType(String contentType) { 
         this.contentType = contentType; 
     }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-    
 }

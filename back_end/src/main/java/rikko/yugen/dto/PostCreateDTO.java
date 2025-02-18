@@ -2,6 +2,7 @@ package rikko.yugen.dto;
 
 public class PostCreateDTO {
     private String content;
+    private String image;
     private Long artistId;  
     private Long productId; 
 
@@ -12,6 +13,14 @@ public class PostCreateDTO {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public Long getArtistId() {
