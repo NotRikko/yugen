@@ -8,13 +8,15 @@ import rikko.yugen.model.Post;
 public class PostDTO {
     private final Long id;
     private final Set<LikeDTO> likes;
+    private final Set<ImageDTO> images;
     private final String content;
     private final ArtistDTO artist;
     private final ProductDTO product;
 
-    public PostDTO(Post post, Set<LikeDTO> likes) {
+    public PostDTO(Post post, Set<LikeDTO> likes, Set<ImageDTO> images) {
         this.id = post.getId();
         this.likes = likes != null ? likes : new HashSet<>();
+        this.images = images != null ? images: new HashSet<>();
         this.content = post.getContent();
         this.artist = post.getArtist() != null ? new ArtistDTO(post.getArtist()) : null;
         this.product = post.getProduct() != null ? new ProductDTO(post.getProduct()) : null;
@@ -27,6 +29,10 @@ public class PostDTO {
 
     public Set<LikeDTO> getLikes() {
         return likes;
+    }
+
+    public Set<ImageDTO> getImages() {
+        return images;
     }
 
     public String getContent() {
