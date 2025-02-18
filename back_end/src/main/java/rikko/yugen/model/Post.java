@@ -18,9 +18,6 @@ public class Post {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = true)
-    private String image;
-
     @ManyToOne
     @JoinColumn(name = "artist_id")
     private Artist artist;
@@ -45,14 +42,6 @@ public class Post {
     
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
     }
     
     public Artist getArtist() {

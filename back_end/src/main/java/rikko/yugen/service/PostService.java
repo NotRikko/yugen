@@ -55,7 +55,6 @@ public class PostService {
         Post post = new Post();
 
         post.setContent(postCreateDTO.getContent());
-        post.setImage(postCreateDTO.getImage());
         post.setArtist(artist);
         post.setProduct(product);    
 
