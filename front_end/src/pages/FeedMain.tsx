@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import Post from "../components/features/Feed/Post";
+import PostCreate from "../components/features/Feed/PostCreate";
 import FeedSidebar from "@/components/features/Feed/FeedSidebar";
 import FeedTrendingBar from "@/components/features/Feed/FeedTrendingBar";
 import { useUser } from "@/UserProvider";
@@ -32,6 +33,7 @@ function FeedMain(): JSX.Element {
             <FeedSidebar user={user} />
             <div className="flex flex-col justify-center items-center mx-4 xl:mx-12 my-12">
                 <div className="flex flex-col gap-4 w-full">
+                    <PostCreate/>
                     {posts.map((post) => (
                         <Post key={post.id} post={post} />
                     ))}

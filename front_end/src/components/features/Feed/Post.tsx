@@ -11,6 +11,11 @@ interface Like {
     likedAt: string;
 }
 
+interface Images {
+    imageId: number;
+    url: string;
+}
+
 interface Artist {
     id: number;
     artistName: string;
@@ -50,6 +55,7 @@ interface Post {
     artist: Artist;
     product: Product;
     likes: Like[];
+    images: Images[];
     comments: Comment[];
 }
 
@@ -60,7 +66,7 @@ interface PostProps {
 
 function Post({ post }: PostProps) {
     return (
-        <div className="w-5/6 mx-auto p-4 border rounded-lg shadow-md bg-white max-h-[600px]">
+        <div className="w-5/6 mx-auto p-4 border rounded-lg shadow-md bg-white max-h-[800px]">
             <div className="flex items-center gap-2">
                 <img 
                     src={post.artist.image}
@@ -71,9 +77,8 @@ function Post({ post }: PostProps) {
             <p className="text-gray-800 text-sm my-2">{post.content}</p>
             {post.product.image && (
                 <img
-                    src={post.product.image}
-                    alt={post.product.name}
-                    className="w-full max-h-[400px] object-cover my-4 rounded-lg"
+                    src={post.images[0].url}
+                    className="w-full max-h-[500px] object-cover my-4 rounded-lg"
                 />
             )}
             <PostFooter post={post} />

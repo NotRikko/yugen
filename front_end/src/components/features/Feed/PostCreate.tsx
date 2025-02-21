@@ -16,12 +16,13 @@ import {
   FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 import {
   Input
 } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+
 
 import { useUser } from "@/UserProvider";
 
@@ -30,10 +31,11 @@ import { useUser } from "@/UserProvider";
 const formSchema = z.object({
     userId: z.number(),
     postContent: z.string().max(280, "Post content must be at most 280 characters"),
-    productId: z.number()
+    productId: z.number(),
+    files: z.array(z.instanceof(File)).optional()
 });
 
-export default function CreatePost({}) {
+export default function PostCreate({}) {
     const {user} = useUser();
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -42,6 +44,7 @@ export default function CreatePost({}) {
             userId: user.id,
             postContent: "",
             productId: 0,
+            files: [],
         }
     })
 
@@ -60,42 +63,40 @@ export default function CreatePost({}) {
         };
     }
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8  mx-auto py-8">
+        <Form {...form} >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mx-auto py-8 w-5/6 mx-auto p-4 border rounded-lg shadow-md bg-white">
                 <FormField
                     control={form.control}
                     name="postContent"
                     render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Post Content</FormLabel>
                         <FormControl>
-                            <Input 
-                                placeholder="Post Content"
-                                type="textarea"
+                            <Textarea 
+                                placeholder="What's up with your new work?"
+                                className="h-20"
                                 {...field} 
                             />
                         </FormControl>
-                        <FormDescription>Describe your post.</FormDescription>
                         <FormMessage />
                     </FormItem>
                     )}
                 />
                 <FormField
                     control={form.control}
-                    name="postContent"
+                    name="files"
                     render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Post Content</FormLabel>
+                        <FormItem>
                         <FormControl>
-                            <Input 
-                                placeholder="Post Content"
-                                type="textarea"
-                                {...field} 
+                            <Input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={(e) => field.onChange(e.target.files)}
                             />
                         </FormControl>
-                        <FormDescription>Describe your post.</FormDescription>
+                        <FormDescription>Upload images for your post.</FormDescription>
                         <FormMessage />
-                    </FormItem>
+                        </FormItem>
                     )}
                 />
                     
