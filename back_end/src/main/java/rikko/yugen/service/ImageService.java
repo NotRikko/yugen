@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import rikko.yugen.dto.ImageDTO;
 import rikko.yugen.model.Image;
 import rikko.yugen.repository.ImageRepository;
@@ -33,5 +34,16 @@ public class ImageService {
         return images.stream()
                      .map(ImageDTO::new) 
                      .collect(Collectors.toSet());
+    }
+
+    @Transactional
+    public Image createImage(String imageUrl, String contentType, Long contentId) {
+        Image image = new Image();
+
+        image.setContentId(contentId);
+        image.setContentType(contentType);
+        image.setUrl(imageUrl);
+
+        return imageRepository.save(image);
     }
 }

@@ -1,8 +1,10 @@
 package rikko.yugen.dto;
 
+import java.util.Set;
+
 public class PostCreateDTO {
     private String content;
-    private String image;
+    private Set<String> images;
     private Long artistId;  
     private Long productId; 
 
@@ -15,12 +17,12 @@ public class PostCreateDTO {
         this.content = content;
     }
 
-    public String getImage() {
-        return image;
+    public Set<String> getImages() {
+        return images;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImages(Set<String> images) {
+        this.images = images;
     }
 
     public Long getArtistId() {
