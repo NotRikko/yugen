@@ -70,10 +70,8 @@ export default function SignupForm() {
         }
     
         console.log("Signup successful:", data);
-        // Handle success 
       } catch (error) {
         console.error("Signup error:", error);
-        // Handle error 
       }
     }
 

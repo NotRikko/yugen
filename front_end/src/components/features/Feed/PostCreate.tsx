@@ -29,45 +29,65 @@ import { useUser } from "@/UserProvider";
 
 
 const formSchema = z.object({
-    userId: z.number(),
-    postContent: z.string().max(280, "Post content must be at most 280 characters"),
-    productId: z.number(),
+    content: z.string().max(280, "Post content must be at most 280 characters"),
+    productId: z.number().optional(),
     files: z.array(z.instanceof(File)).optional()
 });
 
-export default function PostCreate({}) {
+export default function PostCreate() {
     const {user} = useUser();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            userId: user.id,
-            postContent: "",
-            productId: 0,
+            content: "",
+            productId: undefined,
             files: [],
         }
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
+            console.log("Submitting")
+            const formData = new FormData();
+            
+            // Append post data as JSON
+            const postData = {
+                artistId: user.artistId,
+                content: values.content,
+                productId: values.productId ?? null,
+            };
+            formData.append("post", new Blob([JSON.stringify(postData)], { type: "application/json" }));
+    
+            // Append files if any
+            if (values.files && values.files.length > 0) {
+                values.files.forEach((file) => {
+                    formData.append("files", file);
+                });
+            }
+    
             const response = await fetch("http://localhost:8080/posts/create", {
                 mode: "cors",
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(values),
-            })
+                body: formData,
+            });
+    
+            if (!response.ok) {
+                throw new Error("Failed to create post");
+            }
+            
+            console.log("Post created successfully");
+    
         } catch (error) {
-            console.error("Error creating post", error)
-        };
+            console.error("Error creating post", error);
+        }
     }
     return (
         <Form {...form} >
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mx-auto py-8 w-5/6 mx-auto p-4 border rounded-lg shadow-md bg-white">
                 <FormField
                     control={form.control}
-                    name="postContent"
+                    name="content"
                     render={({ field }) => (
                     <FormItem>
                         <FormControl>

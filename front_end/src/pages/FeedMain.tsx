@@ -19,6 +19,7 @@ function FeedMain(): JSX.Element {
                 }
 
                 const postsData = await postsResponse.json()
+                console.log(postsData);
                 setPosts(postsData);
             } catch (error) {
                 console.error("Error fetching posts", error)

@@ -6,6 +6,7 @@ interface User {
     displayName: string;
     email: string;
     image: string;
+    artistId: number | null;
 }
 
 interface UserContextType {
@@ -29,7 +30,8 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
             username : "",
             displayName: "",
             email: "",
-            image: ""
+            image: "",
+            artistId: null
         }
     );
 
@@ -39,8 +41,12 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         const storedToken = localStorage.getItem("accessToken");
     
         if (storedUser && storedToken) {
-          setUser(JSON.parse(storedUser));
-          setIsLoggedIn(true);
+            const parsedUser = JSON.parse(storedUser);
+            setUser({
+                ...parsedUser,
+                artistId: parsedUser.artistId ?? null, 
+            });
+            setIsLoggedIn(true);
         }
       }, []);
 

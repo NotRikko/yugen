@@ -75,7 +75,7 @@ function Post({ post }: PostProps) {
                 <p className="text-blue-500 text-sm font-semibold">{post.artist.artistName}</p>
              </div>
             <p className="text-gray-800 text-sm my-2">{post.content}</p>
-            {post.product.image && (
+            {post.images && post.images.length > 0 && (
                 <img
                     src={post.images[0].url}
                     className="w-full max-h-[500px] object-cover my-4 rounded-lg"
