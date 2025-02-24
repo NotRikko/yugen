@@ -49,9 +49,12 @@ public class PostService {
     public Post createPost(PostCreateDTO postCreateDTO) {
         Artist artist = artistRepository.findById(postCreateDTO.getArtistId())
                                 .orElseThrow(() -> new RuntimeException("Artist not found"));
-        Product product = productRepository.findById(postCreateDTO.getProductId())
-                                      .orElseThrow(() -> new RuntimeException("Product not found"));
-
+                                
+        Product product = (postCreateDTO.getProductId() != null)
+        ? productRepository.findById(postCreateDTO.getProductId())
+                .orElseThrow(() -> new RuntimeException("Product not found"))
+        : null;
+                            
         Post post = new Post();
 
         post.setContent(postCreateDTO.getContent());

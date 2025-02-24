@@ -9,6 +9,7 @@ public class UserDTO {
     private final String email;
     private final String image;
     private final Boolean isArtist;
+    private final Long artistId;
 
     public UserDTO(User user) {
         this.id = user.getId();
@@ -17,6 +18,7 @@ public class UserDTO {
         this.email = user.getEmail();
         this.image = user.getImage();
         this.isArtist = user.getIsArtist();
+        this.artistId = user.getArtist() != null ? user.getArtist().getId() : null;
     }
 
     //Getters
@@ -43,5 +45,9 @@ public class UserDTO {
 
     public Boolean getIsArtist() {
         return isArtist;
+    }
+
+    public Long getArtistId() {
+        return artistId;
     }
 }
