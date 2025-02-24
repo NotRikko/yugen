@@ -3,6 +3,7 @@ package rikko.yugen.controller;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -58,40 +59,40 @@ public class PostController {
     }
 
     @PostMapping(value = "/create", consumes = {"multipart/form-data"})
-    public ResponseEntity<PostDTO> createPost(
-        @RequestPart("post") PostCreateDTO postCreateDTO, 
-        @RequestPart(value = "files", required = false) List<MultipartFile> files) {
-        
-        Post createdPost = postService.createPost(postCreateDTO);
-        Set<ImageDTO> imageDTOs = new HashSet<>();
+    public ResponseEntity<?> createPost(
+    @RequestPart("post") PostCreateDTO postCreateDTO, 
+    @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+        try {
+            Post createdPost = postService.createPost(postCreateDTO);
+            Set<ImageDTO> imageDTOs = new HashSet<>();
 
-        // Process image URLs from DTO
-        if (postCreateDTO.getImages() != null) {
-            for (String imageUrl : postCreateDTO.getImages()) {
-                Long contentId = createdPost.getId();
-                String contentType = "post";
-                Image image = imageService.createImage(imageUrl, contentType, contentId);
-                imageDTOs.add(new ImageDTO(image));
+            // Process image URLs
+            if (postCreateDTO.getImages() != null) {
+                for (String imageUrl : postCreateDTO.getImages()) {
+                    Long contentId = createdPost.getId();
+                    String contentType = "post";
+                    Image image = imageService.createImage(imageUrl, contentType, contentId);
+                    imageDTOs.add(new ImageDTO(image));
+                }
             }
-        }
 
-        // Process uploaded files and upload to Cloudinary
-        if (files != null && !files.isEmpty()) {
-            for (MultipartFile file : files) {
-                try {
-                    String uploadedUrl = cloudinaryService.uploadImage(file); // Use CloudinaryService to upload
-                    
+            // Process uploaded files
+            if (files != null && !files.isEmpty()) {
+                for (MultipartFile file : files) {
+                    String uploadedUrl = cloudinaryService.uploadImage(file);
                     Long contentId = createdPost.getId();
                     String contentType = "post";
                     Image image = imageService.createImage(uploadedUrl, contentType, contentId);
                     imageDTOs.add(new ImageDTO(image));
-                } catch (IOException e) {
-                    throw new ImageUploadException("Image upload failed: " + e.getMessage());
                 }
             }
-        }
 
-        PostDTO postDTO = new PostDTO(createdPost, new HashSet<>(), imageDTOs);
-        return ResponseEntity.status(HttpStatus.CREATED).body(postDTO);
+            PostDTO postDTO = new PostDTO(createdPost, new HashSet<>(), imageDTOs);
+            return ResponseEntity.status(HttpStatus.CREATED).body(postDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to create post: " + e.getMessage()));
+        }
     }
 }

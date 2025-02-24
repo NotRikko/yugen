@@ -111,7 +111,11 @@ export default function PostCreate() {
                             type="file"
                             accept="image/*"
                             multiple
-                            onChange={(e) => field.onChange(e.target.files)}
+                            onChange={(e) => {
+                                // Ensure files are always in array format
+                                const files = e.target.files ? Array.from(e.target.files) : [];
+                                field.onChange(files); // Set the value as an array
+                            }}
                             />
                         </FormControl>
                         <FormDescription>Upload images for your post.</FormDescription>
