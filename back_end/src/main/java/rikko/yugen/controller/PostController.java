@@ -1,6 +1,5 @@
 package rikko.yugen.controller;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,13 +15,11 @@ import rikko.yugen.dto.LikeDTO;
 import rikko.yugen.dto.PostDTO;
 import rikko.yugen.dto.PostCreateDTO;
 import rikko.yugen.dto.ImageDTO;
-import rikko.yugen.model.Image;
 import rikko.yugen.model.Post;
 
 import rikko.yugen.service.PostService;
 import rikko.yugen.service.LikeService;
 import rikko.yugen.service.ImageService;
-import rikko.yugen.service.CloudinaryService;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
@@ -66,4 +63,16 @@ public class PostController {
                     .body(Map.of("error", "Failed to create post: " + e.getMessage()));
         }
     }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deletePost(Long postId) {
+        try {
+            Long postToDeleteId = postId;
+            postService.deletePost(postId);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to delete post: " + e.getMessage()));
+        }
 }
