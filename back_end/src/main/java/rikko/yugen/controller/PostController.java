@@ -58,34 +58,10 @@ public class PostController {
 
     @PostMapping(value = "/create", consumes = {"multipart/form-data"})
     public ResponseEntity<?> createPost(
-    @RequestPart("post") PostCreateDTO postCreateDTO, 
-    @RequestPart(value = "files", required = false) List<MultipartFile> files) {
+            @RequestPart("post") PostCreateDTO postCreateDTO,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files) {
         try {
-            Post createdPost = postService.createPost(postCreateDTO);
-            Set<ImageDTO> imageDTOs = new HashSet<>();
-
-            // Process image URLs
-            if (postCreateDTO.getImages() != null) {
-                for (String imageUrl : postCreateDTO.getImages()) {
-                    Long contentId = createdPost.getId();
-                    String contentType = "post";
-                    Image image = imageService.createImage(imageUrl, contentType, contentId);
-                    imageDTOs.add(new ImageDTO(image));
-                }
-            }
-
-            // Process uploaded files
-            if (files != null && !files.isEmpty()) {
-                for (MultipartFile file : files) {
-                    String uploadedUrl = cloudinaryService.uploadImage(file);
-                    Long contentId = createdPost.getId();
-                    String contentType = "post";
-                    Image image = imageService.createImage(uploadedUrl, contentType, contentId);
-                    imageDTOs.add(new ImageDTO(image));
-                }
-            }
-
-            PostDTO postDTO = new PostDTO(createdPost, new HashSet<>(), imageDTOs);
+            PostDTO postDTO = postService.createPost(postCreateDTO, files);
             return ResponseEntity.status(HttpStatus.CREATED).body(postDTO);
         } catch (Exception e) {
             e.printStackTrace();
