@@ -103,4 +103,9 @@ public class PostService {
         }
         return imageDTOs;
     }
+
+    @Transactional
+    public void deletePost(Long postId) {
+        postRepository.deleteById(postId);
+    }
 }

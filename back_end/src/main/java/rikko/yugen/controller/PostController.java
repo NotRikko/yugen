@@ -64,10 +64,9 @@ public class PostController {
         }
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<?> deletePost(Long postId) {
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<?> deletePost(@PathVariable Long postId) {
         try {
-            Long postToDeleteId = postId;
             postService.deletePost(postId);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (Exception e) {
@@ -75,4 +74,5 @@ public class PostController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Failed to delete post: " + e.getMessage()));
         }
+    }
 }
