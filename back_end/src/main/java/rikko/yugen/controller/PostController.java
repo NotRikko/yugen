@@ -38,9 +38,6 @@ public class PostController {
     @Autowired
     private ImageService imageService;
 
-    @Autowired
-    private CloudinaryService cloudinaryService;
-
    @GetMapping("/all")
     public ResponseEntity<List<PostDTO>> getAllPosts() {
         List<Post> posts = postService.getAllPosts();
