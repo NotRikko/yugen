@@ -1,5 +1,6 @@
 package rikko.yugen.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -58,6 +59,7 @@ public class PostService {
         Post post = new Post();
 
         post.setContent(postCreateDTO.getContent());
+        post.setCreatedAt(LocalDateTime.now());
         post.setArtist(artist);
         post.setProduct(product);    
 
