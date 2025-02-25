@@ -1,5 +1,6 @@
 package rikko.yugen.model;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,6 +18,8 @@ public class Post {
     
     @Column(nullable = false)
     private String content;
+
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "artist_id")
@@ -42,6 +45,14 @@ public class Post {
     
     public void setContent(String content) {
         this.content = content;
+    }
+    
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
     
     public Artist getArtist() {

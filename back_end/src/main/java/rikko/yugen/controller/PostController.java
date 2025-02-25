@@ -1,6 +1,5 @@
 package rikko.yugen.controller;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import rikko.yugen.dto.LikeDTO;
 import rikko.yugen.dto.PostDTO;
-import rikko.yugen.exception.ImageUploadException;
 import rikko.yugen.dto.PostCreateDTO;
 import rikko.yugen.dto.ImageDTO;
 import rikko.yugen.model.Image;
