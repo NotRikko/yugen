@@ -1,4 +1,4 @@
-import { UserPlus,  Key, } from "lucide-react"
+import { UserPlus,  Key, LogOut, Settings } from "lucide-react"
  
 import {
   Sidebar,
@@ -26,13 +26,26 @@ const items = [
   {
     title: "Login",
     url: "/login",
-    icon: Key,
+    icon: Key
   },
   {
     title: "Signup",
     url: "/signup",
-    icon: UserPlus,
+    icon: UserPlus
   },
+]
+
+const loggedInItems = [
+  {
+    title: "Settings",
+    url: "/settings",
+    icon: Settings
+  },
+  {
+    title: "Logout",
+    url: "/logout",
+    icon: LogOut
+  }
 ]
  
 export default function UserSidebar({user} : UserProps) {
@@ -51,16 +64,16 @@ export default function UserSidebar({user} : UserProps) {
             <SidebarGroup>
                 <SidebarGroupContent className="mx-4 p-3">
                 <SidebarMenu>
-                    {items.map((item) => (
+                  {(user ? loggedInItems : items).map((item) => (
                     <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton asChild>
-                        <a href={item.url} className="gap-4">
-                            <item.icon  className="scale-125"/>
-                            <span className="text-lg">{item.title}</span>
-                        </a>
+                            <a href={item.url} className="gap-4">
+                                <item.icon className="scale-125" />
+                                <span className="text-lg">{item.title}</span>
+                            </a>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
-                    ))}
+                  ))}
                 </SidebarMenu>
                 </SidebarGroupContent>
             </SidebarGroup>
