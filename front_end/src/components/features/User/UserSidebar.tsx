@@ -9,6 +9,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { useNavigate } from "react-router-dom"
+import { useUser } from "@/UserProvider";
 
 interface User {
     username: string;
@@ -41,14 +43,19 @@ const loggedInItems = [
     url: "/settings",
     icon: Settings
   },
-  {
-    title: "Logout",
-    url: "/logout",
-    icon: LogOut
-  }
 ]
  
 export default function UserSidebar({user} : UserProps) {
+
+  const {setUser, guestUser} = useUser();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken"); 
+    setUser(guestUser); 
+    navigate('/')
+  };
+
     return (
         <Sidebar className="w-1/6 ">
             <SidebarContent className="overflow-hidden">
@@ -73,7 +80,18 @@ export default function UserSidebar({user} : UserProps) {
                             </a>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
+                    
                   ))}
+                  {user && (
+                      <SidebarMenuItem>
+                          <SidebarMenuButton asChild>
+                              <button onClick={handleLogout} className="gap-4 flex items-center w-full text-left">
+                                  <LogOut className="scale-125" />
+                                  <span className="text-lg">Log Out</span>
+                              </button>
+                          </SidebarMenuButton>
+                      </SidebarMenuItem>
+                  )}
                 </SidebarMenu>
                 </SidebarGroupContent>
             </SidebarGroup>
