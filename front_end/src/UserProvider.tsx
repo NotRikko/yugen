@@ -7,6 +7,7 @@ interface User {
     email: string;
     image: string;
     artistId: number | null;
+    isGuest: boolean;
 }
 
 interface UserContextType {
@@ -31,6 +32,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         email: "",
         image: "",
         artistId: null,
+        isGuest: true
       };
     
     const [isLoggedIn, setIsLoggedIn] = useState(false);

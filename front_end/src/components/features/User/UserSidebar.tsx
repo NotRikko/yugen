@@ -17,6 +17,7 @@ interface User {
     displayName: string;
     email: string;
     image: string;
+    isGuest: boolean;
   }
   
   interface UserProps {
@@ -71,7 +72,7 @@ export default function UserSidebar({user} : UserProps) {
             <SidebarGroup>
                 <SidebarGroupContent className="mx-4 p-3">
                 <SidebarMenu>
-                  {(user ? loggedInItems : items).map((item) => (
+                  {(user.isGuest ? items : loggedInItems).map((item) => (
                     <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton asChild>
                             <a href={item.url} className="gap-4">
@@ -82,7 +83,7 @@ export default function UserSidebar({user} : UserProps) {
                     </SidebarMenuItem>
                     
                   ))}
-                  {user && (
+                  {!user.isGuest && (
                       <SidebarMenuItem>
                           <SidebarMenuButton asChild>
                               <button onClick={handleLogout} className="gap-4 flex items-center w-full text-left">
