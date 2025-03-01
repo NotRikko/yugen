@@ -7,12 +7,14 @@ interface User {
     email: string;
     image: string;
     artistId: number | null;
+    isGuest: boolean;
 }
 
 interface UserContextType {
     isLoggedIn: boolean;
     setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
     user: User;
+    guestUser: User;
     setUser: React.Dispatch<React.SetStateAction<User>>;
 }
 
@@ -23,17 +25,19 @@ interface UserProviderProps {
 }
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
+    const guestUser: User = {
+        id: 0,
+        username: "Guest",
+        displayName: "Guest User",
+        email: "",
+        image: "",
+        artistId: null,
+        isGuest: true
+      };
+    
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [user, setUser] = useState<User>(
-        {
-            id: 0,
-            username : "",
-            displayName: "",
-            email: "",
-            image: "",
-            artistId: null
-        }
-    );
+    const [user, setUser] = useState<User>(guestUser);
+
 
     useEffect(() => {
         // Check if there's a saved user in localStorage
@@ -51,7 +55,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
       }, []);
 
     return (
-        <UserContext.Provider value={{ isLoggedIn, user, setUser, setIsLoggedIn }}>
+        <UserContext.Provider value={{ isLoggedIn, user, guestUser, setUser, setIsLoggedIn }}>
             {children}
         </UserContext.Provider>
     );

@@ -1,4 +1,4 @@
-import { UserPlus,  Key, } from "lucide-react"
+import { UserPlus,  Key, LogOut, Settings } from "lucide-react"
  
 import {
   Sidebar,
@@ -9,12 +9,15 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { useNavigate } from "react-router-dom"
+import { useUser } from "@/UserProvider";
 
 interface User {
     username: string;
     displayName: string;
     email: string;
     image: string;
+    isGuest: boolean;
   }
   
   interface UserProps {
@@ -26,16 +29,34 @@ const items = [
   {
     title: "Login",
     url: "/login",
-    icon: Key,
+    icon: Key
   },
   {
     title: "Signup",
     url: "/signup",
-    icon: UserPlus,
+    icon: UserPlus
+  },
+]
+
+const loggedInItems = [
+  {
+    title: "Settings",
+    url: "/settings",
+    icon: Settings
   },
 ]
  
 export default function UserSidebar({user} : UserProps) {
+
+  const {setUser, guestUser} = useUser();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken"); 
+    setUser(guestUser); 
+    navigate('/')
+  };
+
     return (
         <Sidebar className="w-1/6 ">
             <SidebarContent className="overflow-hidden">
@@ -51,16 +72,27 @@ export default function UserSidebar({user} : UserProps) {
             <SidebarGroup>
                 <SidebarGroupContent className="mx-4 p-3">
                 <SidebarMenu>
-                    {items.map((item) => (
+                  {(user.isGuest ? items : loggedInItems).map((item) => (
                     <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton asChild>
-                        <a href={item.url} className="gap-4">
-                            <item.icon  className="scale-125"/>
-                            <span className="text-lg">{item.title}</span>
-                        </a>
+                            <a href={item.url} className="gap-4">
+                                <item.icon className="scale-125" />
+                                <span className="text-lg">{item.title}</span>
+                            </a>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
-                    ))}
+                    
+                  ))}
+                  {!user.isGuest && (
+                      <SidebarMenuItem>
+                          <SidebarMenuButton asChild>
+                              <button onClick={handleLogout} className="gap-4 flex items-center w-full text-left">
+                                  <LogOut className="scale-125" />
+                                  <span className="text-lg">Log Out</span>
+                              </button>
+                          </SidebarMenuButton>
+                      </SidebarMenuItem>
+                  )}
                 </SidebarMenu>
                 </SidebarGroupContent>
             </SidebarGroup>
