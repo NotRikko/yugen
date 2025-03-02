@@ -1,6 +1,7 @@
 package rikko.yugen.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.transaction.Transactional;
@@ -13,7 +14,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.UserRepository;
+
 import rikko.yugen.dto.user.UserCreateDTO;
+import rikko.yugen.dto.user.UserUpdateDTO;
+
 import rikko.yugen.model.Artist;
 import rikko.yugen.model.User;
 
@@ -25,6 +29,9 @@ public class UserService {
 
     @Autowired
     private ArtistRepository artistRepository;
+
+    @Autowired
+    private CloudinaryService cloudinaryService;
 
     public User getUserByDisplayName(String displayName) {
         return userRepository.findByDisplayName(displayName)
@@ -80,21 +87,28 @@ public class UserService {
         return savedUser;
     }
 
-    /* 
     @Transactional
-    public User updateUser(Long id, UserUpdateDTO userUpdateDTO) {
-        User existingUser = userRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
+    public User updateUser(Long id, UserUpdateDTO userUpdateDTO, MultipartFile file) {
+        try {
+            User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
+    
+            String profileImageUrl = cloudinaryService.uploadImage(file);
+    
+            if (userUpdateDTO.getUsername() != null) {
+                existingUser.setUsername(userUpdateDTO.getUsername());
+            }
+            if (userUpdateDTO.getEmail() != null) {
+                existingUser.setEmail(userUpdateDTO.getEmail());
+            }
+    
+            existingUser.setImage(profileImageUrl);
             
-        if (userUpdateDTO.getUsername() != null) {
-            existingUser.setUsername(userUpdateDTO.getUsername());
-        }
-        if (userUpdateDTO.getEmail() != null) {
-            existingUser.setEmail(userUpdateDTO.getEmail());
-        }
-        if (userUpdateDTO.getProfilePicture() != null) {
-            existingUser.setProfilePicture(userUpdateDTO.getProfilePicture());
+            User savedUser = userRepository.save(existingUser);
+    
+            return savedUser;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error uploading image", e);
         }
     }
-    */
 }

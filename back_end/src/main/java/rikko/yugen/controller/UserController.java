@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.ResponseEntity;
 
@@ -13,8 +14,11 @@ import rikko.yugen.dto.user.LoginResponseDTO;
 import rikko.yugen.dto.user.UserCreateDTO;
 import rikko.yugen.dto.user.UserDTO;
 import rikko.yugen.dto.user.UserLoginDTO;
+import rikko.yugen.dto.user.UserUpdateDTO;
+
 import rikko.yugen.model.LoginResponse;
 import rikko.yugen.model.User;
+
 import rikko.yugen.service.UserService;
 import rikko.yugen.service.JwtService;
 import rikko.yugen.service.AuthenticationService;
@@ -93,14 +97,13 @@ public class UserController {
         return ResponseEntity.ok(loginResponseDTO);
     }
 
-    /* 
-    @PutMapping("{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable long id, @RequestBody UserUpdateDTO userUpdateDTO) {
-        User updatedUser = userService.updateUser(id, userUpdateDTO);
+    @PutMapping(value = "{id}", consumes = {"multipart/form-data"})
+    public ResponseEntity<UserDTO> updateUser(@PathVariable long id, @RequestPart UserUpdateDTO userUpdateDTO, @RequestPart(value="file", required = false) MultipartFile file) {
+        
+        User updatedUser = userService.updateUser(id, userUpdateDTO, file);
     
         UserDTO updatedUserDTO = new UserDTO(updatedUser);
 
         return ResponseEntity.ok(updatedUserDTO);
     }
-    */
 }
