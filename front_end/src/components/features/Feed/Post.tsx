@@ -66,7 +66,7 @@ interface PostProps {
 
 function Post({ post }: PostProps) {
     return (
-        <div className="w-5/6 mx-auto p-4 border rounded-lg shadow-md bg-white max-h-[800px]">
+        <div className="w-5/6 mx-auto p-8 border rounded-lg shadow-md bg-white max-h-[800px]">
             <div className="flex items-center gap-2">
                 <img 
                     src={post.artist.image}

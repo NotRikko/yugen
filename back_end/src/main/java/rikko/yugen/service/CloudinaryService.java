@@ -27,6 +27,7 @@ public class CloudinaryService {
     }
 
     public String uploadImage(MultipartFile file) throws IOException {
+        @SuppressWarnings("unchecked")
         Map<String, Object>uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
         String imageUrl = (String) uploadResult.get("secure_url");
     

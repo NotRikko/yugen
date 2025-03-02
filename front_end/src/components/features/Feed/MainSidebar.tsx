@@ -1,4 +1,4 @@
-import { House, Bookmark, Mail, Bell } from "lucide-react"
+import { House, Bookmark, Mail, Bell, Settings } from "lucide-react"
  
 import {
   Sidebar,
@@ -43,10 +43,15 @@ const items = [
     url: "/",
     icon: Mail,
   },
+  {
+    title: "Settings",
+    url: "/settings",
+    icon: Settings
+  }
   
 ]
  
-function FeedSidebar({user} : UserProps) {
+function MainSidebar({user, onSelectItem} : UserProps & { onSelectItem: (item: string) => void } ) {
     return (
           <Sidebar side="left" className="border-r-2" style={{
             "--sidebar-width": "25%",
@@ -68,10 +73,10 @@ function FeedSidebar({user} : UserProps) {
                       {items.map((item) => (
                       <SidebarMenuItem key={item.title}>
                           <SidebarMenuButton asChild>
-                          <a href={item.url} className="gap-4">
-                              <item.icon className="scale-125"/>
-                              <span className="text-lg">{item.title}</span>
-                          </a>
+                          <button onClick={() => onSelectItem(item.title)} className="gap-4">
+                                            <item.icon className="scale-125"/>
+                                            <span className="text-lg">{item.title}</span>
+                                        </button>
                           </SidebarMenuButton>
                       </SidebarMenuItem>
                       ))}
@@ -83,4 +88,4 @@ function FeedSidebar({user} : UserProps) {
     )
 }
 
-export default FeedSidebar;
+export default MainSidebar;
