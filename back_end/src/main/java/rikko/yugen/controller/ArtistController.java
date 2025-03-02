@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import rikko.yugen.dto.ArtistDTO;
-import rikko.yugen.dto.ArtistCreateDTO;
+import rikko.yugen.dto.artist.ArtistCreateDTO;
+import rikko.yugen.dto.artist.ArtistDTO;
 import rikko.yugen.model.Artist;
 import rikko.yugen.service.ArtistService;
 

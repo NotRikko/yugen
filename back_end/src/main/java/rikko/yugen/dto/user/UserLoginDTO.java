@@ -1,4 +1,4 @@
-package rikko.yugen.dto;
+package rikko.yugen.dto.user;
 
 public class UserLoginDTO {
     private String username;

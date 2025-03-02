@@ -6,7 +6,7 @@ import HomePage from './HomePage.tsx'
 import ArtistsMain from "./pages/ArtistsMain.tsx"
 import SignupPage from './pages/SignupPage.tsx'
 import LoginPage from './pages/LoginPage.tsx'
-import FeedMain from './pages/FeedMain.tsx'
+import MainPage from './pages/MainPage.tsx'
 import { UserProvider } from './UserProvider.tsx'
 import { SidebarProvider} from "@/components/ui/sidebar"
 
@@ -31,7 +31,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/feed',
-    element: <FeedMain />
+    element: <MainPage />
   }
 ])
 

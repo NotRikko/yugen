@@ -13,10 +13,8 @@ import rikko.yugen.repository.ProductRepository;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.CollectionRepository;
 import rikko.yugen.repository.SeriesRepository;
-
-import rikko.yugen.dto.ProductCreateDTO;
-
 import rikko.yugen.model.Product;
+import rikko.yugen.dto.product.ProductCreateDTO;
 import rikko.yugen.model.Artist;
 import rikko.yugen.model.Collection;
 import rikko.yugen.model.Series;

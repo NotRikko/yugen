@@ -17,9 +17,9 @@ import rikko.yugen.repository.LikeRepository;
 
 import rikko.yugen.model.Post;
 import rikko.yugen.model.Product;
-import rikko.yugen.dto.ImageDTO;
-import rikko.yugen.dto.PostCreateDTO;
-import rikko.yugen.dto.PostDTO;
+import rikko.yugen.dto.image.ImageDTO;
+import rikko.yugen.dto.post.PostCreateDTO;
+import rikko.yugen.dto.post.PostDTO;
 import rikko.yugen.model.Artist;
 import rikko.yugen.model.Image;
 import rikko.yugen.model.Like;

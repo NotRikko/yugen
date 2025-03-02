@@ -1,13 +1,10 @@
 import { useState, useEffect } from "react"
 import Post from "../components/features/Feed/Post";
 import PostCreate from "../components/features/Feed/PostCreate";
-import FeedSidebar from "@/components/features/Feed/FeedSidebar";
 import FeedTrendingBar from "@/components/features/Feed/FeedTrendingBar";
-import { useUser } from "@/UserProvider";
 
 function FeedMain(): JSX.Element {
     const [posts, setPosts] = useState<Post[]>([]);
-    const {user} = useUser();
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -30,8 +27,7 @@ function FeedMain(): JSX.Element {
     }, [])
     
     return(
-        <div className="grid sm:grid-cols-[1fr_3fr] xl:grid-cols-[25%_1fr_25%]">
-            <FeedSidebar user={user} />
+        <div className="grid grid-cols-[2fr_1fr]">
             <div className="flex flex-col justify-center items-center mx-4 xl:mx-12 my-12">
                 <div className="flex flex-col gap-4 w-full">
                     <PostCreate/>

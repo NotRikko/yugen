@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import rikko.yugen.dto.ImageDTO;
+import rikko.yugen.dto.image.ImageDTO;
 import rikko.yugen.model.Image;
 import rikko.yugen.repository.ImageRepository;
 

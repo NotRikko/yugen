@@ -1,6 +1,6 @@
 package rikko.yugen.service;
 
-import rikko.yugen.dto.UserLoginDTO;
+import rikko.yugen.dto.user.UserLoginDTO;
 import rikko.yugen.model.User;
 import rikko.yugen.repository.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;

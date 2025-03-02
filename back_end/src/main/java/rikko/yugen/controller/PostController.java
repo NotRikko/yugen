@@ -11,10 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import rikko.yugen.dto.LikeDTO;
-import rikko.yugen.dto.PostDTO;
-import rikko.yugen.dto.PostCreateDTO;
-import rikko.yugen.dto.ImageDTO;
+import rikko.yugen.dto.image.ImageDTO;
+import rikko.yugen.dto.like.LikeDTO;
+import rikko.yugen.dto.post.PostCreateDTO;
+import rikko.yugen.dto.post.PostDTO;
 import rikko.yugen.model.Post;
 
 import rikko.yugen.service.PostService;

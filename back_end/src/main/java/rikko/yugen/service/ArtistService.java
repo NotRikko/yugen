@@ -8,9 +8,7 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.UserRepository;
-
-import rikko.yugen.dto.ArtistCreateDTO;
-
+import rikko.yugen.dto.artist.ArtistCreateDTO;
 import rikko.yugen.model.Artist;
 import rikko.yugen.model.User;
 

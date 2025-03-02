@@ -6,15 +6,19 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.ResponseEntity;
 
-import rikko.yugen.dto.LoginResponseDTO;
-import rikko.yugen.dto.UserLoginDTO;
-import rikko.yugen.dto.UserCreateDTO;
-import rikko.yugen.dto.UserDTO;
+import rikko.yugen.dto.user.LoginResponseDTO;
+import rikko.yugen.dto.user.UserCreateDTO;
+import rikko.yugen.dto.user.UserDTO;
+import rikko.yugen.dto.user.UserLoginDTO;
+import rikko.yugen.dto.user.UserUpdateDTO;
+
 import rikko.yugen.model.LoginResponse;
 import rikko.yugen.model.User;
+
 import rikko.yugen.service.UserService;
 import rikko.yugen.service.JwtService;
 import rikko.yugen.service.AuthenticationService;
@@ -45,20 +49,16 @@ public class UserController {
 
     @GetMapping("/me")
     public ResponseEntity<UserDTO> getAuthenticatedUser(@RequestHeader("Authorization") String token) {
-        // Extract the token 
         String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
 
-        // Extract user information from the token
-        String username = jwtService.extractUsername(jwtToken); // Implement this method in JwtService
+        String username = jwtService.extractUsername(jwtToken); 
 
-        // Get the user from the service
         User user = userService.getUserByUsername(username);
 
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Authenticated user not found");
         }
 
-        // Return the user details as a UserDTO
         UserDTO userDTO = new UserDTO(user);
         return ResponseEntity.ok(userDTO);
     }
@@ -92,5 +92,14 @@ public class UserController {
         LoginResponseDTO loginResponseDTO = new LoginResponseDTO(loginResponse);
         return ResponseEntity.ok(loginResponseDTO);
     }
+
+    @PatchMapping(value = "/{id}", consumes = {"multipart/form-data"})
+    public ResponseEntity<UserDTO> updateUser(@PathVariable long id, @RequestPart UserUpdateDTO userUpdateDTO, @RequestPart(value="file", required = false) MultipartFile file) {
+        
+        User updatedUser = userService.updateUser(id, userUpdateDTO, file);
     
+        UserDTO updatedUserDTO = new UserDTO(updatedUser);
+
+        return ResponseEntity.ok(updatedUserDTO);
+    }
 }

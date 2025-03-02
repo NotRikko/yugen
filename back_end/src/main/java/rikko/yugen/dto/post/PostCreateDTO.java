@@ -1,4 +1,4 @@
-package rikko.yugen.dto;
+package rikko.yugen.dto.post;
 
 import java.util.Set;
 

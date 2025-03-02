@@ -1,8 +1,12 @@
-package rikko.yugen.dto;
+package rikko.yugen.dto.post;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import rikko.yugen.dto.artist.ArtistDTO;
+import rikko.yugen.dto.image.ImageDTO;
+import rikko.yugen.dto.like.LikeDTO;
+import rikko.yugen.dto.product.ProductDTO;
 import rikko.yugen.model.Post;
 
 public class PostDTO {
