@@ -1,7 +1,8 @@
-package rikko.yugen.dto;
+package rikko.yugen.dto.like;
 
 import java.time.LocalDateTime;
 
+import rikko.yugen.dto.user.UserDTO;
 import rikko.yugen.model.Like;
 
 public class LikeDTO {

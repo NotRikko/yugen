@@ -1,8 +1,9 @@
-package rikko.yugen.dto;
+package rikko.yugen.dto.collection;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import rikko.yugen.dto.product.ProductDTO;
 import rikko.yugen.model.Collection;
 
 public class CollectionDTO {

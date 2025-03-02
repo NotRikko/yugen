@@ -1,4 +1,4 @@
-package rikko.yugen.dto;
+package rikko.yugen.dto.user;
 
 import rikko.yugen.model.LoginResponse;
 

@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import rikko.yugen.dto.LikeDTO;
+import rikko.yugen.dto.like.LikeDTO;
 import rikko.yugen.model.Like;
 import rikko.yugen.repository.LikeRepository;
 

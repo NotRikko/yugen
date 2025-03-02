@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.ResponseEntity;
 
-import rikko.yugen.dto.LoginResponseDTO;
-import rikko.yugen.dto.UserLoginDTO;
-import rikko.yugen.dto.UserCreateDTO;
-import rikko.yugen.dto.UserDTO;
+import rikko.yugen.dto.user.LoginResponseDTO;
+import rikko.yugen.dto.user.UserCreateDTO;
+import rikko.yugen.dto.user.UserDTO;
+import rikko.yugen.dto.user.UserLoginDTO;
 import rikko.yugen.model.LoginResponse;
 import rikko.yugen.model.User;
 import rikko.yugen.service.UserService;
@@ -92,5 +92,15 @@ public class UserController {
         LoginResponseDTO loginResponseDTO = new LoginResponseDTO(loginResponse);
         return ResponseEntity.ok(loginResponseDTO);
     }
+
+    /* 
+    @PutMapping("{id}")
+    public ResponseEntity<UserDTO> updateUser(@PathVariable long id, @RequestBody UserUpdateDTO userUpdateDTO) {
+        User updatedUser = userService.updateUser(id, userUpdateDTO);
     
+        UserDTO updatedUserDTO = new UserDTO(updatedUser);
+
+        return ResponseEntity.ok(updatedUserDTO);
+    }
+    */
 }

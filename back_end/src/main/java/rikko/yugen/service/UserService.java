@@ -13,7 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.UserRepository;
-import rikko.yugen.dto.UserCreateDTO;
+import rikko.yugen.dto.user.UserCreateDTO;
 import rikko.yugen.model.Artist;
 import rikko.yugen.model.User;
 
@@ -79,4 +79,22 @@ public class UserService {
 
         return savedUser;
     }
+
+    /* 
+    @Transactional
+    public User updateUser(Long id, UserUpdateDTO userUpdateDTO) {
+        User existingUser = userRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
+            
+        if (userUpdateDTO.getUsername() != null) {
+            existingUser.setUsername(userUpdateDTO.getUsername());
+        }
+        if (userUpdateDTO.getEmail() != null) {
+            existingUser.setEmail(userUpdateDTO.getEmail());
+        }
+        if (userUpdateDTO.getProfilePicture() != null) {
+            existingUser.setProfilePicture(userUpdateDTO.getProfilePicture());
+        }
+    }
+    */
 }

@@ -1,4 +1,4 @@
-package rikko.yugen.dto;
+package rikko.yugen.dto.image;
 
 import rikko.yugen.model.Image;
 public class ImageDTO {
