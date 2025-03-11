@@ -61,7 +61,7 @@ function MainSidebar({user, onSelectItem} : UserProps & { onSelectItem: (item: s
               <SidebarGroup>
                   <SidebarGroupContent className="flex flex-col justify-center p-3">
                       <img 
-                          src="https://i.pinimg.com/236x/05/3b/e5/053be564a7a436ce2846acb98849ea1b.jpg"
+                          src={user.image}
                           className="my-3 border rounded-lg"
                       />
                       <h1 className="text-xl">{user.displayName ? user.displayName : "Guest"}</h1>

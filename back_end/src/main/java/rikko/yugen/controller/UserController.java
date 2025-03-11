@@ -93,8 +93,11 @@ public class UserController {
         return ResponseEntity.ok(loginResponseDTO);
     }
 
-    @PatchMapping(value = "/{id}", consumes = {"multipart/form-data"})
-    public ResponseEntity<UserDTO> updateUser(@PathVariable long id, @RequestPart UserUpdateDTO userUpdateDTO, @RequestPart(value="file", required = false) MultipartFile file) {
+    @PatchMapping(value = "update/{id}", consumes = {"multipart/form-data"})
+    public ResponseEntity<UserDTO> updateUser(
+        @PathVariable long id, 
+        @RequestPart("patch") UserUpdateDTO userUpdateDTO,
+        @RequestPart(value="file", required = false) MultipartFile file) {
         
         User updatedUser = userService.updateUser(id, userUpdateDTO, file);
     

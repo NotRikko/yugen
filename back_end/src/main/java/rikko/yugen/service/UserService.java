@@ -55,17 +55,14 @@ public class UserService {
      
     @Transactional
     public User createUser(UserCreateDTO userCreateDTO) {
-        // Check if username already exists
         userRepository.findByUsername(userCreateDTO.getUsername())
             .ifPresent(existingUser -> {
                 throw new RuntimeException("User with username '" + existingUser.getUsername() + "' already exists.");
             });
 
-        // Hash password
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String hashedPassword = passwordEncoder.encode(userCreateDTO.getPassword());
 
-        // Create and save user
         User user = new User();
         user.setPassword(hashedPassword);
         user.setUsername(userCreateDTO.getUsername());
@@ -76,7 +73,6 @@ public class UserService {
 
         User savedUser = userRepository.save(user);
 
-        // If user is an artist, create an artist profile
         if (userCreateDTO.getIsArtist()) {
             Artist artist = new Artist();
             artist.setArtistName(userCreateDTO.getDisplayName()); 
@@ -93,20 +89,44 @@ public class UserService {
             User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
     
-            String profileImageUrl = cloudinaryService.uploadImage(file);
-    
-            if (userUpdateDTO.getUsername() != null) {
-                existingUser.setUsername(userUpdateDTO.getUsername());
-            }
-            if (userUpdateDTO.getEmail() != null) {
-                existingUser.setEmail(userUpdateDTO.getEmail());
-            }
-    
-            existingUser.setImage(profileImageUrl);
-            
-            User savedUser = userRepository.save(existingUser);
-    
-            return savedUser;
+                boolean isUpdated = false;
+
+                if (userUpdateDTO.getUsername() != null && !userUpdateDTO.getUsername().equals(existingUser.getUsername())) {
+                    if (userRepository.existsByUsername(userUpdateDTO.getUsername())) {
+                        throw new ResponseStatusException(HttpStatus.CONFLICT, "Username is already taken");
+                    }
+                    existingUser.setUsername(userUpdateDTO.getUsername());
+                    isUpdated = true;
+                }
+
+                if (userUpdateDTO.getDisplayName() != null && !userUpdateDTO.getDisplayName().equals(existingUser.getDisplayName())) {
+                    existingUser.setDisplayName(userUpdateDTO.getDisplayName());
+                    isUpdated = true;
+                }
+        
+                if (userUpdateDTO.getEmail() != null && !userUpdateDTO.getEmail().equals(existingUser.getEmail())) {
+                    if (userRepository.existsByEmail(userUpdateDTO.getEmail())) {
+                        throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already taken");
+                    }
+                    existingUser.setEmail(userUpdateDTO.getEmail());
+                    isUpdated = true;
+                }
+                
+        
+                if (file != null && !file.isEmpty()) {
+                    if (existingUser.getImage() != null) {
+                        cloudinaryService.deleteImage(existingUser.getImage());
+                    }
+                    
+                    String profileImageUrl = cloudinaryService.uploadImage(file);
+                    existingUser.setImage(profileImageUrl);
+                    isUpdated = true;
+                }
+        
+                if (isUpdated) {
+                    return userRepository.save(existingUser);
+                }
+                return existingUser;
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error uploading image", e);
         }

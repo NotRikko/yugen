@@ -11,7 +11,6 @@ import {
   import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -20,180 +19,148 @@ import {
   import {
     Input
   } from "@/components/ui/input"
-  import {
-    Checkbox
-  } from "@/components/ui/checkbox"
+import { useUser } from "@/UserProvider"
   
    
-  const formSchema = z.object({
-    username: z.string().min(4).max(25),
-    displayName: z.string().min(4).max(25),
-    email: z.string().email(),
-    password: z.string().min(8).max(30),
-    confirm: z.string().min(8).max(30),
-    isArtist: z.boolean().default(false).optional()
+const formSchema = z.object({
+  username: z.string().min(4).max(25),
+  displayName: z.string().min(4).max(25),
+  email: z.string().email(),
+  file: z.instanceof(File).optional()
+})
+
+export default function SignupForm() {
+  const {user, setUser} = useUser();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: user.username,
+      displayName: user.displayName,
+      email: user.email,
+      file: undefined,
+    },
   })
-  .refine((data) => data.password === data.confirm, {
-      message: "Passwords don't match",
-      path: ["confirm"],
-  });
   
-  export default function SignupForm() {
-      const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-          username: "",
-          displayName: "",
-          email: "",
-          password: "",
-          isArtist: false,
-        },
-      })
-     
-      async function onSubmit(values: z.infer<typeof formSchema>) {
-        try {
-          const response = await fetch("http://localhost:8080/users/create", {
-            mode: "cors",
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(values),
-          });
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const formData = new FormData();
       
-          const data = await response.json();
-      
-          if (!response.ok) {
-            throw new Error(data.message || "Signup failed");
-          }
-      
-          console.log("Signup successful:", data);
-        } catch (error) {
-          console.error("Signup error:", error);
-        }
+      const userData = {
+        username: values.username,
+        displayName: values.displayName,
+        email: values.email
+      };
+
+      formData.append("patch", new Blob([JSON.stringify(userData)], { type: "application/json" }));
+      console.log(formData);
+
+      if (values.file) {
+        formData.append("file", values.file);  
       }
+
+      const response = await fetch(`http://localhost:8080/users/update/${user.id}`, {
+        mode: "cors",
+        method: "PATCH",
+        body: formData,
+      });
   
-      return (
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w- full space-y-8  mx-auto py-8">
-            <div className="grid grid-cols-12 gap-4">
-              <div className="col-span-6">
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Username</FormLabel>
-                      <FormControl>
-                        <Input 
-                        placeholder="Username"
-                        
-                        type="text"
-                        {...field} />
-                      </FormControl>
-                      <FormDescription>This is your username.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="col-span-6">
-                <FormField
-                  control={form.control}
-                  name="displayName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Display Name</FormLabel>
-                      <FormControl>
-                        <Input 
-                        placeholder="Display"
-                        
-                        type="text"
-                        {...field} />
-                      </FormControl>
-                      <FormDescription>This is your public display name.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            
-            </div>
+      const data = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Update failed");
+      }
+
+      localStorage.setItem("user", JSON.stringify(data));
+      setUser(data);
+  
+      console.log("Update successful:", data);
+    } catch (error) {
+      console.error("Update error:", error);
+    }
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8  mx-auto py-8">
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-6">
             <FormField
               control={form.control}
-              name="email"
+              name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Username</FormLabel>
                   <FormControl>
                     <Input 
-                    placeholder="email@gmail.com"
+                    placeholder="Username"
                     
-                    type="email"
+                    type="text"
                     {...field} />
                   </FormControl>
-                  <FormDescription>This is your email.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <div className="grid grid-cols-12 gap-4">
-              <div className="col-span-6">
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="Placeholder" {...field} />
-                      </FormControl>
-                      <FormDescription>Enter your password.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="col-span-6">
-                <FormField
-                  control={form.control}
-                  name="confirm"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Confirm Password</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="Placeholder" {...field} />
-                      </FormControl>
-                      <FormDescription>Confirm your password.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
+          </div>
+          <div className="col-span-6">
             <FormField
               control={form.control}
-              name="isArtist"
+              name="displayName"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                <FormItem>
+                  <FormLabel>Display Name</FormLabel>
                   <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      
-                    />
+                    <Input 
+                    placeholder="Display"
+                    
+                    type="text"
+                    {...field} />
                   </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>Sign up as an artist?</FormLabel>
-                    <FormDescription>You can sign up as an artist to create products and post them.</FormDescription>
-                    <FormMessage />
-                  </div>
+                  <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
-            <p className="text-xs">Already have an account? Sign in here.</p>
-          </form>
-        </Form>
-      )
-    }
+          </div>
+        
+        </div>
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input 
+                placeholder="email@gmail.com"
+                type="email"
+                {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+                    control={form.control}
+                    name="file"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormControl>
+                            <Input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={(e) => {
+                              const file = e.target.files ? e.target.files[0] : undefined;  
+                              field.onChange(file);
+                            }}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
+  )
+}

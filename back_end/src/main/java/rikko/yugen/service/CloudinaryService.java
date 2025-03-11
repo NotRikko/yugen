@@ -35,5 +35,24 @@ public class CloudinaryService {
         
         return imageUrl;
     }
+
+    @SuppressWarnings("unchecked")
+    public String deleteImage(String imageUrl) throws IOException {
+        String publicId = extractPublicIdFromUrl(imageUrl);
+        Map<String, String> response = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+
+        if ("ok".equals(response.get("result"))) {
+            return "Image deleted successfully";
+        } else {
+            return "Error deleting image";
+        }
+    }
+
+    private String extractPublicIdFromUrl(String imageUrl) {
+        String[] urlParts = imageUrl.split("/");
+        String publicIdWithExtension = urlParts[urlParts.length - 1];  
+        String publicId = publicIdWithExtension.split("\\.")[0]; 
+        return publicId;
+    }
    
 }
