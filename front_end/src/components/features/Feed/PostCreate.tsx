@@ -109,9 +109,8 @@ export default function PostCreate() {
                             accept="image/*"
                             multiple
                             onChange={(e) => {
-                                // Ensure files are always in array format
                                 const files = e.target.files ? Array.from(e.target.files) : [];
-                                field.onChange(files); // Set the value as an array
+                                field.onChange(files); 
                             }}
                             />
                         </FormControl>

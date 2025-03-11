@@ -111,8 +111,13 @@ public class UserService {
                     existingUser.setEmail(userUpdateDTO.getEmail());
                     isUpdated = true;
                 }
+                
         
                 if (file != null && !file.isEmpty()) {
+                    if (existingUser.getImage() != null) {
+                        cloudinaryService.deleteImage(existingUser.getImage());
+                    }
+                    
                     String profileImageUrl = cloudinaryService.uploadImage(file);
                     existingUser.setImage(profileImageUrl);
                     isUpdated = true;

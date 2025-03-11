@@ -26,7 +26,7 @@ const formSchema = z.object({
   username: z.string().min(4).max(25),
   displayName: z.string().min(4).max(25),
   email: z.string().email(),
-  files: z.array(z.instanceof(File)).optional()
+  file: z.instanceof(File).optional()
 })
 
 export default function SignupForm() {
@@ -37,7 +37,7 @@ export default function SignupForm() {
       username: user.username,
       displayName: user.displayName,
       email: user.email,
-      files: [],
+      file: undefined,
     },
   })
   
@@ -54,10 +54,8 @@ export default function SignupForm() {
       formData.append("patch", new Blob([JSON.stringify(userData)], { type: "application/json" }));
       console.log(formData);
 
-      if (values.files && values.files.length > 0) {
-        values.files.forEach((file) => {
-            formData.append("files", file);
-        });
+      if (values.file) {
+        formData.append("file", values.file);  
       }
 
       const response = await fetch(`http://localhost:8080/users/update/${user.id}`, {
@@ -67,12 +65,13 @@ export default function SignupForm() {
       });
   
       const data = await response.json();
-      localStorage.setItem("user", JSON.stringify(data));
-      setUser(data);
   
       if (!response.ok) {
         throw new Error(data.message || "Update failed");
       }
+
+      localStorage.setItem("user", JSON.stringify(data));
+      setUser(data);
   
       console.log("Update successful:", data);
     } catch (error) {
@@ -140,6 +139,26 @@ export default function SignupForm() {
             </FormItem>
           )}
         />
+        <FormField
+                    control={form.control}
+                    name="file"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormControl>
+                            <Input
+                            type="file"
+                            accept="image/*"
+                            multiple
+                            onChange={(e) => {
+                              const file = e.target.files ? e.target.files[0] : undefined;  
+                              field.onChange(file);
+                            }}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                />
         <Button type="submit">Submit</Button>
       </form>
     </Form>
