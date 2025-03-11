@@ -20,9 +20,7 @@ import {
   import {
     Input
   } from "@/components/ui/input"
-  import {
-    Checkbox
-  } from "@/components/ui/checkbox"
+import { useUser } from "@/UserProvider"
   
    
   const formSchema = z.object({
@@ -39,22 +37,22 @@ import {
   });
   
   export default function SignupForm() {
+    const {user} = useUser();
       const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-          username: "",
-          displayName: "",
-          email: "",
+          username: user.username,
+          displayName: user.displayName,
+          email: user.email,
           password: "",
-          isArtist: false,
         },
       })
      
       async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
-          const response = await fetch("http://localhost:8080/users/create", {
+          const response = await fetch(`http://localhost:8080/users/update/${user.id}`, {
             mode: "cors",
-            method: "POST",
+            method: "PUT",
             headers: {
               "Content-Type": "application/json",
             },
@@ -64,12 +62,12 @@ import {
           const data = await response.json();
       
           if (!response.ok) {
-            throw new Error(data.message || "Signup failed");
+            throw new Error(data.message || "Update failed");
           }
       
-          console.log("Signup successful:", data);
+          console.log("Update successful:", data);
         } catch (error) {
-          console.error("Signup error:", error);
+          console.error("Update error:", error);
         }
       }
   
@@ -171,26 +169,6 @@ import {
                 />
               </div>
             </div>
-            <FormField
-              control={form.control}
-              name="isArtist"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                      
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>Sign up as an artist?</FormLabel>
-                    <FormDescription>You can sign up as an artist to create products and post them.</FormDescription>
-                    <FormMessage />
-                  </div>
-                </FormItem>
-              )}
-            />
             <Button type="submit">Submit</Button>
             <p className="text-xs">Already have an account? Sign in here.</p>
           </form>

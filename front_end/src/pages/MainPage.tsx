@@ -11,7 +11,7 @@ function MainPage(): JSX.Element {
     return(
         <div className="grid grid-cols-[1fr_3fr]">
             <MainSidebar user={user} onSelectItem={setSelectedItem} />
-            <div>
+            <div >
                 <div className="flex flex-col gap-4 w-full">
                     {selectedItem === "Home" && (<FeedMain />)}
                     {selectedItem === "Settings" && <SettingsForm />}
