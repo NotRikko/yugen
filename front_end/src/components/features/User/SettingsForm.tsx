@@ -11,7 +11,6 @@ import {
   import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -23,155 +22,126 @@ import {
 import { useUser } from "@/UserProvider"
   
    
-  const formSchema = z.object({
-    username: z.string().min(4).max(25),
-    displayName: z.string().min(4).max(25),
-    email: z.string().email(),
-    password: z.string().min(8).max(30),
-    confirm: z.string().min(8).max(30),
-    isArtist: z.boolean().default(false).optional()
+const formSchema = z.object({
+  username: z.string().min(4).max(25),
+  displayName: z.string().min(4).max(25),
+  email: z.string().email(),
+  files: z.array(z.instanceof(File)).optional()
+})
+
+export default function SignupForm() {
+  const {user, setUser} = useUser();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: user.username,
+      displayName: user.displayName,
+      email: user.email,
+      files: [],
+    },
   })
-  .refine((data) => data.password === data.confirm, {
-      message: "Passwords don't match",
-      path: ["confirm"],
-  });
   
-  export default function SignupForm() {
-    const {user} = useUser();
-      const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-          username: user.username,
-          displayName: user.displayName,
-          email: user.email,
-          password: "",
-        },
-      })
-     
-      async function onSubmit(values: z.infer<typeof formSchema>) {
-        try {
-          const response = await fetch(`http://localhost:8080/users/update/${user.id}`, {
-            mode: "cors",
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(values),
-          });
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      const formData = new FormData();
       
-          const data = await response.json();
-      
-          if (!response.ok) {
-            throw new Error(data.message || "Update failed");
-          }
-      
-          console.log("Update successful:", data);
-        } catch (error) {
-          console.error("Update error:", error);
-        }
+      const userData = {
+        username: values.username,
+        displayName: values.displayName,
+        email: values.email
+      };
+
+      formData.append("patch", new Blob([JSON.stringify(userData)], { type: "application/json" }));
+      console.log(formData);
+
+      if (values.files && values.files.length > 0) {
+        values.files.forEach((file) => {
+            formData.append("files", file);
+        });
+      }
+
+      const response = await fetch(`http://localhost:8080/users/update/${user.id}`, {
+        mode: "cors",
+        method: "PATCH",
+        body: formData,
+      });
+  
+      const data = await response.json();
+      localStorage.setItem("user", JSON.stringify(data));
+      setUser(data);
+  
+      if (!response.ok) {
+        throw new Error(data.message || "Update failed");
       }
   
-      return (
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w- full space-y-8  mx-auto py-8">
-            <div className="grid grid-cols-12 gap-4">
-              <div className="col-span-6">
-                <FormField
-                  control={form.control}
-                  name="username"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Username</FormLabel>
-                      <FormControl>
-                        <Input 
-                        placeholder="Username"
-                        
-                        type="text"
-                        {...field} />
-                      </FormControl>
-                      <FormDescription>This is your username.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="col-span-6">
-                <FormField
-                  control={form.control}
-                  name="displayName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Display Name</FormLabel>
-                      <FormControl>
-                        <Input 
-                        placeholder="Display"
-                        
-                        type="text"
-                        {...field} />
-                      </FormControl>
-                      <FormDescription>This is your public display name.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            
-            </div>
+      console.log("Update successful:", data);
+    } catch (error) {
+      console.error("Update error:", error);
+    }
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8  mx-auto py-8">
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-6">
             <FormField
               control={form.control}
-              name="email"
+              name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Username</FormLabel>
                   <FormControl>
                     <Input 
-                    placeholder="email@gmail.com"
+                    placeholder="Username"
                     
-                    type="email"
+                    type="text"
                     {...field} />
                   </FormControl>
-                  <FormDescription>This is your email.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <div className="grid grid-cols-12 gap-4">
-              <div className="col-span-6">
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="Placeholder" {...field} />
-                      </FormControl>
-                      <FormDescription>Enter your password.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <div className="col-span-6">
-                <FormField
-                  control={form.control}
-                  name="confirm"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Confirm Password</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="Placeholder" {...field} />
-                      </FormControl>
-                      <FormDescription>Confirm your password.</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-            <Button type="submit">Submit</Button>
-            <p className="text-xs">Already have an account? Sign in here.</p>
-          </form>
-        </Form>
-      )
-    }
+          </div>
+          <div className="col-span-6">
+            <FormField
+              control={form.control}
+              name="displayName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Display Name</FormLabel>
+                  <FormControl>
+                    <Input 
+                    placeholder="Display"
+                    
+                    type="text"
+                    {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        
+        </div>
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input 
+                placeholder="email@gmail.com"
+                type="email"
+                {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
+  )
+}

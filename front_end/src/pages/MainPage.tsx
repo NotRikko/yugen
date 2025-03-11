@@ -13,7 +13,7 @@ function MainPage(): JSX.Element {
             <MainSidebar user={user} onSelectItem={setSelectedItem} />
             <div >
                 <div className="flex flex-col gap-4 w-full">
-                    {selectedItem === "Home" && (<FeedMain />)}
+                    {selectedItem === "Home" && <FeedMain />}
                     {selectedItem === "Settings" && <SettingsForm />}
                 </div>
             </div>

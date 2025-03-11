@@ -48,10 +48,8 @@ export default function PostCreate() {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
-            console.log("Submitting")
             const formData = new FormData();
             
-            // Append post data as JSON
             const postData = {
                 artistId: user.artistId,
                 content: values.content,
@@ -59,7 +57,6 @@ export default function PostCreate() {
             };
             formData.append("post", new Blob([JSON.stringify(postData)], { type: "application/json" }));
     
-            // Append files if any
             if (values.files && values.files.length > 0) {
                 values.files.forEach((file) => {
                     formData.append("files", file);
