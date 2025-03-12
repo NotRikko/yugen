@@ -25,6 +25,7 @@ import { Textarea } from "@/components/ui/textarea"
 
 
 import { useUser } from "@/UserProvider";
+import { useState } from "react"
 
 
 
@@ -36,6 +37,8 @@ const formSchema = z.object({
 
 export default function PostCreate() {
     const {user} = useUser();
+
+    const [previewImages, setPreviewImages] = useState<string[]>([]);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -98,6 +101,17 @@ export default function PostCreate() {
                     </FormItem>
                     )}
                 />
+               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {previewImages.map((src, index) => (
+                        <div key={index} className="relative w-full h-32 md:h-40 lg:h-48">
+                            <img 
+                                src={src} 
+                                alt={`Preview ${index + 1}`} 
+                                className="rounded-md border w-full h-full object-cover"
+                            />
+                        </div>
+                    ))}
+                </div>
                 <FormField
                     control={form.control}
                     name="files"
@@ -105,13 +119,24 @@ export default function PostCreate() {
                         <FormItem>
                         <FormControl>
                             <Input
-                            type="file"
-                            accept="image/*"
-                            multiple
-                            onChange={(e) => {
-                                const files = e.target.files ? Array.from(e.target.files) : [];
-                                field.onChange(files); 
-                            }}
+                                type="file"
+                                accept="image/*"
+                                multiple
+                                onChange={(e) => {
+                                    const selectedFiles = e.target.files ? Array.from(e.target.files) : [];
+
+                                    const existingFiles = field.value || [];
+                                    if (existingFiles.length + selectedFiles.length > 4) {
+                                        alert("You can upload a maximum of 4 images.");
+                                        return;
+                                    }
+                                    const updatedFiles = [...(field.value || []), ...selectedFiles];
+            
+                                    field.onChange(updatedFiles); 
+
+                                    const imagePreviews = updatedFiles.map(file => URL.createObjectURL(file));
+                                    setPreviewImages(imagePreviews);
+                                }}
                             />
                         </FormControl>
                         <FormDescription>Upload images for your post.</FormDescription>
@@ -119,7 +144,6 @@ export default function PostCreate() {
                         </FormItem>
                     )}
                 />
-                    
             <Button type="submit">Post</Button>
             </form>
         </Form>
