@@ -76,10 +76,27 @@ function Post({ post }: PostProps) {
              </div>
             <p className="text-gray-800 text-sm my-2">{post.content}</p>
             {post.images && post.images.length > 0 && (
-                <img
-                    src={post.images[0].url}
-                    className="w-full max-h-[500px] object-cover my-4 rounded-lg"
-                />
+                <div
+                    className={`
+                        grid gap-4 my-4 
+                        ${post.images.length === 1 ? "grid-cols-1" : ""} 
+                        ${post.images.length === 2 ? "grid-cols-2" : ""} 
+                        ${post.images.length >= 3 ? "grid-cols-2 grid-rows-2" : ""}
+                    `}
+                >
+                    {post.images.map((image, index) => (
+                        <img
+                            key={index}
+                            src={image.url}
+                            className={`
+                                w-full 
+                                ${post.images.length >= 3 ? "max-h-[250px]" : "max-h-[500px]"} 
+                                min-h-[250px] object-cover rounded-lg
+                            `}
+                            alt={`Post image ${index + 1}`}
+                        />
+                    ))}
+                </div>
             )}
             <PostFooter post={post} />
         </div>
