@@ -24,8 +24,9 @@ export default function DeleteAccountButton() {
         };
 
         localStorage.removeItem("user");
+        localStorage.removeItem("accessToken");
         setUser(guestUser);
-        navigate("/home");
+        navigate("/");
         } catch (error) {
             console.error("Account deletion error:", error);
         } finally {
