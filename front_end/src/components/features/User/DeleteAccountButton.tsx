@@ -20,12 +20,13 @@ export default function DeleteAccountButton() {
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.message) || "Deletion Failed";
+            throw new Error(data.message);
         };
 
         localStorage.removeItem("user");
+        localStorage.removeItem("accessToken");
         setUser(guestUser);
-        navigate("/home");
+        navigate("/");
         } catch (error) {
             console.error("Account deletion error:", error);
         } finally {
@@ -37,6 +38,9 @@ export default function DeleteAccountButton() {
         <button 
             onClick={deleteAccount}
             disabled={loading}
+            className="w-1/3 bg-red-600 text-white font-medium px-4 py-2 rounded-lg shadow-md 
+               hover:bg-red-700 focus:ring-2 focus:ring-red-400 focus:outline-none 
+               disabled:bg-red-300 disabled:cursor-not-allowed transition-all"
         >
                 Delete Account
         </button>

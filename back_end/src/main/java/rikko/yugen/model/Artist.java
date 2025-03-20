@@ -25,6 +25,9 @@ public class Artist {
     @JoinColumn(name = "user_id", nullable = false, unique = true)  
     private User user;
 
+    @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Post> posts = new HashSet<>();
+
     //Getters and Setters
     public Long getId() {
         return id;
@@ -72,6 +75,14 @@ public class Artist {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<Post> getPosts() {
+        return posts;
+    }
+    
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
     }
 
 }

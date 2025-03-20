@@ -19,6 +19,7 @@ import {
   import {
     Input
   } from "@/components/ui/input"
+import DeleteAccountButton from "./DeleteAccountButton"
 import { useUser } from "@/UserProvider"
   
    
@@ -159,7 +160,10 @@ export default function SignupForm() {
                         </FormItem>
                     )}
                 />
-        <Button type="submit">Submit</Button>
+        <div className="flex flex-col space-y-4 items-center w-full">
+          <Button type="submit" className="w-1/3">Submit</Button>
+          <DeleteAccountButton />
+        </div>
       </form>
     </Form>
   )
