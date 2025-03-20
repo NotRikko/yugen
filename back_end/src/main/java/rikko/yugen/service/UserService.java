@@ -33,9 +33,6 @@ public class UserService {
     @Autowired
     private CloudinaryService cloudinaryService;
 
-    @Autowired
-    private ArtistService artistService;
-
     public User getUserByDisplayName(String displayName) {
         return userRepository.findByDisplayName(displayName)
             .orElseThrow(() -> new RuntimeException("User not found with name" + displayName));
