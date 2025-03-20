@@ -33,6 +33,9 @@ public class UserService {
     @Autowired
     private CloudinaryService cloudinaryService;
 
+    @Autowired
+    private ArtistService artistService;
+
     public User getUserByDisplayName(String displayName) {
         return userRepository.findByDisplayName(displayName)
             .orElseThrow(() -> new RuntimeException("User not found with name" + displayName));
@@ -130,5 +133,10 @@ public class UserService {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error uploading image", e);
         }
+    }
+
+    @Transactional
+    public void deleteUser(Long userId) {
+        userRepository.deleteById(userId);
     }
 }
