@@ -25,6 +25,7 @@ import {
 import {
   Checkbox
 } from "@/components/ui/checkbox"
+import { useNavigate } from "react-router-dom"
 
  
 const formSchema = z.object({
@@ -41,6 +42,7 @@ const formSchema = z.object({
 });
 
 export default function SignupForm() {
+    const navigate = useNavigate();
     const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
@@ -69,7 +71,7 @@ export default function SignupForm() {
           throw new Error(data.message || "Signup failed");
         }
     
-        console.log("Signup successful:", data);
+        navigate('/login')
       } catch (error) {
         console.error("Signup error:", error);
       }

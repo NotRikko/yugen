@@ -83,7 +83,6 @@ export default function LoginForm() {
         setUser(userData);
         setIsLoggedIn(true);
     
-        console.log("User data fetched:", userData);
         navigate('/feed');
       } catch (error) {
         console.error("Login error:", error);
