@@ -1,4 +1,5 @@
 import { Heart, MessageCircle, ShoppingBag, Share2 } from "lucide-react"
+import { useState } from "react"
 
 interface Like {
     userId: number;
@@ -23,12 +24,39 @@ interface Like {
   }
 
 const PostFooter = ({ post }: PostFooterProps) => {
+    const [likes, setLikes] = useState(post.likes ? post.likes.length : 0);
+    const [liked, setLiked] = useState(false);
+
+    const handleLike = async () => {
+      try {
+          const response = await fetch(`/api/posts/${post.id}/like`, {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ userId: "currentUserId" }),
+          });
+
+          if (response.ok) {
+              const data = await response.json();
+              setLikes(data.likes); 
+              setLiked(data.liked); 
+          } else {
+              console.error("Failed to update like");
+          }
+      } catch (error) {
+          console.error("Error liking post:", error);
+      }
+  };
+
     return (
-        <div className="flex justify-between">
+      <div className="flex justify-between">
         <div className="flex items-center gap-2 text-gray-600 text-base">
-            <button><Heart className="w-6 h-6"/></button>
-            <span>{post.likes ? post.likes.length : 0}</span>
-        </div>
+                <button onClick={handleLike}>
+                    <Heart className={`w-6 h-6 ${liked ? "text-red-500" : ""}`} />
+                </button>
+                <span>{likes}</span>
+          </div>
         <div className="flex items-center gap-2 text-gray-600 text-base">
             <button><MessageCircle className="w-6 h-6" /></button>
             <span>{post.comments ? post.comments.length  : 0}</span>
@@ -41,7 +69,7 @@ const PostFooter = ({ post }: PostFooterProps) => {
             <button><ShoppingBag className="w-6 h-6" /></button>
             <span>{post.comments ? post.comments.length  : 0}</span>
         </div>
-    </div>
+      </div>
     );
   };
 
