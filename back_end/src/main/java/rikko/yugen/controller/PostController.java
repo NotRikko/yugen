@@ -66,16 +66,18 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/like")
-    public ResponseEntity<?> likePost(@PathVariable Long postId, @RequestBody Map<String, Long> request) {
+    public ResponseEntity<?> toggleLike(@PathVariable Long postId, @RequestBody Map<String, Long> request) {
         Long userId = request.get("userId");
 
+        if (userId == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "User ID is required"));
+        }
+
         try {
-            postService.likePost(postId, userId);
-            return ResponseEntity.status(HttpStatus.ACCEPTED).build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("error", "Failed to like post: " + e.getMessage()));
+            int updatedLikes = likeService.toggleLike(postId, userId);
+            return ResponseEntity.ok(Map.of("likes", updatedLikes));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 
