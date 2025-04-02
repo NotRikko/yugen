@@ -1,5 +1,7 @@
 import { Heart, MessageCircle, ShoppingBag, Share2 } from "lucide-react"
 import { useState } from "react"
+import { useUser } from "@/UserProvider";
+
 
 interface Like {
     userId: number;
@@ -24,17 +26,19 @@ interface Like {
   }
 
 const PostFooter = ({ post }: PostFooterProps) => {
+    const {user} = useUser();
     const [likes, setLikes] = useState(post.likes ? post.likes.length : 0);
     const [liked, setLiked] = useState(false);
 
     const handleLike = async () => {
       try {
-          const response = await fetch(`/api/posts/${post.id}/like`, {
+          const response = await fetch(`http://localhost:8080/posts/${post.id}/like`, {
+              mode: "cors",
               method: "POST",
               headers: {
                   "Content-Type": "application/json",
               },
-              body: JSON.stringify({ userId: "currentUserId" }),
+              body: JSON.stringify({ userId: user.id }),
           });
 
           if (response.ok) {
