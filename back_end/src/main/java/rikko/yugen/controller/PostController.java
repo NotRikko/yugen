@@ -1,5 +1,6 @@
 package rikko.yugen.controller;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,6 +62,22 @@ public class PostController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Failed to create post: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/{postId}/like")
+    public ResponseEntity<?> toggleLike(@PathVariable Long postId, @RequestBody Map<String, Long> request) {
+        Long userId = request.get("userId");
+
+        if (userId == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "User ID is required"));
+        }
+
+        try {
+            int updatedLikes = likeService.toggleLike(postId, userId);
+            return ResponseEntity.ok(Map.of("likes", updatedLikes));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
 

@@ -3,9 +3,14 @@ package rikko.yugen.model;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
+import lombok.*;
+
 
 @Entity
 @Table(name = "likes")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,46 +27,5 @@ public class Like {
     private String contentType;
 
     private LocalDateTime createdAt = LocalDateTime.now();
-
-    //Getters and Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Long getContentId() { 
-        return contentId; 
-    }
-    
-    public void setContentId(Long contentId) { 
-        this.contentId = contentId; 
-    }
-
-    public String getContentType() { 
-        return contentType; 
-    }
-
-    public void setContentType(String contentType) { 
-        this.contentType = contentType; 
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
     
 }
