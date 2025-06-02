@@ -12,6 +12,14 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Artist {
+
+    public Artist(String artistName, String bio, String image, User user) {
+        this.artistName = artistName;
+        this.bio = bio;
+        this.image = image;
+        this.user = user;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

@@ -14,6 +14,13 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Post {
+
+    public Post(String content, LocalDateTime createdAt, Artist artist) {
+        this.content = content;
+        this.createdAt = createdAt;
+        this.artist = artist;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

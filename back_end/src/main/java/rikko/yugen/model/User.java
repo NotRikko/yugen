@@ -18,6 +18,16 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
+
+    public User(String username, String displayName, String email, String password, String image, Boolean isArtist) {
+        this.username = username;
+        this.displayName = displayName;
+        this.email = email;
+        this.password = password;
+        this.image = image;
+        this.isArtist = isArtist;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
