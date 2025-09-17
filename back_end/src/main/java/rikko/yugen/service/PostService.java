@@ -14,6 +14,7 @@ import rikko.yugen.repository.PostRepository;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.ProductRepository;
 import rikko.yugen.repository.LikeRepository;
+import rikko.yugen.repository.CommentRepository;
 
 import rikko.yugen.model.Post;
 import rikko.yugen.model.Product;
@@ -23,6 +24,7 @@ import rikko.yugen.dto.post.PostDTO;
 import rikko.yugen.model.Artist;
 import rikko.yugen.model.Image;
 import rikko.yugen.model.Like;
+import rikko.yugen.model.Comment;
 
 @Service
 public class PostService {
@@ -38,6 +40,9 @@ public class PostService {
 
     @Autowired
     private LikeRepository likeRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     @Autowired
     private CloudinaryService cloudinaryService;
@@ -56,6 +61,8 @@ public class PostService {
     public Set<Like> getPostLikes(Long postId) {
         return likeRepository.findByContentIdAndContentType(postId, "POST");
     }
+
+    public Set<Comment> getPostComments(Long postId) { return commentRepository.findByPostId(postId); }
 
     public PostDTO createPost(PostCreateDTO postCreateDTO, List<MultipartFile> files) {
         // Save post within a transaction

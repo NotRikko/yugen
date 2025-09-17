@@ -14,13 +14,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import rikko.yugen.dto.image.ImageDTO;
 import rikko.yugen.dto.like.LikeDTO;
+import rikko.yugen.dto.comment.CommentDTO;
+import rikko.yugen.dto.comment.CommentRequestDTO;
 import rikko.yugen.dto.post.PostCreateDTO;
 import rikko.yugen.dto.post.PostDTO;
 import rikko.yugen.model.Post;
+import rikko.yugen.model.Comment;
 
 import rikko.yugen.service.PostService;
 import rikko.yugen.service.LikeService;
 import rikko.yugen.service.ImageService;
+import rikko.yugen.service.CommentService;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
@@ -32,6 +36,9 @@ public class PostController {
 
     @Autowired
     private LikeService likeService;
+
+    @Autowired
+    private CommentService commentService;
 
     @Autowired
     private ImageService imageService;
@@ -76,6 +83,27 @@ public class PostController {
         try {
             int updatedLikes = likeService.toggleLike(postId, userId);
             return ResponseEntity.ok(Map.of("likes", updatedLikes));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/{postId}/comment")
+    public ResponseEntity<?> createComment(@PathVariable Long postId, @RequestBody CommentRequestDTO request) {
+        Long userId = request.getUserId();
+        String content = request.getContent();
+
+       if (userId == null) {
+            return ResponseEntity.badRequest().body(Map.of("error", "User ID is required"));
+        }
+
+        if (content == null || content.isBlank()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Content required"));
+        }
+        try {
+            CommentDTO createdComment = commentService.addComment(postId, userId, content);
+            return ResponseEntity.ok(createdComment);
+
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
