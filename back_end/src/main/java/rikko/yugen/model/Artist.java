@@ -36,12 +36,17 @@ public class Artist {
     private Set<Product> products = new HashSet<>();
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false, unique = true)  
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Post> posts = new HashSet<>();
+
+    @OneToMany(mappedBy = "followee", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Follow> followers = new HashSet<>();
 
 }

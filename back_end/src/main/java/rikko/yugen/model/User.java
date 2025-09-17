@@ -61,9 +61,6 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Follow> following = new HashSet<>();
 
-    @OneToMany(mappedBy = "followee", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Follow> followers = new HashSet<>();
-
     // Spring Security Methods
 
     @Override

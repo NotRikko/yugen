@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import rikko.yugen.model.Follow;
 import rikko.yugen.model.FollowId;
 import rikko.yugen.model.User;
+import rikko.yugen.model.Artist;
 import rikko.yugen.repository.FollowRepository;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ public class FollowService {
         this.followRepository = followRepository;
     }
 
-    public void follow(User follower, User followee) {
+    public void follow(User follower, Artist followee) {
         if (follower.equals(followee)) {
             throw new IllegalArgumentException("User cannot follow themselves.");
         }
@@ -31,12 +32,12 @@ public class FollowService {
         followRepository.save(follow);
     }
 
-    public void unfollow(User follower, User followee) {
+    public void unfollow(User follower, Artist followee) {
         FollowId followId = new FollowId(follower.getId(), followee.getId());
         followRepository.deleteById(followId);
     }
 
-    public boolean isFollowing(User follower, User followee) {
+    public boolean isFollowing(User follower, Artist followee) {
         return followRepository.existsById(new FollowId(follower.getId(), followee.getId()));
     }
 }

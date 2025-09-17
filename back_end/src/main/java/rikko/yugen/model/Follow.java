@@ -25,7 +25,7 @@ public class Follow {
     @ManyToOne
     @MapsId("followeeId")
     @JoinColumn(name = "followee_id")
-    private User followee;
+    private Artist followee;
 
     private LocalDateTime followedAt = LocalDateTime.now();
 }

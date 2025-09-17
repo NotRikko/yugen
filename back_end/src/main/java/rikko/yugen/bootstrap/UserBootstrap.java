@@ -1,20 +1,28 @@
 package rikko.yugen.bootstrap;
 
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import rikko.yugen.model.Follow;
+import rikko.yugen.model.FollowId;
 import rikko.yugen.model.User;
+import rikko.yugen.repository.FollowRepository;
 import rikko.yugen.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class UserBootstrap {
 
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
     private final PasswordEncoder passwordEncoder;
-    public UserBootstrap(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserBootstrap(UserRepository userRepository, FollowRepository followRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.followRepository = followRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -29,6 +37,7 @@ public class UserBootstrap {
             );
 
             userRepository.saveAll(users);
+
         }
     }
 }
