@@ -30,7 +30,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         username: "Guest",
         displayName: "Guest User",
         email: "",
-        image: "",
+        image: "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg",
         artistId: null,
         isGuest: true
       };

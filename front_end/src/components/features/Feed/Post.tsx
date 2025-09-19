@@ -70,7 +70,13 @@ function Post({ post, onSelect }: PostProps) {
       <div className="w-5/6 mx-auto p-8 border rounded-lg shadow-md bg-white max-h-[800px]">
         <div onClick={onSelect} className="cursor-pointer">
           <div className="flex items-center gap-2">
-            <img src={post.artist.image} className="w-10 h-10 rounded-full object-cover" />
+          <img
+                src={post.artist.image || "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg"}
+                onError={(e) => {
+                    e.currentTarget.src = "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg";
+                }}
+                className="w-10 h-10 rounded-full object-cover"
+            />
             <p className="text-blue-500 text-sm font-semibold">{post.artist.artistName}</p>
           </div>
           <p className="text-gray-800 text-sm my-2">{post.content}</p>
