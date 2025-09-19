@@ -63,7 +63,7 @@ export default function UserSidebar({user} : UserProps) {
             <SidebarGroup>
                 <SidebarGroupContent className="flex flex-col justify-center p-3">
                     <img 
-                        src="https://i.pinimg.com/236x/05/3b/e5/053be564a7a436ce2846acb98849ea1b.jpg"
+                        src={user.image}
                         className="mx-6 my-3"
                     />
                     <h1 className="text-lg mx-6">{user.displayName ? user.displayName : "Guest"}</h1>

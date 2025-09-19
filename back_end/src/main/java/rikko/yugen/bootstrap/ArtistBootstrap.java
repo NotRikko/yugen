@@ -33,9 +33,9 @@ public class ArtistBootstrap {
             }
 
             List<Artist> artists = List.of(
-                    new Artist("DigitalDreamer", "I create colorful digital illustrations.", "artist1.png", artistUsers.get(0)),
-                    new Artist("SketchWizard", "Sketches, characters, and concept art.", "artist2.png", artistUsers.get(1)),
-                    new Artist("ColorStorm", "Abstract painter & digital artist.", "artist3.png", artistUsers.get(2))
+                    new Artist("Sandrone", "I create colorful digital illustrations.", "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg", artistUsers.get(0)),
+                    new Artist("Colombina", "Sketches, characters, and concept art.", "https://preview.redd.it/how-excited-are-you-for-columbina-v0-fxmoi5kd6f0d1.png?width=640&crop=smart&auto=webp&s=cf18e46f714251fd1bba42a9ef9fbd8b647a4249", artistUsers.get(1)),
+                    new Artist("Signora", "Abstract painter & digital artist.", "https://m.media-amazon.com/images/I/612SzJjmqGL.jpg", artistUsers.get(2))
             );
 
             artistRepository.saveAll(artists);
