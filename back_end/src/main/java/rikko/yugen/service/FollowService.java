@@ -1,6 +1,8 @@
 package rikko.yugen.service;
 
 import org.springframework.stereotype.Service;
+import jakarta.transaction.Transactional;
+
 import java.util.List;
 
 import rikko.yugen.model.Follow;
@@ -50,6 +52,7 @@ public class FollowService {
                 .toList();
     }
 
+    @Transactional
     public FollowDTO followArtist(Long userId, Long artistId) {
         User follower = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found: " + userId));
@@ -72,6 +75,7 @@ public class FollowService {
         return new FollowDTO(saved.getFollower().getId(), saved.getFollowee().getId(), saved.getFollowedAt());
     }
 
+    @Transactional
     public void unfollowArtist(Long userId, Long artistId) {
         FollowId followId = new FollowId(userId, artistId);
         if (followRepository.existsById(followId)) {

@@ -27,6 +27,15 @@ public class FollowController {
         return ResponseEntity.ok(following);
     }
 
+    @GetMapping("/check/{userId}/{artistId}")
+    public ResponseEntity<Boolean> isFollowing(
+            @PathVariable Long userId,
+            @PathVariable Long artistId
+    ) {
+        boolean following = followService.isFollowing(userId, artistId);
+        return ResponseEntity.ok(following);
+    }
+
     @GetMapping("/artist/{artistId}")
     public ResponseEntity<List<FollowDTO>> getFollowersForArtist(@PathVariable Long artistId) {
         List<FollowDTO> followers = followService.getFollowersForArtist(artistId);
