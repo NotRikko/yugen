@@ -49,7 +49,7 @@ public class PostController {
         
         List<PostDTO> postDTOs = posts.stream()
                                       .map(post -> {
-                                          Set<ImageDTO> imageDTOs = imageService.getImagesForPost(post.getId());
+                                          Set<ImageDTO> imageDTOs = imageService.getImagesForPost(post);
                                           Set<LikeDTO> likeDTOs = likeService.getLikesForPost(post.getId());
                                           List<CommentDTO> commentDTOs = commentService.getCommentsForPost(post.getId())
                                                   .stream()

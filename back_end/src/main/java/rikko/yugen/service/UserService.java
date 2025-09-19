@@ -20,6 +20,7 @@ import rikko.yugen.dto.user.UserUpdateDTO;
 
 import rikko.yugen.model.Artist;
 import rikko.yugen.model.User;
+import rikko.yugen.model.Image;
 
 @Service
 public class UserService {
@@ -52,30 +53,29 @@ public class UserService {
         return userRepository.findAll();
     }
 
-     
+
     @Transactional
     public User createUser(UserCreateDTO userCreateDTO) {
         userRepository.findByUsername(userCreateDTO.getUsername())
-            .ifPresent(existingUser -> {
-                throw new RuntimeException("User with username '" + existingUser.getUsername() + "' already exists.");
-            });
+                .ifPresent(u -> {
+                    throw new RuntimeException("User with username '" + u.getUsername() + "' already exists.");
+                });
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String hashedPassword = passwordEncoder.encode(userCreateDTO.getPassword());
 
         User user = new User();
-        user.setPassword(hashedPassword);
         user.setUsername(userCreateDTO.getUsername());
         user.setDisplayName(userCreateDTO.getDisplayName());
         user.setEmail(userCreateDTO.getEmail());
-        user.setImage(userCreateDTO.getImage());
+        user.setPassword(hashedPassword);
         user.setIsArtist(userCreateDTO.getIsArtist());
 
         User savedUser = userRepository.save(user);
 
         if (userCreateDTO.getIsArtist()) {
             Artist artist = new Artist();
-            artist.setArtistName(userCreateDTO.getDisplayName()); 
+            artist.setArtistName(userCreateDTO.getDisplayName());
             artist.setUser(savedUser);
             artistRepository.save(artist);
         }
@@ -84,52 +84,64 @@ public class UserService {
     }
 
     @Transactional
-    public User updateUser(Long id, UserUpdateDTO userUpdateDTO, MultipartFile file) {
-        try {
-            User existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
-    
-                boolean isUpdated = false;
+    public User updateUser(Long id, UserUpdateDTO userUpdateDTO, MultipartFile profileImageFile) {
+        User existingUser = getUserById(id);
+        boolean isUpdated = false;
 
-                if (userUpdateDTO.getUsername() != null && !userUpdateDTO.getUsername().equals(existingUser.getUsername())) {
-                    if (userRepository.existsByUsername(userUpdateDTO.getUsername())) {
-                        throw new ResponseStatusException(HttpStatus.CONFLICT, "Username is already taken");
-                    }
-                    existingUser.setUsername(userUpdateDTO.getUsername());
-                    isUpdated = true;
-                }
-
-                if (userUpdateDTO.getDisplayName() != null && !userUpdateDTO.getDisplayName().equals(existingUser.getDisplayName())) {
-                    existingUser.setDisplayName(userUpdateDTO.getDisplayName());
-                    isUpdated = true;
-                }
-        
-                if (userUpdateDTO.getEmail() != null && !userUpdateDTO.getEmail().equals(existingUser.getEmail())) {
-                    if (userRepository.existsByEmail(userUpdateDTO.getEmail())) {
-                        throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already taken");
-                    }
-                    existingUser.setEmail(userUpdateDTO.getEmail());
-                    isUpdated = true;
-                }
-                
-        
-                if (file != null && !file.isEmpty()) {
-                    if (existingUser.getImage() != null) {
-                        cloudinaryService.deleteImage(existingUser.getImage());
-                    }
-                    
-                    String profileImageUrl = cloudinaryService.uploadImage(file);
-                    existingUser.setImage(profileImageUrl);
-                    isUpdated = true;
-                }
-        
-                if (isUpdated) {
-                    return userRepository.save(existingUser);
-                }
-                return existingUser;
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error uploading image", e);
+        // Update username
+        if (userUpdateDTO.getUsername() != null && !userUpdateDTO.getUsername().equals(existingUser.getUsername())) {
+            if (userRepository.existsByUsername(userUpdateDTO.getUsername())) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Username is already taken");
+            }
+            existingUser.setUsername(userUpdateDTO.getUsername());
+            isUpdated = true;
         }
+
+        // Update displayName
+        if (userUpdateDTO.getDisplayName() != null && !userUpdateDTO.getDisplayName().equals(existingUser.getDisplayName())) {
+            existingUser.setDisplayName(userUpdateDTO.getDisplayName());
+            isUpdated = true;
+        }
+
+        // Update email
+        if (userUpdateDTO.getEmail() != null && !userUpdateDTO.getEmail().equals(existingUser.getEmail())) {
+            if (userRepository.existsByEmail(userUpdateDTO.getEmail())) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already taken");
+            }
+            existingUser.setEmail(userUpdateDTO.getEmail());
+            isUpdated = true;
+        }
+
+        // Handle profile picture
+        if (profileImageFile != null && !profileImageFile.isEmpty()) {
+            try {
+                String uploadedUrl = cloudinaryService.uploadImage(profileImageFile);
+
+                Image profileImage = existingUser.getImage();
+
+                if (profileImage != null) {
+                    // Delete old image from cloudinary
+                    cloudinaryService.deleteImage(profileImage.getUrl());
+                    profileImage.setUrl(uploadedUrl);
+                } else {
+                    profileImage = new Image();
+                    profileImage.setUrl(uploadedUrl);
+                    profileImage.setUser(existingUser);
+                    existingUser.setImage(profileImage);
+                }
+
+                isUpdated = true;
+
+            } catch (Exception e) {
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to upload profile picture", e);
+            }
+        }
+
+        if (isUpdated) {
+            return userRepository.save(existingUser);
+        }
+
+        return existingUser;
     }
 
     @Transactional

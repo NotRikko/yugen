@@ -10,7 +10,7 @@ public class UserDTO extends BaseUserDTO {
         this.setUsername(user.getUsername());
         this.setDisplayName(user.getDisplayName());
         this.setEmail(user.getEmail());
-        this.setImage(user.getImage());
+        this.setImage(user.getImage() != null ? user.getImage().getUrl() : null);
         this.setIsArtist(user.getIsArtist());
         this.artistId = user.getArtist() != null ? user.getArtist().getId() : null;
     }

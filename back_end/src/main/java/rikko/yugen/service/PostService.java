@@ -89,11 +89,14 @@ public class PostService {
     private Set<ImageDTO> uploadAndSaveFiles(List<MultipartFile> files, Long postId) {
         Set<ImageDTO> imageDTOs = new HashSet<>();
 
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found with id " + postId));
+
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
                 try {
                     String uploadedUrl = cloudinaryService.uploadImage(file);
-                    Image image = imageService.createImage(uploadedUrl, "post", postId);
+                    Image image = imageService.createImageForPost(uploadedUrl, post);
                     imageDTOs.add(new ImageDTO(image));
                 } catch (Exception e) {
                     // Log and continue, ensuring a failed upload doesn’t affect DB transactions

@@ -33,6 +33,12 @@ public class Post {
     @Column(nullable = false)
     private String content;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Image> images = new HashSet<>();
+
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @ManyToOne
