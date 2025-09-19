@@ -13,6 +13,13 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Comment {
+
+    public Comment(String content, User user, Post post) {
+        this.content = content;
+        this.user = user;
+        this.post = post;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

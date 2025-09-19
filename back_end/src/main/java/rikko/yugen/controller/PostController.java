@@ -51,11 +51,26 @@ public class PostController {
                                       .map(post -> {
                                           Set<ImageDTO> imageDTOs = imageService.getImagesForPost(post.getId());
                                           Set<LikeDTO> likeDTOs = likeService.getLikesForPost(post.getId());
-                                          return new PostDTO(post, likeDTOs, imageDTOs);
+                                          List<CommentDTO> commentDTOs = commentService.getCommentsForPost(post.getId())
+                                                  .stream()
+                                                  .map(CommentDTO::new)
+                                                  .collect(Collectors.toList());
+                                          return new PostDTO(post, likeDTOs, imageDTOs, commentDTOs);
                                       })
                                       .collect(Collectors.toList());
 
         return ResponseEntity.ok(postDTOs);
+    }
+
+    @GetMapping("/posts/{postId}/comments")
+    public ResponseEntity<List<CommentDTO>> getComments(@PathVariable Long postId) {
+        List<Comment> comments = commentService.getCommentsForPost(postId);
+
+        List<CommentDTO> commentDTOs = comments.stream()
+                .map(CommentDTO::new)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(commentDTOs);
     }
 
     @PostMapping(value = "/create", consumes = {"multipart/form-data"})
