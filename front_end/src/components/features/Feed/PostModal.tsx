@@ -1,11 +1,47 @@
 import Post from "./Post";
 import PostFooter from "./PostFooter";
+import { useState, useEffect } from "react";
+import { useUser } from "@/UserProvider";
+
 
 
 interface PostDetailsProps {
     post: Post;
   }
   function PostModal({ post }: PostDetailsProps) {
+    const { user } = useUser(); 
+    const currentUserId = user?.id;
+    
+    const [isFollowing, setIsFollowing] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+      fetch(`http://localhost:8080/follow/check/${currentUserId}/${post.artist.id}`)
+        .then((res) => res.json())
+        .then((data) => setIsFollowing(data))
+        .catch((err) => console.error(err));
+    }, [currentUserId, post.artist.id]);
+
+    const handleFollow = async () => {
+      setLoading(true);
+      try {
+        if (isFollowing) {
+          await fetch(`http://localhost:8080/follow/${currentUserId}/${post.artist.id}`, {
+            method: "DELETE",
+          });
+          setIsFollowing(false);
+        } else {
+          await fetch(`http://localhost:8080/follow/${currentUserId}/${post.artist.id}`, {
+            method: "POST",
+          });
+          setIsFollowing(true);
+        }
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
     return (
       <div className="w-5/6 h-5/6 mx-auto my-6 p-8 border rounded-2xl shadow-xl bg-white overflow-y-auto">
         <div className="flex items-center gap-4 mb-6">
@@ -19,6 +55,17 @@ interface PostDetailsProps {
           <p className="text-blue-600 text-lg font-semibold">
             {post.artist.artistName}
           </p>
+          <button
+            onClick={handleFollow}
+            disabled={loading}
+            className={`px-3 py-1 rounded-md text-sm font-semibold transition-colors ${
+              isFollowing
+                ? "bg-gray-200 text-gray-700 hover:bg-gray-300"
+                : "bg-blue-600 text-white hover:bg-blue-700"
+            }`}
+          >
+            {loading ? "..." : isFollowing ? "Following" : "Follow"}
+          </button>
         </div>
   
         <p className="text-gray-800 text-base mb-6">{post.content}</p>
