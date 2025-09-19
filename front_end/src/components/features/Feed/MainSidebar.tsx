@@ -1,4 +1,4 @@
-import { House, Bookmark, Mail, Bell, Settings } from "lucide-react"
+import { House, Bookmark, Mail, Bell, Settings, Users } from "lucide-react"
  
 import {
   Sidebar,
@@ -32,6 +32,11 @@ const items = [
     title: "Notifications",
     url: "/",
     icon: Bell
+  },
+  {
+    title: "Following",
+    url: "/",
+    icon : Users
   },
   {
     title: "Saved",

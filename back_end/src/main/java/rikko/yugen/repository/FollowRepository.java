@@ -8,8 +8,8 @@ import rikko.yugen.model.User;
 import java.util.List;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
-    List<Follow> findByFollower(User follower);
-    List<Follow> findByFollowee(User followee);
+    List<Follow> findByFollowerId(Long userId);
+    List<Follow> findByFolloweeId(Long artistId);
     boolean existsByFollowerAndFollowee(User follower, User followee);
     boolean existsById(FollowId followId);
     void deleteById(FollowId followId);

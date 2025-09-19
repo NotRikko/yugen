@@ -83,12 +83,31 @@ function Post({ post, onSelect }: PostProps) {
         </div>
   
         {post.images?.length > 0 && (
-          <div className="grid gap-4 my-4">
+          <div
+            className={`grid gap-2 my-4 ${
+              post.images.length === 1
+                ? ""
+                : post.images.length === 2
+                ? "grid-cols-2"
+                : "grid-cols-2 md:grid-cols-3"
+            }`}
+          >
             {post.images.map((image, index) => (
-              <img key={index} src={image.url} className="..." alt={`Post image ${index + 1}`} />
+              <img
+                key={index}
+                src={image.url}
+                alt={`Post image ${index + 1}`}
+                className={`w-full rounded-md ${
+                  post.images.length === 1 ? "max-h-[500px] object-contain" : "h-48 object-cover"
+                }`}
+                onError={(e) => {
+                  e.currentTarget.src =
+                    "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg";
+                }}
+              />
             ))}
           </div>
-        )}
+      )}
   
         <PostFooter post={post} />
       </div>
