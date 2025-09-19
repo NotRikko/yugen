@@ -69,6 +69,7 @@ public class User implements UserDetails {
     private Set<Comment> comments = new HashSet<>();
 
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
+    @EqualsAndHashCode.Exclude
     private Set<Follow> following = new HashSet<>();
 
     // Spring Security Methods
