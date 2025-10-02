@@ -131,6 +131,15 @@ export default function LoginForm() {
           >
             Don't have an account? Signup here.
           </p>
+          <div className="mt-4">
+          <button
+            type="button"
+            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 text-sm"
+            onClick={() => navigate("/")}
+          >
+            Home
+          </button>
+        </div>
         </form>
       </Form>
     )

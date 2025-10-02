@@ -204,11 +204,20 @@ export default function SignupForm() {
           />
           <Button type="submit">Submit</Button>
           <p 
-          className="text-xs cursor-pointer text-blue-500 hover:underline"
-          onClick={() => navigate("/login")}
-        >
-          Already have an account? Sign in here.
-        </p>
+            className="text-xs cursor-pointer text-blue-500 hover:underline"
+            onClick={() => navigate("/login")}
+          >
+            Already have an account? Sign in here.
+          </p>
+          <div className="mt-4">
+          <button
+            type="button"
+            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 text-sm"
+            onClick={() => navigate("/")}
+          >
+            Home
+          </button>
+        </div>
         </form>
       </Form>
     )
