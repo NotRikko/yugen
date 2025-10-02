@@ -68,7 +68,14 @@ export default function SignupForm() {
         const data = await response.json();
     
         if (!response.ok) {
-          throw new Error(data.message || "Signup failed");
+          Object.entries(data).forEach(([field, message]) => {
+            if (form.getFieldState(field as keyof typeof values)) {
+              form.setError(field as keyof typeof values, { type: "server", message: message as string });
+            } else {
+              form.setError("username", { type: "server", message: data.error || "Signup failed" });
+            }
+          });
+          return;
         }
     
         navigate('/login')

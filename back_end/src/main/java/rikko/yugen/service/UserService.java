@@ -22,6 +22,9 @@ import rikko.yugen.model.Artist;
 import rikko.yugen.model.User;
 import rikko.yugen.model.Image;
 
+import rikko.yugen.exception.UserAlreadyExistsException;
+import rikko.yugen.exception.EmailAlreadyExistsException;
+
 @Service
 public class UserService {
     
@@ -58,9 +61,12 @@ public class UserService {
     public User createUser(UserCreateDTO userCreateDTO) {
         userRepository.findByUsername(userCreateDTO.getUsername())
                 .ifPresent(u -> {
-                    throw new RuntimeException("User with username '" + u.getUsername() + "' already exists.");
+                    throw new UserAlreadyExistsException("User with username '" + u.getUsername() + "' already exists.");
                 });
-
+        userRepository.findByEmail(userCreateDTO.getEmail())
+                .ifPresent(u -> {
+                    throw new EmailAlreadyExistsException("User with email '" + u.getEmail() + "' already exists.");
+                });
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String hashedPassword = passwordEncoder.encode(userCreateDTO.getPassword());
 
@@ -91,7 +97,7 @@ public class UserService {
         // Update username
         if (userUpdateDTO.getUsername() != null && !userUpdateDTO.getUsername().equals(existingUser.getUsername())) {
             if (userRepository.existsByUsername(userUpdateDTO.getUsername())) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "Username is already taken");
+                throw new UserAlreadyExistsException("Username is already taken");
             }
             existingUser.setUsername(userUpdateDTO.getUsername());
             isUpdated = true;
