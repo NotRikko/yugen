@@ -125,7 +125,12 @@ export default function LoginForm() {
                     )}
                 />
           <Button type="submit">Login</Button>
-          <p className="text-xs">Don't have an account? Signup here.</p>
+          <p 
+            className="text-xs cursor-pointer text-blue-500 hover:underline"
+            onClick={() => navigate("/signup")}
+          >
+            Don't have an account? Signup here.
+          </p>
         </form>
       </Form>
     )

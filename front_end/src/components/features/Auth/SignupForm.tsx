@@ -203,7 +203,12 @@ export default function SignupForm() {
             )}
           />
           <Button type="submit">Submit</Button>
-          <p className="text-xs">Already have an account? Sign in here.</p>
+          <p 
+          className="text-xs cursor-pointer text-blue-500 hover:underline"
+          onClick={() => navigate("/login")}
+        >
+          Already have an account? Sign in here.
+        </p>
         </form>
       </Form>
     )
