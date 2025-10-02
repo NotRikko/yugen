@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 
 import rikko.yugen.dto.user.LoginResponseDTO;
 import rikko.yugen.dto.user.UserCreateDTO;
@@ -73,7 +74,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserCreateDTO userCreateDTO ) {
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO ) {
         User createdUser = userService.createUser(userCreateDTO);
         UserDTO userDTO = new UserDTO(createdUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);

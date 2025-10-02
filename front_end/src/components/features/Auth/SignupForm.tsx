@@ -29,16 +29,15 @@ import { useNavigate } from "react-router-dom"
 
  
 const formSchema = z.object({
-  username: z.string().min(4).max(25),
-  displayName: z.string().min(4).max(25),
-  email: z.string().email(),
-  password: z.string().min(8).max(30),
-  confirm: z.string().min(8).max(30),
-  isArtist: z.boolean().default(false).optional()
-})
-.refine((data) => data.password === data.confirm, {
-    message: "Passwords don't match",
-    path: ["confirm"],
+  username: z.string().min(4, "Username must be at least 4 characters").max(25),
+  displayName: z.string().min(4, "Display name must be at least 4 characters").max(25),
+  email: z.string().email("Invalid email format"),
+  password: z.string().min(8, "Password must be at least 8 characters").max(30),
+  confirm: z.string().min(8),
+  isArtist: z.boolean().default(false),
+}).refine((data) => data.password === data.confirm, {
+  path: ["confirm"],
+  message: "Passwords don't match",
 });
 
 export default function SignupForm() {
@@ -50,6 +49,7 @@ export default function SignupForm() {
         displayName: "",
         email: "",
         password: "",
+        confirm: "",
         isArtist: false,
       },
     })
