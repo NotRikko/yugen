@@ -51,7 +51,7 @@ export default function PostCreate() {
 
     if (!user.artistId) {
         return (
-            <div className="p-8">
+            <div className="w-5/6 mx-auto p-4 border">
                 <p className="text-red-500">
                     Only artists can create posts. Please register as an artist to post.
                 </p>
@@ -94,7 +94,7 @@ export default function PostCreate() {
     }
     return (
         <Form {...form} >
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 mx-auto py-8 w-5/6 mx-auto p-4 border rounded-lg shadow-md bg-white">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 w-5/6 mx-auto p-4 border rounded-lg shadow-md bg-white">
                 <FormField
                     control={form.control}
                     name="content"
