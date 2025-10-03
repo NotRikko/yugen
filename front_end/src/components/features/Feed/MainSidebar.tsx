@@ -15,6 +15,7 @@ interface User {
   displayName: string;
   email: string;
   image: string;
+  isGuest: boolean;
 }
 
 interface UserProps {
@@ -70,6 +71,14 @@ function MainSidebar({user, onSelectItem} : UserProps & { onSelectItem: (item: s
                           className="my-3 border rounded-lg"
                       />
                       <h1 className="text-xl">{user.displayName ? user.displayName : "Guest"}</h1>
+                      {user.isGuest && (
+                        <button
+                          onClick={() => (window.location.href = "/login")}
+                          className="mt-2 px-3 py-1 rounded bg-blue-500 text-white hover:bg-blue-600"
+                        >
+                          Login
+                        </button>
+                      )}
                   </SidebarGroupContent>
               </SidebarGroup>
               <SidebarGroup>

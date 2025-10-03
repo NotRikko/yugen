@@ -11,7 +11,7 @@ A marketplace/social media hybrid web app geared towards the art community.
 ## Upcoming Features
 
 * User Dashboard
-* Like and commenting functionality
+* Post/Product Feature
 
 ## Getting Started
 

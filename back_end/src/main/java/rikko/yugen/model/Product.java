@@ -1,10 +1,10 @@
 package rikko.yugen.model;
 
 import java.util.Set;
+import java.util.HashSet;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 
 @Entity
 @Table(name = "products")
@@ -21,6 +21,11 @@ public class Product {
     private Float price;
     private Integer quantity_in_stock;
     private String image;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<Post> posts = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "artist_id", nullable = false)

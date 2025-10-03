@@ -15,10 +15,18 @@ import lombok.*;
 @AllArgsConstructor
 public class Post {
 
+    public Post(String content, LocalDateTime createdAt, Artist artist, Product product) {
+        this.content = content;
+        this.createdAt = createdAt;
+        this.artist = artist;
+        this.product = product;
+    }
+
     public Post(String content, LocalDateTime createdAt, Artist artist) {
         this.content = content;
         this.createdAt = createdAt;
         this.artist = artist;
+        this.product = null;
     }
 
     @Id
