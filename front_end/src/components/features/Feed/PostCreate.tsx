@@ -60,6 +60,8 @@ export default function PostCreate() {
     }
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
+        const API_URL = import.meta.env.VITE_API_URL;
+
         try {
             const formData = new FormData();
             
@@ -76,7 +78,7 @@ export default function PostCreate() {
                 });
             }
     
-            const response = await fetch("http://localhost:8080/posts/create", {
+            const response = await fetch(`${API_URL}/posts/create`, {
                 mode: "cors",
                 method: "POST",
                 body: formData,

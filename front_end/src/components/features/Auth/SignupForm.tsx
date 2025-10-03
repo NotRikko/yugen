@@ -55,8 +55,10 @@ export default function SignupForm() {
     })
    
     async function onSubmit(values: z.infer<typeof formSchema>) {
+      const API_URL = import.meta.env.VITE_API_URL;
+
       try {
-        const response = await fetch("http://localhost:8080/users/create", {
+        const response = await fetch(`${API_URL}/users/create`, {
           mode: "cors",
           method: "POST",
           headers: {

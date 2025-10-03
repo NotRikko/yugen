@@ -46,8 +46,10 @@ export default function LoginForm() {
     })
    
     async function onSubmit(values: z.infer<typeof formSchema>) {
+      const API_URL = import.meta.env.VITE_API_URL;
+    
       try {
-        const response = await fetch("http://localhost:8080/users/login", {
+        const response = await fetch(`${API_URL}/users/login`, {
           mode: "cors",
           method: "POST",
           headers: {
@@ -69,7 +71,7 @@ export default function LoginForm() {
 
         const token = localStorage.getItem("accessToken");
     
-        const userResponse = await fetch("http://localhost:8080/users/me", {
+        const userResponse = await fetch(`${API_URL}/users/me`, {
           method: "GET",
           headers: {
             "Authorization": `Bearer ${token}`,

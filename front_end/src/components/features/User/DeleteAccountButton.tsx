@@ -8,11 +8,12 @@ export default function DeleteAccountButton() {
     const [loading, setLoading] = useState(false);
 
     async function deleteAccount() {
+        const API_URL = import.meta.env.VITE_API_URL;
         const confirmed = window.confirm("Are you sure you want to delete your account? This action cannot be undone.");
         if (!confirmed) return;
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:8080/users/delete/${user.id}`, {
+            const response = await fetch(`${API_URL}/users/delete/${user.id}`, {
             mode: "cors",
             method: "DELETE"
         });

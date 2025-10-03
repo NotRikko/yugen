@@ -33,13 +33,14 @@ interface Like {
   }
 
 const PostFooter = ({ post }: PostFooterProps) => {
-    const {user, cart, addToCart} = useUser();
+    const {user, addToCart} = useUser();
     const [likes, setLikes] = useState(post.likes ? post.likes.length : 0);
     const [liked, setLiked] = useState(false);
 
     const handleLike = async () => {
+      const API_URL = import.meta.env.VITE_API_URL;
       try {
-          const response = await fetch(`http://localhost:8080/posts/${post.id}/like`, {
+          const response = await fetch(`${API_URL}/posts/${post.id}/like`, {
               mode: "cors",
               method: "POST",
               headers: {

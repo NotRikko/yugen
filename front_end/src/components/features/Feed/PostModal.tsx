@@ -15,8 +15,11 @@ interface PostDetailsProps {
     const [isFollowing, setIsFollowing] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    const API_URL = import.meta.env.VITE_API_URL;
+
     useEffect(() => {
-      fetch(`http://localhost:8080/follow/check/${currentUserId}/${post.artist.id}`)
+      
+      fetch(`${API_URL}/follow/check/${currentUserId}/${post.artist.id}`)
         .then((res) => res.json())
         .then((data) => setIsFollowing(data))
         .catch((err) => console.error(err));
@@ -26,12 +29,12 @@ interface PostDetailsProps {
       setLoading(true);
       try {
         if (isFollowing) {
-          await fetch(`http://localhost:8080/follow/${currentUserId}/${post.artist.id}`, {
+          await fetch(`${API_URL}/follow/${currentUserId}/${post.artist.id}`, {
             method: "DELETE",
           });
           setIsFollowing(false);
         } else {
-          await fetch(`http://localhost:8080/follow/${currentUserId}/${post.artist.id}`, {
+          await fetch(`${API_URL}/follow/${currentUserId}/${post.artist.id}`, {
             method: "POST",
           });
           setIsFollowing(true);

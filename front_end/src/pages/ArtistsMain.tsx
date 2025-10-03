@@ -13,8 +13,10 @@ function ArtistsMain(): JSX.Element {
         
         useEffect(() => {
             const fetchArtists = async () => {
+                const API_URL = import.meta.env.VITE_API_URL;
+
                 try {
-                    const artistsResponse = await fetch("http://localhost:8080/artists/all", { mode: "cors"});
+                    const artistsResponse = await fetch(`${API_URL}/artists/all`, { mode: "cors"});
 
                     if (!artistsResponse.ok) {
                         throw new Error("Issue with network response")

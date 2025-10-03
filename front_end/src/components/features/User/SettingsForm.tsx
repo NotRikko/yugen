@@ -43,6 +43,8 @@ export default function SignupForm() {
   })
   
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    const API_URL = import.meta.env.VITE_API_URL;
+
     try {
       const formData = new FormData();
       
@@ -59,7 +61,7 @@ export default function SignupForm() {
         formData.append("file", values.file);  
       }
 
-      const response = await fetch(`http://localhost:8080/users/update/${user.id}`, {
+      const response = await fetch(`${API_URL}/users/update/${user.id}`, {
         mode: "cors",
         method: "PATCH",
         body: formData,

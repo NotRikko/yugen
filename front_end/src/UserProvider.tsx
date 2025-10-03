@@ -57,8 +57,10 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User>(guestUser);
     const [cart, setCart] = useState<Cart | null>(null);
 
+    const API_URL = import.meta.env.VITE_API_URL;
 
     useEffect(() => {
+
         const storedUser = localStorage.getItem("user");
         const storedToken = localStorage.getItem("accessToken");
     
@@ -79,7 +81,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
             const token = tokenParam || localStorage.getItem("accessToken");
             if (!token) return;
     
-            const res = await fetch("http://localhost:8080/cart", {
+            const res = await fetch(`${API_URL}/cart`, {
                 method: "GET",
                 mode: "cors",
                 headers: {
@@ -103,7 +105,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const addToCart = async (productId: number, quantity: number) => {
         try {
             const token = localStorage.getItem("accessToken");
-            const res = await fetch(`http://localhost:8080/cart/add?productId=${productId}&quantity=${quantity}`, {
+            const res = await fetch(`${API_URL}/cart/add?productId=${productId}&quantity=${quantity}`, {
                 method: "POST",
                 mode: "cors",
                 headers: {
@@ -127,7 +129,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
     const updateCartItem = async (productId: number, quantity: number) => {
         try {
-            const res = await fetch(`/api/cart/update?productId=${productId}&quantity=${quantity}`, {
+            const res = await fetch(`${API_URL}/cart/update?productId=${productId}&quantity=${quantity}`, {
                 method: "PATCH",
                 credentials: "include",
             });
@@ -141,7 +143,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
     const removeFromCart = async (productId: number) => {
         try {
-            const res = await fetch(`/api/cart/remove?productId=${productId}`, {
+            const res = await fetch(`${API_URL}/cart/remove?productId=${productId}`, {
                 method: "DELETE",
                 credentials: "include",
             });
@@ -155,7 +157,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
     const clearCart = async () => {
         try {
-            const res = await fetch("/api/cart/clear", { method: "POST", credentials: "include" });
+            const res = await fetch(`${API_URL}/cart/clear`, { method: "POST", credentials: "include" });
             if (res.ok) {
                 setCart({ id: cart?.id || 0, items: [] });
             }
@@ -166,7 +168,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
     const mergeGuestCart = async (guestCart: Cart) => {
         try {
-            const res = await fetch("/api/cart/merge", {
+            const res = await fetch(`${API_URL}/cart/merge`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",

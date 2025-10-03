@@ -6,10 +6,12 @@ function FeedTrendingBar(): JSX.Element {
     const [trendingArtists, setTrendingArtists] = useState([]);
     const [trendingTags, setTrendingTags] = useState([]);
 
+
     useEffect(() => {
         const fetchPosts = async () => {
+            const API_URL = import.meta.env.VITE_API_URL;
             try {
-                const postsResponse = await fetch("http://localhost:8080/posts/all", { mode: "cors"});
+                const postsResponse = await fetch(`${API_URL}/posts/all`, { mode: "cors"});
 
                 if (!postsResponse.ok) {
                     throw new Error("Issue with network response")
