@@ -72,6 +72,11 @@ public class User implements UserDetails {
     @EqualsAndHashCode.Exclude
     private Set<Follow> following = new HashSet<>();
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Cart cart;
+
     // Spring Security Methods
 
     @Override
