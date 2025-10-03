@@ -6,11 +6,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import lombok.RequiredArgsConstructor;
 
 import rikko.yugen.dto.image.ImageDTO;
 import rikko.yugen.dto.like.LikeDTO;
@@ -29,19 +30,16 @@ import rikko.yugen.service.CommentService;
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/posts")
+@RequiredArgsConstructor
 public class PostController {
     
-    @Autowired
-    private PostService postService;
+    private final PostService postService;
 
-    @Autowired
-    private LikeService likeService;
+    private final LikeService likeService;
 
-    @Autowired
-    private CommentService commentService;
+    private final CommentService commentService;
 
-    @Autowired
-    private ImageService imageService;
+    private final ImageService imageService;
 
    @GetMapping("/all")
     public ResponseEntity<List<PostDTO>> getAllPosts() {

@@ -3,11 +3,13 @@ package rikko.yugen.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
+import lombok.RequiredArgsConstructor;
+
 
 import rikko.yugen.dto.artist.ArtistCreateDTO;
 import rikko.yugen.dto.artist.ArtistDTO;
@@ -17,10 +19,10 @@ import rikko.yugen.service.ArtistService;
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/artists")
+@RequiredArgsConstructor
 public class ArtistController {
-    
-    @Autowired
-    private ArtistService artistService;
+
+    private final ArtistService artistService;
 
     @GetMapping("/artist")
     public ResponseEntity<Artist> getArtist(@RequestParam String artistName) {

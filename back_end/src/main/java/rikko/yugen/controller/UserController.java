@@ -3,13 +3,15 @@ package rikko.yugen.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.ResponseEntity;
+
 import jakarta.validation.Valid;
+
+import lombok.RequiredArgsConstructor;
 
 import rikko.yugen.dto.user.LoginResponseDTO;
 import rikko.yugen.dto.user.UserCreateDTO;
@@ -28,16 +30,14 @@ import rikko.yugen.service.AuthenticationService;
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
     
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private JwtService jwtService;
+    private final JwtService jwtService;
 
-    @Autowired
-    private AuthenticationService authenticationService;    
+    private final AuthenticationService authenticationService;
 
     @GetMapping("/user")
     public ResponseEntity<User> getUser(@RequestParam String username) {
