@@ -6,11 +6,11 @@ import SettingsForm from "../components/features/User/SettingsForm";
 
 function MainPage(): JSX.Element {
     const [selectedItem, setSelectedItem] = useState<string>("Home");
-    const {user} = useUser();
+    const {user, cart} = useUser();
     
     return(
         <div className="grid grid-cols-[1fr_3fr]">
-            <MainSidebar user={user} onSelectItem={setSelectedItem} />
+            <MainSidebar user={user} cartItemCount={cart?.items.length ?? 0}  onSelectItem={setSelectedItem} />
             <div >
                 <div className="flex flex-col gap-4 w-full">
                     {selectedItem === "Home" && <FeedMain />}

@@ -1,5 +1,15 @@
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 
+interface CartItem {
+    productId: number;
+    quantity: number;
+}
+
+interface Cart {
+    id: number;
+    items: CartItem[];
+}
+
 interface User {
     id: number;
     username: string;
@@ -16,6 +26,14 @@ interface UserContextType {
     user: User;
     guestUser: User;
     setUser: React.Dispatch<React.SetStateAction<User>>;
+    cart: Cart | null;
+    setCart: React.Dispatch<React.SetStateAction<Cart | null>>;
+    addToCart: (productId: number, quantity: number) => Promise<void>;
+    updateCartItem: (productId: number, quantity: number) => Promise<void>;
+    removeFromCart: (productId: number) => Promise<void>;
+    clearCart: () => Promise<void>;
+    fetchCart: () => Promise<void>;
+    mergeGuestCart: (guestCart: Cart) => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -37,10 +55,10 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState<User>(guestUser);
+    const [cart, setCart] = useState<Cart | null>(null);
 
 
     useEffect(() => {
-        // Check if there's a saved user in localStorage
         const storedUser = localStorage.getItem("user");
         const storedToken = localStorage.getItem("accessToken");
     
@@ -54,8 +72,106 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         }
       }, []);
 
+      const fetchCart = async () => {
+        if (!isLoggedIn) return;
+        try {
+            const res = await fetch("/api/cart", { credentials: "include" });
+            if (res.ok) {
+                const data = await res.json();
+                setCart(data);
+            }
+        } catch (err) {
+            console.error("Failed to fetch cart:", err);
+        }
+    };
+
+    const addToCart = async (productId: number, quantity: number) => {
+        try {
+            const res = await fetch(`/api/cart/add?productId=${productId}&quantity=${quantity}`, {
+                method: "POST",
+                credentials: "include",
+            });
+            if (res.ok) {
+                await fetchCart();
+            }
+        } catch (err) {
+            console.error("Failed to add to cart:", err);
+        }
+    };
+
+    const updateCartItem = async (productId: number, quantity: number) => {
+        try {
+            const res = await fetch(`/api/cart/update?productId=${productId}&quantity=${quantity}`, {
+                method: "PATCH",
+                credentials: "include",
+            });
+            if (res.ok) {
+                await fetchCart();
+            }
+        } catch (err) {
+            console.error("Failed to update cart item:", err);
+        }
+    };
+
+    const removeFromCart = async (productId: number) => {
+        try {
+            const res = await fetch(`/api/cart/remove?productId=${productId}`, {
+                method: "DELETE",
+                credentials: "include",
+            });
+            if (res.ok) {
+                await fetchCart();
+            }
+        } catch (err) {
+            console.error("Failed to remove from cart:", err);
+        }
+    };
+
+    const clearCart = async () => {
+        try {
+            const res = await fetch("/api/cart/clear", { method: "POST", credentials: "include" });
+            if (res.ok) {
+                setCart({ id: cart?.id || 0, items: [] });
+            }
+        } catch (err) {
+            console.error("Failed to clear cart:", err);
+        }
+    };
+
+    const mergeGuestCart = async (guestCart: Cart) => {
+        try {
+            const res = await fetch("/api/cart/merge", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(guestCart),
+            });
+            if (res.ok) {
+                await fetchCart();
+            }
+        } catch (err) {
+            console.error("Failed to merge guest cart:", err);
+        }
+    };
+
     return (
-        <UserContext.Provider value={{ isLoggedIn, user, guestUser, setUser, setIsLoggedIn }}>
+        <UserContext.Provider
+            value={{
+                isLoggedIn,
+                setIsLoggedIn,
+                user,
+                guestUser,
+                setUser,
+                cart,
+                setCart,
+                addToCart,
+                updateCartItem,
+                removeFromCart,
+                clearCart,
+                fetchCart,
+                mergeGuestCart,
+            }}
+        >
             {children}
         </UserContext.Provider>
     );

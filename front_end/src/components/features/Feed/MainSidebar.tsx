@@ -1,4 +1,4 @@
-import { House, Bookmark, Mail, Bell, Settings, Users } from "lucide-react"
+import { House, Bookmark, Mail, Bell, Settings, Users, ShoppingCart } from "lucide-react"
  
 import {
   Sidebar,
@@ -20,44 +20,50 @@ interface User {
 
 interface UserProps {
   user: User;
+  cartItemCount?: number;
 }
  
-// Menu items.
-const items = [
-  {
-    title: "Home",
-    url: "/",
-    icon: House,
-  },
-  {
-    title: "Notifications",
-    url: "/",
-    icon: Bell
-  },
-  {
-    title: "Following",
-    url: "/",
-    icon : Users
-  },
-  {
-    title: "Saved",
-    url: "/",
-    icon: Bookmark, 
-  },
-  {
-    title: "Messages",
-    url: "/",
-    icon: Mail,
-  },
-  {
-    title: "Settings",
-    url: "/settings",
-    icon: Settings
-  }
-  
-]
+
  
-function MainSidebar({user, onSelectItem} : UserProps & { onSelectItem: (item: string) => void } ) {
+function MainSidebar({user, cartItemCount = 0, onSelectItem} : UserProps & { onSelectItem: (item: string) => void } ) {
+      // Menu items.
+    const items = [
+      {
+        title: "Home",
+        url: "/",
+        icon: House,
+      },
+      { title: "Cart", 
+        url: "/cart", 
+        icon: ShoppingCart, 
+        badge: cartItemCount },
+      {
+        title: "Notifications",
+        url: "/",
+        icon: Bell
+      },
+      {
+        title: "Following",
+        url: "/",
+        icon : Users
+      },
+      {
+        title: "Saved",
+        url: "/",
+        icon: Bookmark, 
+      },
+      {
+        title: "Messages",
+        url: "/",
+        icon: Mail,
+      },
+      {
+        title: "Settings",
+        url: "/settings",
+        icon: Settings
+      }
+      
+    ]
     return (
           <Sidebar side="left" className="border-r-2" style={{
             "--sidebar-width": "25%",
@@ -90,6 +96,11 @@ function MainSidebar({user, onSelectItem} : UserProps & { onSelectItem: (item: s
                           <button onClick={() => onSelectItem(item.title)} className="gap-4">
                                             <item.icon className="scale-125"/>
                                             <span className="text-lg">{item.title}</span>
+                                            {item.badge && (
+                                              <span className="ml-auto px-2 py-0.5 text-xs font-semibold bg-red-500 text-white rounded-full">
+                                                {item.badge}
+                                              </span>
+                                            )}
                                         </button>
                           </SidebarMenuButton>
                       </SidebarMenuItem>
