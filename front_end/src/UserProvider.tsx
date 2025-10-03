@@ -66,19 +66,34 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
             const parsedUser = JSON.parse(storedUser);
             setUser({
                 ...parsedUser,
-                artistId: parsedUser.artistId ?? null, 
+                artistId: parsedUser.artistId ?? null,
             });
             setIsLoggedIn(true);
+    
+            fetchCart(parsedUser, storedToken);
         }
-      }, []);
+    }, []);
 
-      const fetchCart = async () => {
-        if (!isLoggedIn) return;
+    const fetchCart = async (userParam?: User, tokenParam?: string) => {
         try {
-            const res = await fetch("/api/cart", { credentials: "include" });
+            const token = tokenParam || localStorage.getItem("accessToken");
+            if (!token) return;
+    
+            const res = await fetch("http://localhost:8080/cart", {
+                method: "GET",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+    
             if (res.ok) {
                 const data = await res.json();
                 setCart(data);
+                console.log("Fetched cart:", data);
+            } else {
+                console.error("Failed to fetch cart:", res.statusText);
             }
         } catch (err) {
             console.error("Failed to fetch cart:", err);

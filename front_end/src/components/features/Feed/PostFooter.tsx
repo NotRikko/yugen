@@ -33,7 +33,7 @@ interface Like {
   }
 
 const PostFooter = ({ post }: PostFooterProps) => {
-    const {user, cart, setCart, addToCart} = useUser();
+    const {user, cart, addToCart} = useUser();
     const [likes, setLikes] = useState(post.likes ? post.likes.length : 0);
     const [liked, setLiked] = useState(false);
 
@@ -68,10 +68,7 @@ const PostFooter = ({ post }: PostFooterProps) => {
   
     try {
       await addToCart(post.product.id, 1);
-  
-      const totalItems = cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
-  
-      alert(`Added ${post.product.name} to your cart! Total items: ${totalItems}`);
+    
     } catch (error) {
       console.error("Error purchasing product:", error);
     }

@@ -3,6 +3,7 @@ import { useUser } from "@/UserProvider";
 import FeedMain from "./FeedMain";
 import MainSidebar from "@/components/features/Feed/MainSidebar";
 import SettingsForm from "../components/features/User/SettingsForm";
+import CartPage from "../components/features/User/CartPage";
 
 function MainPage(): JSX.Element {
     const [selectedItem, setSelectedItem] = useState<string>("Home");
@@ -15,6 +16,7 @@ function MainPage(): JSX.Element {
                 <div className="flex flex-col gap-4 w-full">
                     {selectedItem === "Home" && <FeedMain />}
                     {selectedItem === "Settings" && <SettingsForm />}
+                    {selectedItem === "Cart" && <CartPage />}
                 </div>
             </div>
         </div>
