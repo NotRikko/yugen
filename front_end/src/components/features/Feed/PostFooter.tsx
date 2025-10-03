@@ -67,19 +67,24 @@ const PostFooter = ({ post }: PostFooterProps) => {
     }
   
     try {
-      const response = await fetch(`http://localhost:8080/products/${post.product.id}/purchase`, {
+      const token = localStorage.getItem("accessToken");
+      const response = await fetch(`http://localhost:8080/cart/add?productId=${post.product.id}&quantity=1`, {
         mode: "cors",
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
         },
       });
   
       if (response.ok) {
-        const message = await response.text(); 
-        alert(message); 
+        const cart = await response.json(); 
+        console.log("Updated cart:", cart);
+        alert(`Added ${post.product.name} to your cart! Total items: ${cart.items.length}`);
       } else {
-        console.error("Failed to purchase product");
+        console.error("Failed to add product to cart");
+        const errData = await response.json();
+        console.error(errData);
       }
     } catch (error) {
       console.error("Error purchasing product:", error);

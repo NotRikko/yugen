@@ -62,15 +62,17 @@ export default function LoginForm() {
           throw new Error(data.message || "Login failed");
         }
 
-        if(data.token) {
-          localStorage.setItem('accessToken', data.token);
+        if (data.token) {
+          localStorage.setItem("accessToken", data.token);
         }
+
+
+        const token = localStorage.getItem("accessToken");
     
-        console.log("Login successful:", data);
         const userResponse = await fetch("http://localhost:8080/users/me", {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${data.token}`,
+            "Authorization": `Bearer ${token}`,
           },
         });
     
