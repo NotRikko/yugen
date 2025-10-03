@@ -49,6 +49,16 @@ export default function PostCreate() {
         }
     })
 
+    if (!user.artistId) {
+        return (
+            <div className="p-8">
+                <p className="text-red-500">
+                    Only artists can create posts. Please register as an artist to post.
+                </p>
+            </div>
+        );
+    }
+
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
             const formData = new FormData();
