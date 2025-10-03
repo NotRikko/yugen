@@ -5,9 +5,11 @@ import org.springframework.stereotype.Component;
 import rikko.yugen.model.Artist;
 import rikko.yugen.model.Post;
 import rikko.yugen.model.Image;
+import rikko.yugen.model.Product;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.PostRepository;
 import rikko.yugen.repository.ImageRepository;
+import rikko.yugen.repository.ProductRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,11 +20,13 @@ public class PostBootstrap {
     private final PostRepository postRepository;
     private final ArtistRepository artistRepository;
     private final ImageRepository imageRepository;
+    private final ProductRepository productRepository;
 
-    public PostBootstrap(PostRepository postRepository, ArtistRepository artistRepository, ImageRepository imageRepository) {
+    public PostBootstrap(PostRepository postRepository, ArtistRepository artistRepository, ImageRepository imageRepository, ProductRepository productRepository) {
         this.postRepository = postRepository;
         this.artistRepository = artistRepository;
         this.imageRepository = imageRepository;
+        this.productRepository = productRepository;
     }
 
     public void load() {
@@ -34,12 +38,19 @@ public class PostBootstrap {
                 return;
             }
 
+            List<Product> products = productRepository.findAll();
+
             List<Post> posts = List.of(
-                    new Post("This is me if anyone even cares.", LocalDateTime.now().minusDays(1), artists.get(0)),
-                    new Post("Felt pretty.", LocalDateTime.now().minusDays(2), artists.get(1)),
-                    new Post("Character design drop 💥", LocalDateTime.now().minusDays(3), artists.get(2)),
-                    new Post("Landscape art inspired by Ghibli", LocalDateTime.now().minusDays(4), artists.get(1)),
-                    new Post("Color study from a reference photo", LocalDateTime.now().minusDays(5), artists.get(0))
+                    new Post("This is me if anyone even cares.", LocalDateTime.now().minusDays(1),
+                            artists.get(0), products.size() > 0 ? products.get(0) : null),
+                    new Post("Felt pretty.", LocalDateTime.now().minusDays(2),
+                            artists.get(1), products.size() > 1 ? products.get(1) : null),
+                    new Post("Character design drop 💥", LocalDateTime.now().minusDays(3),
+                            artists.get(2), null),
+                    new Post("Landscape art inspired by Ghibli", LocalDateTime.now().minusDays(4),
+                            artists.get(1), null),
+                    new Post("Color study from a reference photo", LocalDateTime.now().minusDays(5),
+                            artists.get(0), null)
             );
 
             postRepository.saveAll(posts);

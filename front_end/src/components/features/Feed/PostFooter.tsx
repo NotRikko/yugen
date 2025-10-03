@@ -13,12 +13,19 @@ interface Like {
     content: string;
     postedAt: string;
   }
+
+  interface Product {
+    id: number;
+    name: string;
+    price: number;
+  }  
   
   interface Post {
     id: number;
     content: string;
     likes: Like[]; 
     comments: Comment[];
+    product?: Product;
   }
   
   interface PostFooterProps {
@@ -53,6 +60,34 @@ const PostFooter = ({ post }: PostFooterProps) => {
       }
   };
 
+  const handlePurchase = async () => {
+    if (!post.product) {
+      console.warn("No product associated with this post");
+      return;
+    }
+  
+    try {
+      const response = await fetch(`http://localhost:8080/products/${post.product.id}/purchase`, {
+        mode: "cors",
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      if (response.ok) {
+        const message = await response.text(); 
+        alert(message); 
+      } else {
+        console.error("Failed to purchase product");
+      }
+    } catch (error) {
+      console.error("Error purchasing product:", error);
+    }
+  };
+
+  
+
     return (
       <div className="flex justify-between">
         <div className="flex items-center gap-2 text-gray-600 text-base">
@@ -70,7 +105,7 @@ const PostFooter = ({ post }: PostFooterProps) => {
             <span>{post.comments ? post.comments.length  : 0}</span>
         </div>
         <div className="flex items-center gap-2 text-gray-600 text-base">
-            <button><ShoppingBag className="w-6 h-6" /></button>
+            <button onClick={handlePurchase}><ShoppingBag className="w-6 h-6" /></button>
             <span>{post.comments ? post.comments.length  : 0}</span>
         </div>
       </div>

@@ -37,6 +37,8 @@ public class Product {
         joinColumns = @JoinColumn(name = "product_id"),
         inverseJoinColumns = @JoinColumn(name = "series_id")
     )
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<Series> series;
 
     @ManyToMany
@@ -45,6 +47,8 @@ public class Product {
         joinColumns = @JoinColumn(name = "product_id"),
         inverseJoinColumns = @JoinColumn(name = "collection_id")
     )
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Set<Collection> collections;
 
 }
