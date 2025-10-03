@@ -74,4 +74,13 @@ public class ProductService {
         return productRepository.save(product);
 
     }
+
+    @Transactional
+    public String purchaseProduct(Long productId) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
+
+        // Later: reduce stock, record purchase, send confirmation, etc.
+        return "Product '" + product.getName() + "' bought!";
+    }
 }
