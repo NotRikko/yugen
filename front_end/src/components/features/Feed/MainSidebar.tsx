@@ -1,4 +1,5 @@
 import { House, Bookmark, Mail, Bell, Settings, Users, ShoppingCart } from "lucide-react"
+
  
 import {
   Sidebar,
@@ -9,6 +10,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+
+import { useNavigate } from "react-router-dom";
+
 
 interface User {
   username: string;
@@ -26,6 +30,7 @@ interface UserProps {
 
  
 function MainSidebar({user, cartItemCount = 0, onSelectItem} : UserProps & { onSelectItem: (item: string) => void } ) {
+    const navigate = useNavigate();
       // Menu items.
     const items = [
       {
@@ -93,7 +98,7 @@ function MainSidebar({user, cartItemCount = 0, onSelectItem} : UserProps & { onS
                       {items.map((item) => (
                       <SidebarMenuItem key={item.title}>
                           <SidebarMenuButton asChild>
-                          <button onClick={() => onSelectItem(item.title)} className="gap-4">
+                          <button onClick={ () => {onSelectItem(item.title); if (item.title === "Home") { navigate(item.url)}}} className="gap-4">
                                             <item.icon className="scale-125"/>
                                             <span className="text-lg">{item.title}</span>
                                             {item.badge && (
