@@ -73,7 +73,7 @@ function MainSidebar({user, cartItemCount = 0, onSelectItem} : UserProps & { onS
           <Sidebar side="left" className="border-r-2" style={{
             "--sidebar-width": "25%",
             "--sidebar-width-mobile": "25rem",
-          }}>
+          } as React.CSSProperties}>
             <SidebarContent  className="px-16">
               <SidebarGroup>
                   <SidebarGroupContent className="flex flex-col justify-center p-3">

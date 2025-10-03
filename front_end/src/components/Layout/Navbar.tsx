@@ -2,24 +2,13 @@ import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useState, useEffect, useRef } from "react";
 import { NavLink } from 'react-router-dom';
+import { useUser } from "@/UserProvider";
 import UserSidebar from '../features/User/UserSidebar';
 import CartSidebar from '../features/Cart/CartSidebar';
 
-import { useUser } from "@/UserProvider"
 
-interface User {
-    username: string;
-    displayName: string;
-    email: string;
-    image: string;
-}
-  
-interface UserProps {
-    user: User;
-}
-
-
-function Navbar( {user} : UserProps) {
+function Navbar() {
+    const { user } = useUser();
     const [isMobile, setIsMobile] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [viewingAccountBar, setIsViewingAccountBar] = useState(false);

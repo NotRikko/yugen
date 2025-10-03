@@ -1,14 +1,22 @@
 import { createContext, useState, useEffect, useContext, ReactNode } from "react";
 
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    image?: string;
+}
+
 interface CartItem {
     productId: number;
     quantity: number;
+    product: Product;
 }
 
 interface Cart {
     id: number;
     items: CartItem[];
-}
+    }
 
 interface User {
     id: number;
@@ -72,11 +80,11 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
             });
             setIsLoggedIn(true);
     
-            fetchCart(parsedUser, storedToken);
+            fetchCart(storedToken);
         }
     }, []);
 
-    const fetchCart = async (userParam?: User, tokenParam?: string) => {
+    const fetchCart = async (tokenParam?: string) => {
         try {
             const token = tokenParam || localStorage.getItem("accessToken");
             if (!token) return;

@@ -3,8 +3,10 @@ import Post from "./Post";
 
 function FeedTrendingBar(): JSX.Element {
     const [posts, setPosts] = useState<Post[]>([]);
+    /*
     const [trendingArtists, setTrendingArtists] = useState([]);
     const [trendingTags, setTrendingTags] = useState([]);
+    */
 
 
     useEffect(() => {

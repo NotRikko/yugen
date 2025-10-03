@@ -13,7 +13,7 @@ interface TrendingProduct {
 
 
 function MainTrending(): JSX.Element {
-    const [trendingProducts, setTrendingProducts] = useState<TrendingProduct[]>([
+    const [trendingProducts] = useState<TrendingProduct[]>([
         {
             id: 1,
             title: "Robin",
