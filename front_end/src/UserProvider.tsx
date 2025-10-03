@@ -87,12 +87,23 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
 
     const addToCart = async (productId: number, quantity: number) => {
         try {
-            const res = await fetch(`/api/cart/add?productId=${productId}&quantity=${quantity}`, {
+            const token = localStorage.getItem("accessToken");
+            const res = await fetch(`http://localhost:8080/cart/add?productId=${productId}&quantity=${quantity}`, {
                 method: "POST",
-                credentials: "include",
+                mode: "cors",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
             });
+    
             if (res.ok) {
-                await fetchCart();
+                const updatedCart = await res.json();
+                setCart(updatedCart); 
+                console.log("Cart updated:", updatedCart);
+            } else {
+                const errData = await res.json();
+                console.error("Failed to add to cart:", errData);
             }
         } catch (err) {
             console.error("Failed to add to cart:", err);

@@ -10,7 +10,7 @@ function MainPage(): JSX.Element {
     
     return(
         <div className="grid grid-cols-[1fr_3fr]">
-            <MainSidebar user={user} cartItemCount={cart?.items.length ?? 0}  onSelectItem={setSelectedItem} />
+            <MainSidebar user={user} cartItemCount={cart?.items.reduce((t, i) => t + i.quantity, 0) || 0}  onSelectItem={setSelectedItem} />
             <div >
                 <div className="flex flex-col gap-4 w-full">
                     {selectedItem === "Home" && <FeedMain />}

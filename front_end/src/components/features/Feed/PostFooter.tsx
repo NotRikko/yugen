@@ -33,7 +33,7 @@ interface Like {
   }
 
 const PostFooter = ({ post }: PostFooterProps) => {
-    const {user} = useUser();
+    const {user, cart, setCart, addToCart} = useUser();
     const [likes, setLikes] = useState(post.likes ? post.likes.length : 0);
     const [liked, setLiked] = useState(false);
 
@@ -67,25 +67,11 @@ const PostFooter = ({ post }: PostFooterProps) => {
     }
   
     try {
-      const token = localStorage.getItem("accessToken");
-      const response = await fetch(`http://localhost:8080/cart/add?productId=${post.product.id}&quantity=1`, {
-        mode: "cors",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-      });
+      await addToCart(post.product.id, 1);
   
-      if (response.ok) {
-        const cart = await response.json(); 
-        console.log("Updated cart:", cart);
-        alert(`Added ${post.product.name} to your cart! Total items: ${cart.items.length}`);
-      } else {
-        console.error("Failed to add product to cart");
-        const errData = await response.json();
-        console.error(errData);
-      }
+      const totalItems = cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
+  
+      alert(`Added ${post.product.name} to your cart! Total items: ${totalItems}`);
     } catch (error) {
       console.error("Error purchasing product:", error);
     }
