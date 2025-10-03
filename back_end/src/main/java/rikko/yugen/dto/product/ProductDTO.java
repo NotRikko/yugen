@@ -14,7 +14,7 @@ public class ProductDTO {
     private final String name;
     private final String description;
     private final Float price;
-    private final Integer quantity_in_stock;
+    private final Integer quantityInStock;
     private final String image;
     private final ArtistDTO artist;
     private final Set<SeriesDTO> series;
@@ -25,7 +25,7 @@ public class ProductDTO {
         this.name = product.getName();
         this.description = product.getDescription();
         this.price = product.getPrice();
-        this.quantity_in_stock = product.getQuantity_in_stock();
+        this.quantityInStock = product.getQuantityInStock();
         this.image = product.getImage();
         this.artist = product.getArtist() != null ? new ArtistDTO(product.getArtist()) : null;
         this.series = product.getSeries() != null
@@ -59,7 +59,7 @@ public class ProductDTO {
     }
 
     public Integer getQuantityInStock() {
-        return quantity_in_stock;
+        return quantityInStock;
     }
 
     public String getImage() {

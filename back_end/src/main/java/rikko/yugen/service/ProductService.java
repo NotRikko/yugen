@@ -55,7 +55,7 @@ public class ProductService {
         product.setName(productCreateDTO.getName());
         product.setDescription(productCreateDTO.getDescription());
         product.setPrice(productCreateDTO.getPrice());
-        product.setQuantity_in_stock(productCreateDTO.getQuantityInStock());
+        product.setQuantityInStock(productCreateDTO.getQuantityInStock());
         product.setImage(productCreateDTO.getImage());
         product.setArtist(artist);
 

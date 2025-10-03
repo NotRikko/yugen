@@ -19,7 +19,7 @@ public class Product {
     private String name;
     private String description;
     private Float price;
-    private Integer quantity_in_stock;
+    private Integer quantityInStock;
     private String image;
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
