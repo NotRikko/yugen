@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import { useUser } from "@/UserProvider";
 
 interface User {
@@ -75,10 +75,10 @@ export default function UserSidebar({user} : UserProps) {
                   {(user.isGuest ? items : loggedInItems).map((item) => (
                     <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton asChild>
-                            <a href={item.url} className="gap-4">
-                                <item.icon className="scale-125" />
-                                <span className="text-lg">{item.title}</span>
-                            </a>
+                        <Link to={item.url} className="gap-4 flex items-center">
+                          <item.icon className="scale-125" />
+                          <span className="text-lg">{item.title}</span>
+                        </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                     
