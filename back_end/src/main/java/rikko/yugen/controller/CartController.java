@@ -10,7 +10,7 @@ import rikko.yugen.dto.cart.CartDTO;
 import rikko.yugen.service.CartService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "${frontend.url}")
 @RequestMapping("/cart")
 @RequiredArgsConstructor
 public class CartController {

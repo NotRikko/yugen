@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import rikko.yugen.service.ProductService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "${frontend.url}")
 @RequestMapping("/products")
 @RequiredArgsConstructor
 public class ProductController {

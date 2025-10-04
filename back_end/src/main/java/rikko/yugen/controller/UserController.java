@@ -28,7 +28,7 @@ import rikko.yugen.service.AuthenticationService;
 
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "${frontend.url}")
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {

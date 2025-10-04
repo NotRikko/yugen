@@ -15,7 +15,7 @@ import rikko.yugen.dto.follow.FollowDTO;
 import rikko.yugen.service.FollowService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "${frontend.url}")
 @RequestMapping("/follow")
 @RequiredArgsConstructor
 public class FollowController {

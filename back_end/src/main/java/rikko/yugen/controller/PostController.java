@@ -28,7 +28,7 @@ import rikko.yugen.service.ImageService;
 import rikko.yugen.service.CommentService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "${frontend.url}")
 @RequestMapping("/posts")
 @RequiredArgsConstructor
 public class PostController {

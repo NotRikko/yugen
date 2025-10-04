@@ -17,7 +17,7 @@ import rikko.yugen.model.Artist;
 import rikko.yugen.service.ArtistService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "${frontend.url}")
 @RequestMapping("/artists")
 @RequiredArgsConstructor
 public class ArtistController {
