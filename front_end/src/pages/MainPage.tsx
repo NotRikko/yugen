@@ -1,9 +1,9 @@
 import { useState } from "react"
 import { useUser } from "@/UserProvider";
 import FeedMain from "./FeedMain";
-import MainSidebar from "@/components/features/Feed/MainSidebar";
-import SettingsForm from "../components/features/User/SettingsForm";
-import CartPage from "../components/features/User/CartPage";
+import MainSidebar from "@/features/feed/components/MainSidebar";
+import SettingsForm from "../features/user/SettingsForm";
+import CartPage from "../features/user/CartPage";
 
 function MainPage(): JSX.Element {
     const [selectedItem, setSelectedItem] = useState<string>("Home");
