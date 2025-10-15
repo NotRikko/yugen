@@ -41,6 +41,10 @@ public class ProductService {
         return productRepository.findByArtist_ArtistName(artistName);
     }
 
+    public List<Product> getProductsByArtistId(Long artistId) {
+        return productRepository.findByArtistId(artistId);
+    }
+
     public List<Product> getProductsByCollectionName(String collectionName) {
         return productRepository.findByCollections_Name(collectionName);
     }

@@ -13,8 +13,10 @@ import lombok.RequiredArgsConstructor;
 
 import rikko.yugen.dto.artist.ArtistCreateDTO;
 import rikko.yugen.dto.artist.ArtistDTO;
+import rikko.yugen.dto.product.ProductDTO;
 import rikko.yugen.model.Artist;
 import rikko.yugen.service.ArtistService;
+import rikko.yugen.service.ProductService;
 
 @RestController
 @CrossOrigin(origins = "${frontend.url}")
@@ -41,7 +43,12 @@ public class ArtistController {
         .collect(Collectors.toList());
         return ResponseEntity.ok(artistDTOs);
     }
-    
+
+    @GetMapping("/{artistId}/products")
+    public ResponseEntity<List<ProductDTO>> getProductsByArtistId(@PathVariable Long artistId) {
+        List<ProductDTO> products = productService.getProductsByArtist(artistId);
+        return ResponseEntity.ok(products);
+    }
 
     @PostMapping("/create")
     public ResponseEntity<ArtistDTO> createArtist(@RequestBody ArtistCreateDTO artistCreateDTO) {
@@ -51,5 +58,5 @@ public class ArtistController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(artistDTO);
     }
-    
+
 }
