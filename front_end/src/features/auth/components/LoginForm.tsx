@@ -1,15 +1,11 @@
 "use client"
 
-import {
-  useForm
-} from "react-hook-form"
+import { useForm } from "react-hook-form"
 import {
   zodResolver
 } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import {
-  Button
-} from "@/features/ui/button"
+import { Button } from "@/shared/ui/button"
 import {
   Form,
   FormControl,
@@ -18,10 +14,8 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/features/ui/form"
-import {
-  Input
-} from "@/features/ui/input"
+} from "@/shared/ui/form"
+import { Input } from "@/shared/ui/input"
 import { useNavigate } from "react-router-dom"
 import { useUser } from "@/UserProvider"
 

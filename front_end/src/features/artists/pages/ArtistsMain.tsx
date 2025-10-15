@@ -1,4 +1,4 @@
-import Navbar from '../features/layout/Navbar'
+import Navbar from '@/features/layout/Navbar';
 import { useState, useEffect } from 'react'
 
 interface Artist {

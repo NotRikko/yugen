@@ -7,7 +7,7 @@ import {
   import * as z from "zod"
   import {
     Button
-  } from "@/features/ui/button"
+  } from "@/shared/ui/button"
   import {
     Form,
     FormControl,
@@ -15,10 +15,10 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-  } from "@/features/ui/form"
+  } from "@/shared/ui/form"
   import {
     Input
-  } from "@/features/ui/input"
+  } from "@/shared/ui/input"
 import DeleteAccountButton from "./DeleteAccountButton"
 import { useUser } from "@/UserProvider"
   

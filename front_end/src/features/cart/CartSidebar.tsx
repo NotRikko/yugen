@@ -8,10 +8,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/features/ui/sidebar"
- 
-// Menu items.
-const items = [
+} from "@/shared/ui/sidebar"
+
+ const items = [
   {
     title: "Login",
     url: "/login",

@@ -8,7 +8,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/features/ui/sidebar"
+} from "@/shared/ui/sidebar"
 import { useNavigate, Link } from "react-router-dom"
 import { useUser } from "@/UserProvider";
 

@@ -7,9 +7,7 @@ import {
   zodResolver
 } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import {
-  Button
-} from "@/features/ui/button"
+import { Button } from "@/shared/ui/button"
 import {
   Form,
   FormControl,
@@ -18,13 +16,9 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/features/ui/form"
-import {
-  Input
-} from "@/features/ui/input"
-import {
-  Checkbox
-} from "@/features/ui/checkbox"
+} from "@/shared/ui/form"
+import { Input } from "@/shared/ui/input"
+import { Checkbox } from "@/shared/ui/checkbox"
 import { useNavigate } from "react-router-dom"
 
  

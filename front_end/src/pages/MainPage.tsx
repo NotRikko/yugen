@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useUser } from "@/UserProvider";
-import FeedMain from "./FeedMain";
+import FeedMain from "@/features/feed/components/pages/FeedMain";
 import MainSidebar from "@/features/feed/components/MainSidebar";
 import SettingsForm from "../features/user/SettingsForm";
 import CartPage from "../features/user/CartPage";
