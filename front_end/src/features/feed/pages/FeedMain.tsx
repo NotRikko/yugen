@@ -4,7 +4,7 @@ import PostCreate from "@/features/posts/components/PostCreate";
 import PostModal from "@/features/posts/components/PostModal";
 import TrendingArtistsBar from "@/features/feed/components/TrendingArtistsBar";
 import { useFeed } from "../hooks/useFeed";
-import { useArtist } from "@/features/artists/hooks/useArtistdata";
+import { useArtist } from "@/features/artists/hooks/useArtist";
 
 function FeedMain(): JSX.Element {
   const { posts, loading } = useFeed();

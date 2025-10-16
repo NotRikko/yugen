@@ -22,7 +22,7 @@ import {
 import { Textarea } from "@/shared/ui/textarea"
 
 
-import { useUser } from "@/UserProvider";
+import { useUser } from "@/features/user/UserProvider";
 import { useState } from "react"
 
 

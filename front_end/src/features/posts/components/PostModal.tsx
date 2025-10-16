@@ -1,7 +1,7 @@
 import Post from "./Post";
 import PostFooter from "./PostFooter";
 import { useState, useEffect } from "react";
-import { useUser } from "@/UserProvider";
+import { useUser } from "@/features/user/UserProvider";
 
 
 

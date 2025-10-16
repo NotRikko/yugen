@@ -1,6 +1,6 @@
-import { useUser } from "@/UserProvider";
+import { useUser } from "@/features/user/UserProvider";
 import { Outlet } from "react-router-dom";
-import MainSidebar from "@/features/feed/components/MainSidebar";
+import MainSidebar from "@/features/main/MainSidebar";
 
 function MainPage(): JSX.Element {
   const { user, cart } = useUser();

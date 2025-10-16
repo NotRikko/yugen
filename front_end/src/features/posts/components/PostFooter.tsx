@@ -1,6 +1,6 @@
 import { Heart, MessageCircle, ShoppingBag, Share2 } from "lucide-react"
 import { useState } from "react"
-import { useUser } from "@/UserProvider";
+import { useUser } from "@/features/user/UserProvider";
 import type { Post } from "@/features/posts/types/postTypes";
   
   interface PostFooterProps {

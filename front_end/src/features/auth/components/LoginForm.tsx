@@ -17,7 +17,7 @@ import {
 } from "@/shared/ui/form"
 import { Input } from "@/shared/ui/input"
 import { useNavigate } from "react-router-dom"
-import { useUser } from "@/UserProvider"
+import { useUser } from "@/features/user/UserProvider"
 
 
 const formSchema = z.object({
@@ -30,7 +30,7 @@ const formSchema = z.object({
 
 export default function LoginForm() {
     const navigate = useNavigate();
-    const {setUser, setIsLoggedIn} = useUser();
+    const { handleLogin } = useUser();
     const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
@@ -40,50 +40,12 @@ export default function LoginForm() {
     })
    
     async function onSubmit(values: z.infer<typeof formSchema>) {
-      const API_URL = import.meta.env.VITE_API_URL;
-    
       try {
-        const response = await fetch(`${API_URL}/users/login`, {
-          mode: "cors",
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
-        });
-    
-        const data = await response.json();
-        console.log(data);
-        if (!response.ok) {
-          throw new Error(data.message || "Login failed");
-        }
-
-        if (data.token) {
-          localStorage.setItem("accessToken", data.token);
-        }
-
-
-        const token = localStorage.getItem("accessToken");
-    
-        const userResponse = await fetch(`${API_URL}/users/me`, {
-          method: "GET",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-          },
-        });
-    
-        const userData = await userResponse.json();
-    
-        if (!userResponse.ok) {
-          throw new Error(userData.message || "Failed to fetch user data");
-        }
-        localStorage.setItem("user", JSON.stringify(userData));
-        setUser(userData);
-        setIsLoggedIn(true);
-    
-        navigate('/feed');
-      } catch (error) {
-        console.error("Login error:", error);
+        await handleLogin(values.username, values.password);
+        navigate("/feed"); 
+      } catch (err: unknown) {
+        console.error(err);
+        alert(err.message || "Login failed"); 
       }
     }
 
