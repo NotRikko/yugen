@@ -1,9 +1,12 @@
 import { fetchClient } from "@/shared/api/fetchClient";
-import { PartialArtist } from "../types/artistTypes";
+import { PartialArtist, Artist } from "../types/artistTypes";
 import { Post } from ".."
 import { Product } from "../types/productTypes";
 
 export const artistApi = {
+  getArtists: () =>
+    fetchClient<Artist[]>("/artists/", { method: "GET"}),
+
   getById: (artistId: number) =>
     fetchClient<PartialArtist>(`/artists/${artistId}`, { method: "GET" }),
 

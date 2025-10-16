@@ -2,11 +2,13 @@ import { useState } from "react";
 import Post from "@/features/posts/components/Post";
 import PostCreate from "@/features/posts/components/PostCreate";
 import PostModal from "@/features/posts/components/PostModal";
-import FeedTrendingBar from "@/features/feed/components/FeedTrendingBar";
+import TrendingArtistsBar from "@/features/feed/components/TrendingArtistsBar";
 import { useFeed } from "../hooks/useFeed";
+import { useArtist } from "@/features/artists/hooks/useArtistdata";
 
 function FeedMain(): JSX.Element {
     const { posts } = useFeed();
+    const { trendingArtists } = useArtist();
     const [selectedPost, setSelectedPost] = useState<Post | null>(null);
     
     return(
@@ -19,7 +21,7 @@ function FeedMain(): JSX.Element {
                     ))}
                 </div>
             </div>
-            <FeedTrendingBar />
+            <TrendingArtistsBar trendingArtists={trendingArtists} />
             {selectedPost && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                 <div className="bg-white rounded-xl shadow-lg w-11/12 md:w-3/4 lg:w-1/2 relative max-h-[90vh] overflow-y-auto">
