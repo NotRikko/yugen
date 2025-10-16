@@ -9,6 +9,9 @@ import LoginPage from './features/auth/pages/LoginPage.tsx'
 import MainPage from './pages/MainPage.tsx'
 import { UserProvider } from './UserProvider.tsx'
 import { SidebarProvider } from './shared/ui/sidebar.tsx'
+import SettingsForm from './features/user/SettingsForm.tsx'
+import FeedMain from './features/feed/pages/FeedMain.tsx'
+import CartPage from './features/cart/pages/CartPage.tsx'
 
 
 const router = createBrowserRouter([
@@ -30,9 +33,14 @@ const router = createBrowserRouter([
     element: <LoginPage />
   },
   {
-    path: '/feed',
-    element: <MainPage />
-  }
+    path: "/",
+    element: <MainPage />,
+    children: [
+      { path: "feed", element: <FeedMain /> },
+      { path: "settings", element: <SettingsForm /> },
+      { path: 'cart', element: <CartPage /> },
+    ],
+  },
 ])
 
 createRoot(document.getElementById('root')!).render(
