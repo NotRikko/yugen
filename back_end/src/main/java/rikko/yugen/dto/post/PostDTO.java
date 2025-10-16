@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
-
+import java.util.stream.Collectors;
 
 import rikko.yugen.dto.artist.ArtistDTO;
 import rikko.yugen.dto.image.ImageDTO;
@@ -30,6 +30,15 @@ public class PostDTO {
         this.content = post.getContent();
         this.artist = post.getArtist() != null ? new ArtistDTO(post.getArtist()) : null;
         this.product = post.getProduct() != null ? new ProductDTO(post.getProduct()) : null;
+    }
+
+    public static PostDTO fromPost(Post post, Set<LikeDTO> likes) {
+        return new PostDTO(
+                post,
+                likes,
+                post.getImages().stream().map(ImageDTO::new).collect(Collectors.toSet()),
+                post.getComments().stream().map(CommentDTO::new).collect(Collectors.toList())
+        );
     }
 
     //Getters

@@ -2,8 +2,11 @@ package rikko.yugen.repository;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import rikko.yugen.model.Like;
 
@@ -13,4 +16,7 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
     Optional<Like> findByUserIdAndContentIdAndContentType(Long userId, Long contentId, String contentType);
     
     int countByContentIdAndContentType(Long contentId, String contentType);
+
+    @Query("SELECT l FROM Like l WHERE l.contentType = 'POST' AND l.contentId IN :postIds")
+    List<Like> findLikesForPosts(@Param("postIds") List<Long> postIds);
 }

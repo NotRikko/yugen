@@ -1,16 +1,19 @@
 package rikko.yugen.service;
 
 import java.time.LocalDateTime;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import rikko.yugen.repository.PostRepository;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.ProductRepository;
@@ -53,15 +56,28 @@ public class PostService {
         return postRepository.findByArtist_Id(artistId);
     }
 
-    public List<Post> getAllPosts() {
-        return postRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<PostDTO> getAllPosts() {
+        List<Post> posts = postRepository.findAll();
+
+        List<Long> postIds = posts.stream().map(Post::getId).toList();
+
+        List<rikko.yugen.model.Like> likes = likeRepository.findLikesForPosts(postIds);
+
+        Map<Long, Set<LikeDTO>> likesByPost = likes.stream()
+                .collect(Collectors.groupingBy(
+                        l -> l.getContentId(),
+                        Collectors.mapping(LikeDTO::new, Collectors.toSet())
+                ));
+
+        return posts.stream()
+                .map(post -> PostDTO.fromPost(post, likesByPost.getOrDefault(post.getId(), new HashSet<>())))
+                .collect(Collectors.toList());
     }
 
     public PostDTO createPost(PostCreateDTO postCreateDTO, List<MultipartFile> files) {
-        // Save post within a transaction
         Post createdPost = savePost(postCreateDTO);
 
-        // Process images outside the transaction
         Set<ImageDTO> imageDTOs = uploadAndSaveFiles(files, createdPost.getId());
 
         return new PostDTO(createdPost, new HashSet<LikeDTO>(), imageDTOs, new ArrayList<CommentDTO>());

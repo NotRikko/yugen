@@ -41,23 +41,10 @@ public class PostController {
 
     private final ImageService imageService;
 
-   @GetMapping("/all")
+    @GetMapping("/")
     public ResponseEntity<List<PostDTO>> getAllPosts() {
-        List<Post> posts = postService.getAllPosts();
-        
-        List<PostDTO> postDTOs = posts.stream()
-                                      .map(post -> {
-                                          Set<ImageDTO> imageDTOs = imageService.getImagesForPost(post);
-                                          Set<LikeDTO> likeDTOs = likeService.getLikesForPost(post.getId());
-                                          List<CommentDTO> commentDTOs = commentService.getCommentsForPost(post.getId())
-                                                  .stream()
-                                                  .map(CommentDTO::new)
-                                                  .collect(Collectors.toList());
-                                          return new PostDTO(post, likeDTOs, imageDTOs, commentDTOs);
-                                      })
-                                      .collect(Collectors.toList());
-
-        return ResponseEntity.ok(postDTOs);
+        List<PostDTO> posts = postService.getAllPosts();
+        return ResponseEntity.ok(posts);
     }
 
     @GetMapping("/posts/{postId}/comments")
