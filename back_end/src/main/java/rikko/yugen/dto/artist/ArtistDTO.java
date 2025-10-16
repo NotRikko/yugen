@@ -7,12 +7,14 @@ public class ArtistDTO {
     private final Long id;
     private final String artistName;
     private final String profilePictureUrl;
+    private final String bannerPictureUrl;
     private final UserDTO user;
 
     public ArtistDTO(Artist artist) {
         this.id = artist.getId();
         this.artistName = artist.getArtistName();
         this.profilePictureUrl = artist.getprofilePictureUrl();
+        this.bannerPictureUrl = artist.getBannerPictureUrl();
         this.user= artist.getUser() != null ? new UserDTO(artist.getUser()) : null;
     }
 
@@ -28,6 +30,10 @@ public class ArtistDTO {
 
     public String getprofilePictureUrl() {
         return profilePictureUrl;
+    }
+
+    public String getBannerPictureUrl() {
+        return bannerPictureUrl;
     }
 
     public UserDTO getUser() {

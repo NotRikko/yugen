@@ -8,6 +8,7 @@ public class ArtistCreateDTO {
     @NotBlank(message = "Name is required")
     private String artistName;
     private String profilePicureUrl;
+    private String bannerPictureUrl;
 
     @NotBlank(message = "User ID is required")
     private Long userId;

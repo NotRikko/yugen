@@ -1,5 +1,6 @@
 package rikko.yugen.model;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,6 +30,7 @@ public class Artist {
 
     private String bio;
     private String profilePictureUrl;
+    private String bannerPictureUrl;
     
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
@@ -49,4 +51,10 @@ public class Artist {
     @EqualsAndHashCode.Exclude
     private Set<Follow> followers = new HashSet<>();
 
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 }
