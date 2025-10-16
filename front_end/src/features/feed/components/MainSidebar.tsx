@@ -37,6 +37,11 @@ function MainSidebar({user, cartItemCount = 0, onSelectItem} : UserProps & { onS
         url: "/",
         icon: House,
       },
+      {
+        title: "Feed",
+        url: "/feed",
+        icon: House,
+      },
       { title: "Cart", 
         url: "/cart", 
         icon: ShoppingCart, 
