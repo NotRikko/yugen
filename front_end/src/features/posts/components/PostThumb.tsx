@@ -1,19 +1,4 @@
-interface PostThumb {
-    id: number;
-    product: Product;
-
-}
-
-interface Product {
-    id: number;
-    name: string;
-    image: string;
-}
-
-interface Post {
-    id: number;
-    product: Product;
-}
+import type { Post } from "@/features/posts/types/postTypes";
 
 interface PostThumbProps {
     post: Post;
@@ -23,7 +8,7 @@ interface PostThumbProps {
 function PostThumb({ post }: PostThumbProps) {
     return (
         <div className="p-4 border">
-            <img src={post.product.image} alt={post.product.name} />
+            <img src={post.images[0].url} alt={post.content} />
         </div>
     );
 }

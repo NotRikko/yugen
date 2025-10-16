@@ -38,9 +38,9 @@ function ArtistsMain(): JSX.Element {
                         <div className="w-4/5 sm:w-3/4 flex flex-col sm:flex-row items-center">
                         {artists.length > 0 ? (
                             <>
-                                <img className="aspect-square h-3/4" src={artists[0].profilePictureUrl} alt={artists[0].displayName} />
+                                <img className="aspect-square h-3/4" src={artists[0].profilePictureUrl} alt={artists[0].artistName} />
                                 <div className="sm:p-14 flex sm:flex-col gap-4">
-                                    <h3 className="text-2xl">{artists[0].displayName}</h3>
+                                    <h3 className="text-2xl">{artists[0].artistName}</h3>
                                     <p>A short description is a brief summary of a topic that conveys the most important information in a clear and concise way. It can be used for books, movies, products, or other topics.</p>
                                 </div>
                             </>
@@ -71,8 +71,8 @@ function ArtistsMain(): JSX.Element {
                                     }}
                                     
                                 >
-                                    <img src={artist.image} className="aspect-square h-3/4" />
-                                    <h2>{artist.name}</h2>
+                                    <img src={artist.profilePictureUrl} className="aspect-square h-3/4" />
+                                    <h2>{artist.artistName}</h2>
                                 </div>
                             ))}
                         </div>

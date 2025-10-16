@@ -49,7 +49,7 @@ interface PostDetailsProps {
       <div className="w-5/6 h-5/6 mx-auto my-6 p-8 border rounded-2xl shadow-xl bg-white overflow-y-auto">
         <div className="flex items-center gap-4 mb-6">
         <img
-                src={post.artist.image || "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg"}
+                src={post.artist.profilePictureUrl || "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg"}
                 onError={(e) => {
                     e.currentTarget.src = "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg";
                 }}

@@ -4,7 +4,7 @@ const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
 
 type RequestOptions = RequestInit & { auth?: boolean };
 
-export async function fetchClient(
+export async function fetchClient<T>(
     endpoint: string,
     options: RequestOptions = {}
 ) {
@@ -30,5 +30,6 @@ export async function fetchClient(
 
     if (res.status === 204) return null;
 
-    return res.json();
+    return res.json() as Promise<T>;
 };
+

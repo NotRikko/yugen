@@ -1,32 +1,7 @@
 import { Heart, MessageCircle, ShoppingBag, Share2 } from "lucide-react"
 import { useState } from "react"
 import { useUser } from "@/UserProvider";
-
-
-interface Like {
-    userId: number;
-    likedAt: string;
-  }
-  
-  interface Comment {
-    userId: number;
-    content: string;
-    postedAt: string;
-  }
-
-  interface Product {
-    id: number;
-    name: string;
-    price: number;
-  }  
-  
-  interface Post {
-    id: number;
-    content: string;
-    likes: Like[]; 
-    comments: Comment[];
-    product?: Product;
-  }
+import type { Post } from "@/features/posts/types/postTypes";
   
   interface PostFooterProps {
     post: Post;
