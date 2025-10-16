@@ -1,14 +1,9 @@
 import Navbar from '@/features/layout/Navbar';
 import { useState, useEffect } from 'react'
-
-interface Artist {
-    id: number;
-    name: string;
-    image: string;
-}
+import type { PartialArtist } from '../types/artistTypes';
 
 function ArtistsMain(): JSX.Element {
-    const [artists, setArtists] = useState<Artist[]>([
+    const [artists, setArtists] = useState<PartialArtist[]>([
         ]);
         
         useEffect(() => {
@@ -43,9 +38,9 @@ function ArtistsMain(): JSX.Element {
                         <div className="w-4/5 sm:w-3/4 flex flex-col sm:flex-row items-center">
                         {artists.length > 0 ? (
                             <>
-                                <img className="aspect-square h-3/4" src={artists[0].image} alt={artists[0].name} />
+                                <img className="aspect-square h-3/4" src={artists[0].profilePictureUrl} alt={artists[0].displayName} />
                                 <div className="sm:p-14 flex sm:flex-col gap-4">
-                                    <h3 className="text-2xl">{artists[0].name}</h3>
+                                    <h3 className="text-2xl">{artists[0].displayName}</h3>
                                     <p>A short description is a brief summary of a topic that conveys the most important information in a clear and concise way. It can be used for books, movies, products, or other topics.</p>
                                 </div>
                             </>
@@ -72,7 +67,7 @@ function ArtistsMain(): JSX.Element {
                                     key={artist.id}
                                     className="sm:p-6 w-full h-full flex flex-col items-center justify-center"
                                     style={{
-                                        height: '500px', // Ensures all items have the same height
+                                        height: '500px',
                                     }}
                                     
                                 >
