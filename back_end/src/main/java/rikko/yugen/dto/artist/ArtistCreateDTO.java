@@ -7,7 +7,7 @@ public class ArtistCreateDTO {
 
     @NotBlank(message = "Name is required")
     private String artistName;
-    private String image;
+    private String profilePicureUrl;
 
     @NotBlank(message = "User ID is required")
     private Long userId;
@@ -22,12 +22,12 @@ public class ArtistCreateDTO {
         this.artistName = artistName;
     }
 
-    public String getImage() {
-        return image;
+    public String getProfilePicureUrl() {
+        return profilePicureUrl;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setProfilePicureUrl(String profilePicureUrl) {
+        this.profilePicureUrl = profilePicureUrl;
     }
 
     public Long getUserId() {

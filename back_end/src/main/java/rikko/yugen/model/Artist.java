@@ -13,10 +13,10 @@ import lombok.*;
 @AllArgsConstructor
 public class Artist {
 
-    public Artist(String artistName, String bio, String image, User user) {
+    public Artist(String artistName, String bio, String profilePictureUrl, User user) {
         this.artistName = artistName;
         this.bio = bio;
-        this.image = image;
+        this.profilePictureUrl = profilePictureUrl;
         this.user = user;
     }
 
@@ -28,7 +28,7 @@ public class Artist {
     private String artistName;
 
     private String bio;
-    private String image;
+    private String profilePictureUrl;
     
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude

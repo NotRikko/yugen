@@ -6,13 +6,13 @@ import rikko.yugen.model.Artist;
 public class ArtistDTO {
     private final Long id;
     private final String artistName;
-    private final String image;
+    private final String profilePictureUrl;
     private final UserDTO user;
 
     public ArtistDTO(Artist artist) {
         this.id = artist.getId();
         this.artistName = artist.getArtistName();
-        this.image = artist.getImage();
+        this.profilePictureUrl = artist.getprofilePictureUrl();
         this.user= artist.getUser() != null ? new UserDTO(artist.getUser()) : null;
     }
 
@@ -26,8 +26,8 @@ public class ArtistDTO {
         return artistName;
     }
 
-    public String getImage() {
-        return image;
+    public String getprofilePictureUrl() {
+        return profilePictureUrl;
     }
 
     public UserDTO getUser() {
