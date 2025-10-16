@@ -1,33 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Post from "@/features/posts/components/Post";
 import PostCreate from "@/features/posts/components/PostCreate";
 import PostModal from "@/features/posts/components/PostModal";
 import FeedTrendingBar from "@/features/feed/components/FeedTrendingBar";
+import { useFeed } from "../hooks/useFeed";
 
 function FeedMain(): JSX.Element {
-    const [posts, setPosts] = useState<Post[]>([]);
+    const { posts } = useFeed();
     const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-
-    useEffect(() => {
-        const fetchPosts = async () => {
-            const API_URL = import.meta.env.VITE_API_URL;
-            try {
-                const postsResponse = await fetch(`${API_URL}/posts/all`, { mode: "cors"});
-
-                if (!postsResponse.ok) {
-                    throw new Error("Issue with network response")
-                }
-
-                const postsData = await postsResponse.json()
-                console.log(postsData);
-                setPosts(postsData);
-            } catch (error) {
-                console.error("Error fetching posts", error)
-            }
-         
-        };
-        fetchPosts();
-    }, [])
     
     return(
         <div className="grid grid-cols-[2fr_1fr]">
