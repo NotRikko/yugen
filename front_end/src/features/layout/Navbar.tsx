@@ -4,8 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { NavLink } from 'react-router-dom';
 import { useUser } from "@/UserProvider";
 import UserSidebar from '../user/UserSidebar';
-import CartSidebar from '../cart/CartSidebar';
-
+import CartSidebar from '../cart/components/CartSidebar';
 
 function Navbar() {
     const { user } = useUser();

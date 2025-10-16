@@ -3,8 +3,7 @@ import { useUser } from "@/UserProvider";
 import FeedMain from "@/features/feed/pages/FeedMain";
 import MainSidebar from "@/features/feed/components/MainSidebar";
 import SettingsForm from "../features/user/SettingsForm";
-import CartPage from "../features/user/CartPage";
-
+import CartPage from "@/features/cart/pages/CartPage";
 function MainPage(): JSX.Element {
     const [selectedItem, setSelectedItem] = useState<string>("Home");
     const {user, cart} = useUser();

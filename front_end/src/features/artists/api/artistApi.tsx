@@ -1,6 +1,6 @@
 import { fetchClient } from "@/shared/api/fetchClient";
 import { PartialArtist, Artist } from "../types/artistTypes";
-import { Post } from ".."
+import { Post } from "@/features/posts/types/postTypes";
 import { Product } from "../types/productTypes";
 
 export const artistApi = {
