@@ -54,6 +54,7 @@ interface PostDetailsProps {
                     e.currentTarget.src = "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg";
                 }}
                 className="w-14 h-14 rounded-full object-cover"
+                alt="Post image"
             />
           <p className="text-blue-600 text-lg font-semibold">
             {post.artist.artistName}

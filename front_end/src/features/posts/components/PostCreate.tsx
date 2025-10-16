@@ -1,13 +1,7 @@
-import {
-  useForm
-} from "react-hook-form"
-import {
-  zodResolver
-} from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import {
-  Button
-} from "@/shared/ui/button"
+import { Button } from "@/shared/ui/button"
 import {
   Form,
   FormControl,
@@ -16,16 +10,12 @@ import {
   FormItem,
   FormMessage,
 } from "@/shared/ui/form"
-import {
-  Input
-} from "@/shared/ui/input"
+import { Input } from "@/shared/ui/input"
 import { Textarea } from "@/shared/ui/textarea"
-
 
 import { useUser } from "@/features/user/UserProvider";
 import { useState } from "react"
-
-
+import { postApi } from "../api/postApi";
 
 const formSchema = z.object({
     content: z.string().max(280, "Post content must be at most 280 characters"),
@@ -58,40 +48,19 @@ export default function PostCreate() {
     }
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        const API_URL = import.meta.env.VITE_API_URL;
-
         try {
-            const formData = new FormData();
-            
-            const postData = {
-                artistId: user.artistId,
-                content: values.content,
-                productId: values.productId ?? null,
-            };
-            formData.append("post", new Blob([JSON.stringify(postData)], { type: "application/json" }));
-    
-            if (values.files && values.files.length > 0) {
-                values.files.forEach((file) => {
-                    formData.append("files", file);
-                });
-            }
-    
-            const response = await fetch(`${API_URL}/posts/create`, {
-                mode: "cors",
-                method: "POST",
-                body: formData,
-            });
-    
-            if (!response.ok) {
-                throw new Error("Failed to create post");
-            }
-            
-            console.log("Post created successfully");
-    
+          await postApi.createPost({
+            artistId: user.artistId,
+            content: values.content,
+            productId: values.productId ?? null,
+            files: values.files,
+          });
+      
+          console.log("Post created successfully");
         } catch (error) {
-            console.error("Error creating post", error);
+          console.error("Error creating post", error);
         }
-    }
+      }
     return (
         <Form {...form} >
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 w-5/6 mx-auto p-4 border rounded-lg shadow-md bg-white">
