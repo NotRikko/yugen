@@ -1,0 +1,35 @@
+import CartItem from "../components/CartItem";
+import { useCart } from "../hooks/useCart";
+
+const CartPage: React.FC = () => {
+  const { cart, handleUpdateQuantity, handleRemove, totalPrice } = useCart();
+
+  return (
+    <div className="p-4">
+      <h2 className="text-2xl font-bold mb-4">Your Cart</h2>
+      {cart && cart.items.length > 0 ? (
+        <div className="flex flex-col gap-4">
+          {cart.items.map((item) => (
+            <CartItem
+              key={item.productId}
+              productId={item.productId}
+              name={item.product?.name || "Product"}
+              price={item.product?.price || 0}
+              quantity={item.quantity}
+              image={item.product?.image}
+              onUpdateQuantity={handleUpdateQuantity}
+              onRemove={handleRemove}
+            />
+          ))}
+          <div className="flex justify-end mt-4 text-xl font-semibold">
+            Total: ${totalPrice.toFixed(2)}
+          </div>
+        </div>
+      ) : (
+        <p>Your cart is empty.</p>
+      )}
+    </div>
+  );
+};
+
+export default CartPage;
