@@ -25,6 +25,7 @@ import rikko.yugen.service.ProductService;
 public class ArtistController {
 
     private final ArtistService artistService;
+    private final ProductService productService;
 
     @GetMapping("/artist")
     public ResponseEntity<Artist> getArtist(@RequestParam String artistName) {
@@ -37,16 +38,19 @@ public class ArtistController {
 
     @GetMapping("/all")
     public ResponseEntity<List<ArtistDTO>> getAllArtists() {
-        List<ArtistDTO> artistDTOs = artistService.getAllArtists()
+        List<ArtistDTO> artists = artistService.getAllArtists()
         .stream()
         .map(ArtistDTO::new)
         .collect(Collectors.toList());
-        return ResponseEntity.ok(artistDTOs);
+        return ResponseEntity.ok(artists);
     }
 
     @GetMapping("/{artistId}/products")
     public ResponseEntity<List<ProductDTO>> getProductsByArtistId(@PathVariable Long artistId) {
-        List<ProductDTO> products = productService.getProductsByArtist(artistId);
+        List<ProductDTO> products = productService.getProductsByArtistId(artistId)
+                .stream()
+                .map(ProductDTO::new)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(products);
     }
 

@@ -13,7 +13,7 @@ public class ArtistDTO {
     public ArtistDTO(Artist artist) {
         this.id = artist.getId();
         this.artistName = artist.getArtistName();
-        this.profilePictureUrl = artist.getprofilePictureUrl();
+        this.profilePictureUrl = artist.getProfilePictureUrl();
         this.bannerPictureUrl = artist.getBannerPictureUrl();
         this.user= artist.getUser() != null ? new UserDTO(artist.getUser()) : null;
     }
@@ -28,7 +28,7 @@ public class ArtistDTO {
         return artistName;
     }
 
-    public String getprofilePictureUrl() {
+    public String getProfilePictureUrl() {
         return profilePictureUrl;
     }
 

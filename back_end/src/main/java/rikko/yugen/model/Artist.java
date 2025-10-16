@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,10 +17,11 @@ import lombok.*;
 @AllArgsConstructor
 public class Artist {
 
-    public Artist(String artistName, String bio, String profilePictureUrl, User user) {
+    public Artist(String artistName, String bio, String profilePictureUrl, String bannerProfilePictureUrl, User user) {
         this.artistName = artistName;
         this.bio = bio;
         this.profilePictureUrl = profilePictureUrl;
+        this.bannerPictureUrl = bannerProfilePictureUrl;
         this.user = user;
     }
 
@@ -31,6 +35,13 @@ public class Artist {
     private String bio;
     private String profilePictureUrl;
     private String bannerPictureUrl;
+
+    @Column(updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
     
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
@@ -50,11 +61,4 @@ public class Artist {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Follow> followers = new HashSet<>();
-
-    @CreationTimestamp
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 }

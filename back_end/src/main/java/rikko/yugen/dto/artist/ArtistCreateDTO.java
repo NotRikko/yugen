@@ -7,7 +7,7 @@ public class ArtistCreateDTO {
 
     @NotBlank(message = "Name is required")
     private String artistName;
-    private String profilePicureUrl;
+    private String profilePictureUrl;
     private String bannerPictureUrl;
 
     @NotBlank(message = "User ID is required")
@@ -23,13 +23,17 @@ public class ArtistCreateDTO {
         this.artistName = artistName;
     }
 
-    public String getProfilePicureUrl() {
-        return profilePicureUrl;
+    public String getProfilePictureUrl() {
+        return profilePictureUrl;
     }
 
-    public void setProfilePicureUrl(String profilePicureUrl) {
-        this.profilePicureUrl = profilePicureUrl;
+    public void setProfilePictureUrl(String profilePictureUrl) {
+        this.profilePictureUrl = profilePictureUrl;
     }
+
+    public String getBannerPictureUrl() { return bannerPictureUrl; }
+
+    public void setBannerPictureUrl(String bannerPictureUrl) { this.bannerPictureUrl = bannerPictureUrl; }
 
     public Long getUserId() {
         return userId;

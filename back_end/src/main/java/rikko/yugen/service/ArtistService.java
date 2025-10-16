@@ -42,7 +42,8 @@ public class ArtistService {
 
         Artist artist = new Artist();
         artist.setArtistName(artistCreateDTO.getArtistName());
-        artist.setImage(artistCreateDTO.getImage());
+        artist.setProfilePictureUrl(artistCreateDTO.getProfilePictureUrl());
+        artist.setBannerPictureUrl(artistCreateDTO.getBannerPictureUrl());
         artist.setUser(user); 
 
         return artistRepository.save(artist);
