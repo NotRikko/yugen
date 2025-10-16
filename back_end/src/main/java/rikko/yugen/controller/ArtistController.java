@@ -36,7 +36,7 @@ public class ArtistController {
         return ResponseEntity.ok(artist);
     }
 
-    @GetMapping("/all")
+    @GetMapping("/")
     public ResponseEntity<List<ArtistDTO>> getAllArtists() {
         List<ArtistDTO> artists = artistService.getAllArtists()
         .stream()
