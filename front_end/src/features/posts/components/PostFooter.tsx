@@ -1,6 +1,7 @@
 import { Heart, MessageCircle, ShoppingBag, Share2 } from "lucide-react"
 import { useState } from "react"
 import { useUser } from "@/features/user/UserProvider";
+import { useCartHook } from "@/features/cart/hooks/useCart";
 import type { Post } from "@/features/posts/types/postTypes";
 import { postApi } from "../api/postApi";
 
@@ -10,6 +11,7 @@ interface PostFooterProps {
 
 const PostFooter = ({ post }: PostFooterProps) => {
     const { user } = useUser();
+    const { handleAddToCart } = useCartHook();
     const [likes, setLikes] = useState(post.likes ? post.likes.length : 0);
     const [liked, setLiked] = useState(false);
 
@@ -38,8 +40,7 @@ const PostFooter = ({ post }: PostFooterProps) => {
     }
   
     try {
-      await addToCart(post.product.id, 1);
-    
+      await handleAddToCart(post.product.id, 1);
     } catch (error) {
       console.error("Error purchasing product:", error);
     }

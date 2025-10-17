@@ -1,7 +1,6 @@
 import { createContext, ReactNode, useContext } from "react";
 import { useUserHook } from "./hooks/useUser";
-import { useCartHook } from "./hooks/useCart";
-
+import { useCartHook } from "@/features/cart/hooks/useCart";
 type UserHook = ReturnType<typeof useUserHook>;
 type CartHook = ReturnType<typeof useCartHook>;
 

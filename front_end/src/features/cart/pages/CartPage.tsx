@@ -1,8 +1,7 @@
 import CartItem from "../components/CartItem";
-import { useCart } from "../hooks/useCart";
-
+import { useCartHook } from "../hooks/useCart";
 const CartPage: React.FC = () => {
-  const { cart, handleUpdateQuantity, handleRemove, totalPrice } = useCart();
+  const { cart, handleUpdateQuantity, handleRemove, totalPrice } = useCartHook();
 
   return (
     <div className="p-4">

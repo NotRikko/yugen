@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
-import { User, Cart } from "../types/userTypes";
-import { userApi } from "../api/userApi";
+import type { User } from "../types/userTypes";
+import type { Cart } from "@/features/cart/types/cartTypes";
+import { userApi } from "../api/userApi"; 
+import { cartApi } from "@/features/cart/api/cartApi";
 
 const guestUser: User = {
   id: 0,
@@ -73,7 +75,7 @@ export const useUserHook = () => {
         const data = await userApi.getCurrentUser();
         if (data) setUser(data);
         setIsLoggedIn(true);
-        const cartData = await userApi.getCart();
+        const cartData = await cartApi.getCart();
         setCart(cartData);
       } catch (err) {
         console.error(err);
