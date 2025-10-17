@@ -10,9 +10,15 @@ export const artistApi = {
   getById: (artistId: number) =>
     fetchClient<PartialArtist>(`/artists/${artistId}`, { method: "GET" }),
 
-  getPosts: (artistId: number) =>
+  getByArtistName: (artistName: string) =>
+    fetchClient<PartialArtist>(`/artists/${artistName}`, { method: "GET" }),
+
+  getPostsById: (artistId: number) =>
     fetchClient<Post[]>(`/artists/${artistId}/posts`, { method: "GET" }),
 
+  getPostsByArtistName: (artistName: string) =>
+    fetchClient<Post[]>(`/artists/${artistName}/posts`, { method: "GET" }),
+  
   getProducts: (artistId: number) =>
     fetchClient<Product[]>(`/artists/${artistId}/products`, { method: "GET" }),
 

@@ -2,6 +2,7 @@ import Post from "./Post";
 import PostFooter from "./PostFooter";
 import { useState, useEffect } from "react";
 import { useUser } from "@/features/user/UserProvider";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -9,6 +10,13 @@ interface PostDetailsProps {
     post: Post;
   }
   function PostModal({ post }: PostDetailsProps) {
+    const navigate = useNavigate();
+
+    const handleArtistClick = (e: React.MouseEvent) => {
+      e.stopPropagation(); 
+      navigate(`/artist/${post.artist.artistName}`);
+    };
+
     const { user } = useUser(); 
     const currentUserId = user?.id;
     
@@ -48,15 +56,16 @@ interface PostDetailsProps {
     return (
       <div className="w-5/6 h-5/6 mx-auto my-6 p-8 border rounded-2xl shadow-xl bg-white overflow-y-auto">
         <div className="flex items-center gap-4 mb-6">
-        <img
-                src={post.artist.profilePictureUrl || "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg"}
-                onError={(e) => {
-                    e.currentTarget.src = "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg";
-                }}
-                className="w-14 h-14 rounded-full object-cover"
-                alt="Post image"
+        <img    
+            onClick={handleArtistClick}
+            src={post.artist.profilePictureUrl || "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg"}
+            onError={(e) => {
+                e.currentTarget.src = "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg";
+            }}
+            className="w-14 h-14 rounded-full object-cover"
+            alt="Post image"
             />
-          <p className="text-blue-600 text-lg font-semibold">
+          <p onClick={handleArtistClick} className="text-blue-600 text-lg font-semibold">
             {post.artist.artistName}
           </p>
           <button

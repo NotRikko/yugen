@@ -56,6 +56,23 @@ public class PostService {
         return postRepository.findByArtist_Id(artistId);
     }
 
+    public List<PostDTO> getPostsByArtistName(String artistName) {
+        List<Post> posts = postRepository.findByArtist_ArtistName(artistName);
+
+        List<Long> postIds = posts.stream().map(Post::getId).toList();
+
+        List<rikko.yugen.model.Like> likes = likeRepository.findLikesForPosts(postIds);
+
+        Map<Long, Set<LikeDTO>> likesByPost = likes.stream()
+                .collect(Collectors.groupingBy(
+                        l -> l.getContentId(),
+                        Collectors.mapping(LikeDTO::new, Collectors.toSet())
+                ));
+        return posts.stream()
+                .map(post -> PostDTO.fromPost(post, likesByPost.getOrDefault(post.getId(), new HashSet<>())))
+                .collect(Collectors.toList());
+    }
+
     @Transactional(readOnly = true)
     public List<PostDTO> getAllPosts() {
         List<Post> posts = postRepository.findAll();

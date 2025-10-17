@@ -14,9 +14,11 @@ import lombok.RequiredArgsConstructor;
 import rikko.yugen.dto.artist.ArtistCreateDTO;
 import rikko.yugen.dto.artist.ArtistDTO;
 import rikko.yugen.dto.product.ProductDTO;
+import rikko.yugen.dto.post.PostDTO;
 import rikko.yugen.model.Artist;
 import rikko.yugen.service.ArtistService;
 import rikko.yugen.service.ProductService;
+import rikko.yugen.service.PostService;
 
 @RestController
 @CrossOrigin(origins = "${frontend.url}")
@@ -26,6 +28,16 @@ public class ArtistController {
 
     private final ArtistService artistService;
     private final ProductService productService;
+    private final PostService postService;
+
+    @GetMapping("/")
+    public ResponseEntity<List<ArtistDTO>> getAllArtists() {
+        List<ArtistDTO> artists = artistService.getAllArtists()
+                .stream()
+                .map(ArtistDTO::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(artists);
+    }
 
     @GetMapping("/artist")
     public ResponseEntity<Artist> getArtist(@RequestParam String artistName) {
@@ -36,13 +48,15 @@ public class ArtistController {
         return ResponseEntity.ok(artist);
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<ArtistDTO>> getAllArtists() {
-        List<ArtistDTO> artists = artistService.getAllArtists()
-        .stream()
-        .map(ArtistDTO::new)
-        .collect(Collectors.toList());
-        return ResponseEntity.ok(artists);
+    @GetMapping("/{artistName}")
+    public ResponseEntity<ArtistDTO> getArtistByArtistName(@PathVariable String artistName) {
+       ArtistDTO artist = artistService.getArtistByArtistName(artistName);
+       return ResponseEntity.ok(artist);
+    }
+
+    @GetMapping("/{artistName}/posts")
+    public List<PostDTO> getPostsByArtistName(@PathVariable String artistName) {
+        return postService.getPostsByArtistName(artistName);
     }
 
     @GetMapping("/{artistId}/products")

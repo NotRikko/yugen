@@ -12,6 +12,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @EntityGraph(attributePaths = {"images", "artist", "product"})
     List<Post> findAll();
     List<Post> findByArtist_Id(Long artistId);
+    List<Post> findByArtist_ArtistName(String artistName);
     List<Post> findByProduct(Product product);
     List<Post> findByProductId(Long productId);
 }

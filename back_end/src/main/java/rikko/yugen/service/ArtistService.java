@@ -1,5 +1,7 @@
 package rikko.yugen.service;
 
+import lombok.RequiredArgsConstructor;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,21 +11,31 @@ import jakarta.transaction.Transactional;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.UserRepository;
 import rikko.yugen.dto.artist.ArtistCreateDTO;
+import rikko.yugen.dto.artist.ArtistDTO;
 import rikko.yugen.model.Artist;
 import rikko.yugen.model.User;
 
 @Service
+@RequiredArgsConstructor
 public class ArtistService {
     
-    @Autowired
-    private ArtistRepository artistRepository;
+    private final ArtistRepository artistRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    public Artist getArtistById(Long id) {
+        return artistRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Artist not found with id: " + id));
+    }
 
     public Artist getArtistByName(String artistName) {
         return artistRepository.findByArtistName(artistName)
             .orElseThrow(() -> new RuntimeException("Artist not found with name: " + artistName));
+    }
+
+    public ArtistDTO getArtistByArtistName(String artistName) {
+        Artist artist = artistRepository.findByArtistName(artistName)
+                .orElseThrow(() -> new RuntimeException("Artist not found with name: " + artistName));
+        return new ArtistDTO(artist);
     }
 
     public List<Artist> getAllArtists() {
