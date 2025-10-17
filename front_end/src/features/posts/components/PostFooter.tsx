@@ -9,7 +9,7 @@ interface PostFooterProps {
 }
 
 const PostFooter = ({ post }: PostFooterProps) => {
-    const {user, addToCart} = useUser();
+    const { user } = useUser();
     const [likes, setLikes] = useState(post.likes ? post.likes.length : 0);
     const [liked, setLiked] = useState(false);
 
