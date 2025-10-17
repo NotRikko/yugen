@@ -1,11 +1,6 @@
 import { Artist } from "@/features/artists/types/artistTypes";
 import { Product } from "@/features/products/types/productTypes";
-
-export interface Comment {
-  userId: number;
-  content: string;
-  postedAt: string;
-}
+import { PartialComment } from "@/features/comments/types/commentTypes";
 
 export interface Like {
   userId: number;
@@ -24,7 +19,7 @@ export interface Post {
   product?: Product;
   likes: Like[];
   images: Image[];
-  comments: Comment[];
+  comments: PartialComment[];
 }
 
 export interface PostProps {

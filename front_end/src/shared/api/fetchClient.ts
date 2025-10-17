@@ -7,29 +7,32 @@ type RequestOptions = RequestInit & { auth?: boolean };
 export async function fetchClient<T>(
     endpoint: string,
     options: RequestOptions = {}
-) {
+  ) {
     const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-        ...(options.headers as Record<string, string>),
-        };
-
+      ...(options.headers as Record<string, string>),
+    };
+  
+    if (!(options.body instanceof FormData)) {
+      headers["Content-Type"] = "application/json";
+    }
+  
     if (options.auth) {
-        const token = tokenService.get();
-        if (token) headers.Authorization = `Bearer ${token}`;
+      const token = tokenService.get();
+      if (token) headers.Authorization = `Bearer ${token}`;
     }
-
+  
     const res = await fetch(`${BASE_URL}${endpoint}`, {
-        ...options,
-        headers,
+      ...options,
+      headers,
     });
-
+  
     if (!res.ok) {
-        const message = await res.text();
-        throw new Error(message || `Request failed: ${res.status}`);
+      const message = await res.text();
+      throw new Error(message || `Request failed: ${res.status}`);
     }
-
-    if (res.status === 204) return null;
-
+  
+    if (res.status === 204) return null
+  
     return res.json() as Promise<T>;
-};
+  }
 
