@@ -1,3 +1,4 @@
+import { fetchClient } from "@/shared/api/fetchClient";
 import { Post } from "../types/postTypes";
 
 export const postApi = {
@@ -37,4 +38,13 @@ export const postApi = {
     
         return response.json() as Promise<Post>;
       },
+      likePost: (postId: number, userId: number) =>
+        fetchClient<{ likes: number; liked: boolean }>(
+          `/posts/${postId}/like`,
+          {
+            method: "POST",
+            body: JSON.stringify({ userId }),
+            auth: true,
+          }
+        ),
 }

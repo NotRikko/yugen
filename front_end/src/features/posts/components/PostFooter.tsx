@@ -2,10 +2,11 @@ import { Heart, MessageCircle, ShoppingBag, Share2 } from "lucide-react"
 import { useState } from "react"
 import { useUser } from "@/features/user/UserProvider";
 import type { Post } from "@/features/posts/types/postTypes";
-  
-  interface PostFooterProps {
-    post: Post;
-  }
+import { postApi } from "../api/postApi";
+
+interface PostFooterProps {
+  post: Post;
+}
 
 const PostFooter = ({ post }: PostFooterProps) => {
     const {user, addToCart} = useUser();
@@ -13,28 +14,22 @@ const PostFooter = ({ post }: PostFooterProps) => {
     const [liked, setLiked] = useState(false);
 
     const handleLike = async () => {
-      const API_URL = import.meta.env.VITE_API_URL;
+      if (!user) return;
+    
       try {
-          const response = await fetch(`${API_URL}/posts/${post.id}/like`, {
-              mode: "cors",
-              method: "POST",
-              headers: {
-                  "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ userId: user.id }),
-          });
-
-          if (response.ok) {
-              const data = await response.json();
-              setLikes(data.likes); 
-              setLiked(data.liked); 
-          } else {
-              console.error("Failed to update like");
-          }
+        const data = await postApi.likePost(post.id, user.id);
+    
+        if (!data) {
+          console.error("No data returned from likePost");
+          return;
+        }
+    
+        setLikes(data.likes);
+        setLiked(data.liked);
       } catch (error) {
-          console.error("Error liking post:", error);
+        console.error("Error liking post:", error);
       }
-  };
+    };
 
   const handlePurchase = async () => {
     if (!post.product) {
