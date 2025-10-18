@@ -60,7 +60,7 @@ export default function PostCreate() {
         } catch (error) {
           console.error("Error creating post", error);
         }
-      }
+    }
     return (
         <Form {...form} >
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 w-5/6 mx-auto p-4 border rounded-lg shadow-md bg-white">

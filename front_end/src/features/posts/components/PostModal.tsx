@@ -1,10 +1,10 @@
 import Post from "./Post";
 import PostFooter from "./PostFooter";
+import CommentSection from "@/features/comments/components/CommentSection";
+import CommentCreate from "@/features/comments/components/CommentCreate";
 import { useState, useEffect } from "react";
 import { useUser } from "@/features/user/UserProvider";
 import { useNavigate } from "react-router-dom";
-
-
 
 interface PostDetailsProps {
     post: Post;
@@ -108,22 +108,10 @@ interface PostDetailsProps {
         )}
   
         <PostFooter post={post} />
-  
+        
         <div className="mt-8">
-          <h3 className="font-semibold text-lg text-gray-700 mb-4">Comments</h3>
-          {post.comments.length === 0 ? (
-            <p className="text-gray-500 text-base">No comments yet.</p>
-          ) : (
-            <ul className="space-y-5">
-              {post.comments.map((c, i) => (
-                <li key={i} className="border-b pb-3">
-                  <p className="text-base font-semibold">User {c.userId}</p>
-                  <p className="text-gray-700 text-base">{c.content}</p>
-                  <p className="text-sm text-gray-400">{c.postedAt}</p>
-                </li>
-              ))}
-            </ul>
-          )}
+          <CommentCreate postId={post.id} />
+          <CommentSection postId={post.id} comments={post.comments} />
         </div>
       </div>
     );
