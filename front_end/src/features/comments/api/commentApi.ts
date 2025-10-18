@@ -2,31 +2,18 @@ import { fetchClient } from "@/shared/api/fetchClient";
 import { PartialComment } from "../types/commentTypes";
 
 export const commentApi = {
-  createComment: async (data: {
+  createPostComment: async (data: {
     userId: number | null;
     postId: number;
     content: string;
-    files?: File[];
   }): Promise<PartialComment> => {
-    const formData = new FormData();
 
-    const commentData = {
-      userId: data.userId,
-      postId: data.postId,
-      content: data.content,
-    };
-    formData.append(
-      "post",
-      new Blob([JSON.stringify(commentData)], { type: "application/json" })
-    );
-
-    if (data.files && data.files.length > 0) {
-      data.files.forEach((file) => formData.append("files", file));
-    }
-
-    const result = await fetchClient<PartialComment>("/comments/create", {
+    const result = await fetchClient<PartialComment>("/comments/post", {
       method: "POST",
-      body: formData,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
       auth: true,
     });
 

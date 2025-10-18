@@ -15,3 +15,8 @@ export interface User {
   isGuest: boolean;
 }
 
+export interface PartialUser {
+  displayName: string;
+  image: string;
+}
+

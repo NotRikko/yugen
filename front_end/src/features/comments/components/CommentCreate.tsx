@@ -43,15 +43,15 @@ export default function CommentCreate( { postId } : CommentCreateProps) {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
-            await commentApi.createComment({
+            await commentApi.createPostComment({
             userId: user.id,
             postId,
             content: values.content,
             });
         
-            console.log("Post created successfully");
+            console.log("Comment created successfully");
         } catch (error) {
-            console.error("Error creating post", error);
+            console.error("Error creating comment", error);
         }
     }
 
