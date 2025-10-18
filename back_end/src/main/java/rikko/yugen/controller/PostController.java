@@ -49,13 +49,9 @@ public class PostController {
 
     @GetMapping("/posts/{postId}/comments")
     public ResponseEntity<List<CommentDTO>> getComments(@PathVariable Long postId) {
-        List<Comment> comments = commentService.getCommentsForPost(postId);
+        List<CommentDTO> comments = commentService.getCommentsByPostId(postId);
 
-        List<CommentDTO> commentDTOs = comments.stream()
-                .map(CommentDTO::new)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(commentDTOs);
+        return ResponseEntity.ok(comments);
     }
 
     @PostMapping(value = "/create", consumes = {"multipart/form-data"})
@@ -83,27 +79,6 @@ public class PostController {
         try {
             int updatedLikes = likeService.toggleLike(postId, userId);
             return ResponseEntity.ok(Map.of("likes", updatedLikes));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        }
-    }
-
-    @PostMapping("/{postId}/comment")
-    public ResponseEntity<?> createComment(@PathVariable Long postId, @RequestBody CommentRequestDTO request) {
-        Long userId = request.getUserId();
-        String content = request.getContent();
-
-       if (userId == null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "User ID is required"));
-        }
-
-        if (content == null || content.isBlank()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Content required"));
-        }
-        try {
-            CommentDTO createdComment = commentService.addComment(postId, userId, content);
-            return ResponseEntity.ok(createdComment);
-
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }

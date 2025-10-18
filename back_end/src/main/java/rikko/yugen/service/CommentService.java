@@ -8,8 +8,11 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
+
 import jakarta.transaction.Transactional;
 import rikko.yugen.dto.comment.CommentDTO;
+import rikko.yugen.dto.comment.CommentCreateDTO;
 import rikko.yugen.model.Comment;
 import rikko.yugen.model.User;
 import rikko.yugen.model.Post;
@@ -18,34 +21,43 @@ import rikko.yugen.repository.UserRepository;
 import rikko.yugen.repository.PostRepository;
 
 @Service
+@RequiredArgsConstructor
 public class CommentService {
-    @Autowired
-    private CommentRepository commentRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
 
-    @Autowired
-    private PostRepository postRepository;
-
-    public List<Comment> getCommentsForPost(Long postId) {
+    public List<CommentDTO> getCommentsByPostId(Long postId) {
         List<Comment> comments = commentRepository.findByPostId(postId);
-        return comments;
+        return comments.stream()
+                .map(CommentDTO::new)
+                .toList();
     }
 
-    @Transactional
-    public CommentDTO addComment(Long postId, Long userId, String content) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("No user found"));
+    public List<CommentDTO> getCommentsByUserId(Long userId) {
+        List<Comment> comments = commentRepository.findByUserId(userId);
+        return comments.stream()
+                .map(CommentDTO::new)
+                .toList();
+    }
 
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
+    @Transactional
+    public CommentDTO createComment(CommentCreateDTO dto) {
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("No user found with ID " + dto.getUserId()));
+
+        Post post = postRepository.findById(dto.getPostId())
+                .orElseThrow(() -> new IllegalArgumentException("Post not found with ID " + dto.getPostId()));
 
         Comment comment = new Comment();
         comment.setUser(user);
         comment.setPost(post);
-        comment.setContent(content);
+        comment.setContent(dto.getContent());
+
         Comment saved = commentRepository.save(comment);
+
         return new CommentDTO(saved);
     }
 }
