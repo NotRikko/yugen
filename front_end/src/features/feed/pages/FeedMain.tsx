@@ -13,7 +13,7 @@ function FeedMain(): JSX.Element {
 
   return (
     <div className="grid grid-cols-[2fr_1fr] h-screen">
-      <div className="flex flex-col items-center mx-4 xl:mx-12 my-12 w-full overflow-y-auto">
+      <div className="flex flex-col items-center px-4 xl:px-12 my-12 w-full overflow-y-auto">
         <div className="flex flex-col gap-4 w-full">
           <PostCreate />
           {loading ? (
