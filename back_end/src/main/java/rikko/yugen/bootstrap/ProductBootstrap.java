@@ -29,11 +29,13 @@ public class ProductBootstrap {
             Product p1 = new Product();
             p1.setName("Cool Poster");
             p1.setPrice(19.99f);
+            p1.setImage("https://pbs.twimg.com/media/GzhOWSpWcAAxTrI.png");
             p1.setArtist(artists.get(0));
 
             Product p2 = new Product();
             p2.setName("Art Print");
             p2.setPrice(29.99f);
+            p2.setImage("https://pbs.twimg.com/media/GzhOWSpWcAAxTrI.png");
             p2.setArtist(artists.get(1));
 
             productRepository.saveAll(List.of(p1, p2));
