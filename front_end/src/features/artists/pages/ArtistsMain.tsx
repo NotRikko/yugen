@@ -1,4 +1,3 @@
-import Navbar from '@/features/layout/Navbar';
 import { useState, useEffect } from 'react'
 import type { PartialArtist } from '../types/artistTypes';
 
@@ -30,7 +29,6 @@ function ArtistsMain(): JSX.Element {
 
     return (
         <>
-            <Navbar/>
             <div className="sm:w-full h-full flex flex-col gap-6">
                 <div className="h-full self-center flex flex-col items-center w-full">
                     <div className="flex flex-col items-center gap-16 h-full sm:p-28">

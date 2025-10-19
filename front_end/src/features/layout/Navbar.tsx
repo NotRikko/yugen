@@ -69,7 +69,7 @@ function Navbar() {
                         <ul className="flex flex-col  md:text-xl mr-10">
                             <li>Feed</li>
                             <NavLink to="/collections"><li>Collections</li></NavLink>
-                            <NavLink to="/artists"><li>Artists</li></NavLink>
+                            <NavLink to="/artist/artists"><li>Artists</li></NavLink>
                             <li onClick={handleViewingAccountBar}><AccountCircleIcon/></li>
                             <li><ShoppingBagIcon/></li>
                         </ul>
@@ -79,7 +79,7 @@ function Navbar() {
                 ) : (
                     <ul className="flex justify-end gap-x-9 md:text-xl mr-10 items-center">
                         <NavLink to="/feed"><li>Feed</li></NavLink>
-                        <NavLink to="/artists"><li>Artists</li></NavLink>
+                        <NavLink to="/artist/artists"><li>Artists</li></NavLink>
                         <li onClick={handleViewingAccountBar}><AccountCircleIcon sx={{ fontSize: 28 }}/></li>
                         <li onClick={handleViewingCartBar}><ShoppingBagIcon sx={{ fontSize: 28 }}/></li>
                     </ul>

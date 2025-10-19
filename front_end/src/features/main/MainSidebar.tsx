@@ -42,6 +42,10 @@ function MainSidebar({ user, cartItemCount = 0, handleLogout }: UserProps) {
     items.push({ title: "Settings", url: "/settings", icon: Settings });
   }
 
+  if (!user.isGuest && (user as any).artistId) {
+    items.push({ title: "Dashboard", url: "/artist/dashboard", icon: House });
+  }
+
   return (
     <Sidebar
       side="left"
