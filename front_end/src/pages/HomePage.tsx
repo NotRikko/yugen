@@ -1,7 +1,7 @@
 import MainNewRelease from "../features/main/MainNewRelease"
 import MainPopularPieces from "../features/main/MainPopularPieces"
 import MainTrending from '../features/main/MainTrending'
-import Navbar from "../features/layout/Navbar"
+import Navbar from "../shared/components/Navbar"
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import { useState } from "react"

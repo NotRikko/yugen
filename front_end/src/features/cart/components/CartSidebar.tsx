@@ -1,60 +1,45 @@
-import { Calendar,  Inbox, } from "lucide-react"
- 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from "@/shared/ui/sidebar"
+import { useUser } from "@/features/user/UserProvider";
+import { X } from "lucide-react";
 
- const items = [
-  {
-    title: "Login",
-    url: "/login",
-    icon: Inbox,
-  },
-  {
-    title: "Signup",
-    url: "/signup",
-    icon: Calendar,
-  },
-]
- 
-export default function CartSidebar() {
-    return (
-      <div className="fixed">
-        <Sidebar className="w-1/6">
-            <SidebarContent>
-            <SidebarGroup>
-                <SidebarGroupContent className="flex flex-col justify-center p-3">
-                    <img 
-                        src="https://i.pinimg.com/236x/05/3b/e5/053be564a7a436ce2846acb98849ea1b.jpg"
-                        className="mx-6 my-3"
-                    />
-                    <h1 className="text-lg mx-6">Cart</h1>
-                </SidebarGroupContent>
-            </SidebarGroup>
-            <SidebarGroup>
-                <SidebarGroupContent className="mx-4 p-3">
-                <SidebarMenu>
-                    {items.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton asChild>
-                        <a href={item.url}>
-                            <item.icon />
-                            <span>{item.title}</span>
-                        </a>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    ))}
-                </SidebarMenu>
-                </SidebarGroupContent>
-            </SidebarGroup>
-            </SidebarContent>
-        </Sidebar>
-      </div>  
-    )
+interface CartSidebarProps {
+  onClose: () => void;
+}
+
+export default function CartSidebar({ onClose }: CartSidebarProps) {
+  const { cart } = useUser();
+
+  return (
+    <div className="w-full min-h-screen bg-white px-8 py-8">
+      <div className="flex justify-between items-center p-4 border-b">
+        <h2 className="text-xl font-semibold">Your Cart</h2>
+        <button onClick={onClose}>
+          <X className="w-6 h-6" />
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        {cart?.items.length ? (
+          cart.items.map((item) => (
+            <div key={item.productId} className="flex justify-between items-center border-b pb-2">
+              <div className="flex flex-col">
+                <span className="font-medium">{item.product.name}</span>
+                <span className="text-sm text-gray-500">Qty: {item.quantity}</span>
+              </div>
+              <span className="font-semibold">${(item.product.price * item.quantity).toFixed(2)}</span>
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-500">Your cart is empty</p>
+        )}
+      </div>
+
+      {cart?.items.length ? (
+        <div className="p-4 border-t">
+          <button className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
+            Checkout
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
 }

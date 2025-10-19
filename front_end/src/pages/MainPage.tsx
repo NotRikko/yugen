@@ -1,13 +1,13 @@
 import { useUser } from "@/features/user/UserProvider";
 import { Outlet } from "react-router-dom";
-import { House, Bookmark, Mail, Bell, Settings, Users, ShoppingCart } from "lucide-react";
-import MainNav from "@/features/main/MainNav";
+import { House, Bookmark, Mail, Bell, Settings, Users, ShoppingCart, Newspaper } from "lucide-react";
+import MainNav from "@/shared/components/MainNav";
 function MainPage(): JSX.Element {
   const { user, cart } = useUser();
   const cartItemCount = cart?.items.reduce((t, i) => t + i.quantity, 0) || 0;
   const items = [
     { title: "Home", url: "/", icon: House },
-    { title: "Feed", url: "/feed", icon: House },
+    { title: "Feed", url: "/feed", icon: Newspaper },
     { title: "Cart", url: "/cart", icon: ShoppingCart, badge: cartItemCount },
     { title: "Notifications", url: "/notifications", icon: Bell },
     { title: "Following", url: "/following", icon: Users },

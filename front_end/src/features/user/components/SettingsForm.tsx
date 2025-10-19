@@ -46,90 +46,93 @@ export default function SignupForm() {
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8  mx-auto py-8">
-        <div className="grid grid-cols-12 gap-4">
-          <div className="col-span-6">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input 
-                    placeholder="Username"
-                    
-                    type="text"
-                    {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+    <div className="p-12">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8  mx-auto py-8">
+          <div className="grid grid-cols-12 gap-4">
+            <div className="col-span-6">
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input 
+                      placeholder="Username"
+                      
+                      type="text"
+                      {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="col-span-6">
+              <FormField
+                control={form.control}
+                name="displayName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Display Name</FormLabel>
+                    <FormControl>
+                      <Input 
+                      placeholder="Display"
+                      
+                      type="text"
+                      {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          
           </div>
-          <div className="col-span-6">
-            <FormField
-              control={form.control}
-              name="displayName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Display Name</FormLabel>
-                  <FormControl>
-                    <Input 
-                    placeholder="Display"
-                    
-                    type="text"
-                    {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input 
+                  placeholder="email@gmail.com"
+                  type="email"
+                  {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+                      control={form.control}
+                      name="file"
+                      render={({ field }) => (
+                          <FormItem>
+                          <FormControl>
+                              <Input
+                              type="file"
+                              accept="image/*"
+                              multiple
+                              onChange={(e) => {
+                                const file = e.target.files ? e.target.files[0] : undefined;  
+                                field.onChange(file);
+                              }}
+                              />
+                          </FormControl>
+                          <FormMessage />
+                          </FormItem>
+                      )}
+                  />
+          <div className="flex flex-col space-y-4 items-center w-full">
+            <Button type="submit" className="w-1/3">Submit</Button>
+            <DeleteAccountButton />
           </div>
-        
-        </div>
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input 
-                placeholder="email@gmail.com"
-                type="email"
-                {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-                    control={form.control}
-                    name="file"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormControl>
-                            <Input
-                            type="file"
-                            accept="image/*"
-                            multiple
-                            onChange={(e) => {
-                              const file = e.target.files ? e.target.files[0] : undefined;  
-                              field.onChange(file);
-                            }}
-                            />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                />
-        <div className="flex flex-col space-y-4 items-center w-full">
-          <Button type="submit" className="w-1/3">Submit</Button>
-          <DeleteAccountButton />
-        </div>
-      </form>
-    </Form>
+        </form>
+      </Form>
+    </div>
+
   )
 }
