@@ -15,14 +15,14 @@ export const useCartHook = () => {
     setCart(updated);
   };
 
-  const handleUpdateQuantity = async (productId: number, quantity: number) => {
+  const handleUpdateQuantity = async (cartItemId: number, quantity: number) => {
     if (quantity <= 0) return;
-    const updated = await cartApi.updateCartItem(productId, quantity);
+    const updated = await cartApi.updateCartItem(cartItemId, quantity);
     setCart(updated);
   };
 
-  const handleRemove = async (productId: number) => {
-    const updated = await cartApi.removeFromCart(productId);
+  const handleRemove = async (cartItemId: number) => {
+    const updated = await cartApi.removeFromCart(cartItemId);
     setCart(updated);
   };
 

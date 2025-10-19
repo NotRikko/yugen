@@ -5,7 +5,7 @@ const CartPage: React.FC = () => {
   const { cart, handleUpdateQuantity, handleRemove, totalPrice } = useCartHook();
   console.log(cart);
   return (
-    <div className="p-8">
+    <div className="py-12 px-24">
       <h2 className="text-2xl font-bold mb-4">Your Cart</h2>
 
       {cart && cart.items.length > 0 ? (

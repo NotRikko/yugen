@@ -4,111 +4,93 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.ResponseEntity;
 
 import jakarta.validation.Valid;
-
 import lombok.RequiredArgsConstructor;
 
-import rikko.yugen.dto.user.LoginResponseDTO;
-import rikko.yugen.dto.user.UserCreateDTO;
-import rikko.yugen.dto.user.UserDTO;
-import rikko.yugen.dto.user.UserLoginDTO;
-import rikko.yugen.dto.user.UserUpdateDTO;
-
+import rikko.yugen.dto.user.*;
 import rikko.yugen.model.LoginResponse;
 import rikko.yugen.model.User;
-
-import rikko.yugen.service.UserService;
-import rikko.yugen.service.JwtService;
-import rikko.yugen.service.AuthenticationService;
-
+import rikko.yugen.service.*;
 
 @RestController
 @CrossOrigin(origins = "${frontend.url}")
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
-    
+
     private final UserService userService;
-
     private final JwtService jwtService;
-
     private final AuthenticationService authenticationService;
 
+    // ✅ Public: fetch a user by username (no authentication needed)
     @GetMapping("/user")
     public ResponseEntity<User> getUser(@RequestParam String username) {
         User user = userService.getUserByUsername(username);
         if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with name:" + username);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + username);
         }
         return ResponseEntity.ok(user);
     }
 
+    // ✅ Authenticated: get currently logged-in user
     @GetMapping("/me")
-    public ResponseEntity<UserDTO> getAuthenticatedUser(@RequestHeader("Authorization") String token) {
-        String jwtToken = token.startsWith("Bearer ") ? token.substring(7) : token;
-
-        String username = jwtService.extractUsername(jwtToken); 
-
-        User user = userService.getUserByUsername(username);
-
+    public ResponseEntity<UserDTO> getAuthenticatedUser(@AuthenticationPrincipal User user) {
         if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Authenticated user not found");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
         }
-
-        UserDTO userDTO = new UserDTO(user);
-        return ResponseEntity.ok(userDTO);
+        return ResponseEntity.ok(new UserDTO(user));
     }
 
+    // ✅ Public: get all users (optional — could be restricted)
     @GetMapping("/all")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> userDTOs = userService.getAllUsers()
-        .stream()
-        .map(UserDTO::new)
-        .collect(Collectors.toList());
+                .stream()
+                .map(UserDTO::new)
+                .collect(Collectors.toList());
         return ResponseEntity.ok(userDTOs);
     }
 
+    // ✅ Public: register user
     @PostMapping("/create")
-    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO ) {
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
         User createdUser = userService.createUser(userCreateDTO);
-        UserDTO userDTO = new UserDTO(createdUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UserDTO(createdUser));
     }
 
+    // ✅ Public: login (returns JWT)
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> authenticate(@RequestBody UserLoginDTO userLoginDTO) {
         User authenticatedUser = authenticationService.authenticate(userLoginDTO);
-
         String jwtToken = jwtService.generateToken(authenticatedUser);
 
         LoginResponse loginResponse = new LoginResponse();
         loginResponse.setToken(jwtToken);
         loginResponse.setExpiresIn(jwtService.getExpirationTime());
 
-        LoginResponseDTO loginResponseDTO = new LoginResponseDTO(loginResponse);
-        return ResponseEntity.ok(loginResponseDTO);
+        return ResponseEntity.ok(new LoginResponseDTO(loginResponse));
     }
 
+    // ✅ Authenticated: update user (multipart)
     @PatchMapping(value = "update/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<UserDTO> updateUser(
-        @PathVariable long id, 
-        @RequestPart("patch") UserUpdateDTO userUpdateDTO,
-        @RequestPart(value="file", required = false) MultipartFile file) {
-        
+            @PathVariable long id,
+            @RequestPart("patch") UserUpdateDTO userUpdateDTO,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) {
         User updatedUser = userService.updateUser(id, userUpdateDTO, file);
-    
-        UserDTO updatedUserDTO = new UserDTO(updatedUser);
-
-        return ResponseEntity.ok(updatedUserDTO);
+        return ResponseEntity.ok(new UserDTO(updatedUser));
     }
 
-    @DeleteMapping(value="delete/{id}")
-    public ResponseEntity<String> deleteUser( @PathVariable Long id ) {
+    // ✅ Authenticated: delete user
+    @DeleteMapping(value = "delete/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.ok("{\"message\": \"Deleted User\"}");
     }

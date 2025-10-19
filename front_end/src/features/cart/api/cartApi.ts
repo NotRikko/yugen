@@ -10,14 +10,14 @@ export const cartApi = {
       auth: true,
     }),
 
-  updateCartItem: (productId: number, quantity: number) =>
-    fetchClient<Cart>(`/cart/update?productId=${productId}&quantity=${quantity}`, {
+  updateCartItem: (cartItemId: number, quantity: number) =>
+    fetchClient<Cart>(`/cart/update?cartItemId=${cartItemId}&quantity=${quantity}`, {
       method: "PATCH",
       auth: true,
     }),
 
-  removeFromCart: (productId: number) =>
-    fetchClient<Cart>(`/cart/remove?productId=${productId}`, {
+  removeFromCart: (cartItemId: number) =>
+    fetchClient<Cart>(`/cart/remove?cartItemId=${cartItemId}`, {
       method: "DELETE",
       auth: true,
     }),
