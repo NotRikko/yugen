@@ -5,23 +5,29 @@ import rikko.yugen.model.Product;
 import rikko.yugen.dto.product.ProductDTO;
 
 public class CartItemDTO {
-    private final Long id;
-    private final ProductDTO product;
+    private final Long id;  // NEW
+    private final Long productId;
+    private final String productName;
     private final int quantity;
 
-    public CartItemDTO(CartItem item) {
-        this.id = item.getId();
-        this.product = item.getProduct() != null ? new ProductDTO(item.getProduct()) : null;
-        this.quantity = item.getQuantity();
+    public CartItemDTO(CartItem cartItem) {
+        this.id = cartItem.getId();  // map the CartItem's ID
+        this.productId = cartItem.getProduct().getId();
+        this.productName = cartItem.getProduct().getName();
+        this.quantity = cartItem.getQuantity();
     }
 
     // Getters
-    public Long getId() {
+    public Long getCartId() {
         return id;
     }
 
-    public ProductDTO getProduct() {
-        return product;
+    public Long getProductId() {
+        return productId;
+    }
+
+    public String getProductName() {
+        return productName;
     }
 
     public int getQuantity() {

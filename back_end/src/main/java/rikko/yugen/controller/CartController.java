@@ -1,11 +1,8 @@
 package rikko.yugen.controller;
 
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import rikko.yugen.model.Cart;
 import rikko.yugen.dto.cart.CartDTO;
 import rikko.yugen.service.CartService;
 
@@ -19,38 +16,34 @@ public class CartController {
 
     @GetMapping
     public ResponseEntity<CartDTO> getCart() {
-        Cart cart = cartService.getOrCreateCart();
-        return ResponseEntity.ok(new CartDTO(cart));
+        CartDTO cart = cartService.getOrCreateCart();
+        return ResponseEntity.ok(cart);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<CartDTO> addItem(@RequestParam Long productId, @RequestParam int quantity) {
-        Cart cart = cartService.addItem(productId, quantity);
-        return ResponseEntity.ok(new CartDTO(cart));
+    public ResponseEntity<CartDTO> addItem(@RequestParam Long productId,
+                                           @RequestParam int quantity) {
+        CartDTO cart = cartService.addItem(productId, quantity);
+        return ResponseEntity.ok(cart);
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<CartDTO> updateItem(@RequestParam Long productId, @RequestParam int quantity) {
-        Cart cart = cartService.updateItem(productId, quantity);
-        return ResponseEntity.ok(new CartDTO(cart));
+    public ResponseEntity<CartDTO> updateItem(@RequestParam Long cartItemId,
+                                              @RequestParam int quantity) {
+        CartDTO cart = cartService.updateItem(cartItemId, quantity);
+        return ResponseEntity.ok(cart);
     }
 
     @DeleteMapping("/remove")
-    public ResponseEntity<CartDTO> removeItem(@RequestParam Long productId) {
-        Cart cart = cartService.removeItem(productId);
-        return ResponseEntity.ok(new CartDTO(cart));
+    public ResponseEntity<CartDTO> removeItem(@RequestParam Long cartItemId) {
+        CartDTO cart = cartService.removeItem(cartItemId);
+        return ResponseEntity.ok(cart);
     }
 
     @PostMapping("/clear")
     public ResponseEntity<CartDTO> clearCart() {
-        Cart cart = cartService.clearCart();
-        return ResponseEntity.ok(new CartDTO(cart));
-    }
-
-    @PostMapping("/merge")
-    public ResponseEntity<CartDTO> mergeGuestCart(@RequestBody Cart guestCart) {
-        Cart cart = cartService.mergeGuestCart(guestCart);
-        return ResponseEntity.ok(new CartDTO(cart));
+        CartDTO cart = cartService.clearCart();
+        return ResponseEntity.ok(cart);
     }
 
     @PostMapping("/checkout")

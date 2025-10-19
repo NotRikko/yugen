@@ -4,13 +4,19 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import rikko.yugen.model.Cart;
 import rikko.yugen.model.CartItem;
 import rikko.yugen.model.Product;
 import rikko.yugen.model.User;
+
+import rikko.yugen.dto.cart.CartDTO;
+
 import rikko.yugen.repository.CartRepository;
 import rikko.yugen.repository.ProductRepository;
 import rikko.yugen.repository.UserRepository;
+
+import rikko.yugen.service.CartItemService;
 
 import java.util.Optional;
 
@@ -21,6 +27,7 @@ public class CartService {
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final CartItemService cartItemService;
 
     private User getCurrentUser() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -31,82 +38,81 @@ public class CartService {
     }
 
     @Transactional
-    public Cart getOrCreateCart() {
+    public CartDTO getOrCreateCart() {
         User user = getCurrentUser();
-        return cartRepository.findByUserId(user.getId())
+        Cart cart = cartRepository.findByUserId(user.getId())
                 .orElseGet(() -> {
-                    Cart cart = new Cart();
-                    cart.setUser(user);
-                    return cartRepository.save(cart);
+                    Cart newCart = new Cart();
+                    newCart.setUser(user);
+                    return cartRepository.save(newCart);
                 });
+
+        return new CartDTO(cart);
     }
 
     @Transactional
-    public Cart addItem(Long productId, int quantity) {
-        Cart cart = getOrCreateCart();
+    public CartDTO addItem(Long productId, int quantity) {
+        Cart cart = getOrCreateCartEntity();
 
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        Optional<CartItem> existingItem = cart.getItems().stream()
+        cartItemService.getItemsByCartId(cart.getId()).stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
-                .findFirst();
+                .findFirst()
+                .ifPresentOrElse(
+                        item -> {
+                            item.setQuantity(item.getQuantity() + quantity);
+                            cartItemService.save(item);
+                        },
+                        () -> {
+                            CartItem newItem = new CartItem();
+                            newItem.setCart(cart);
+                            newItem.setProduct(product);
+                            newItem.setQuantity(quantity);
+                            cartItemService.save(newItem);
+                        }
+                );
 
-        if (existingItem.isPresent()) {
-            existingItem.get().setQuantity(existingItem.get().getQuantity() + quantity);
-        } else {
-            CartItem item = new CartItem();
-            item.setCart(cart);
-            item.setProduct(product);
-            item.setQuantity(quantity);
-            cart.getItems().add(item);
-        }
-
-        return cartRepository.save(cart);
+        return new CartDTO(cartRepository.findById(cart.getId()).get());
     }
 
     @Transactional
-    public Cart updateItem(Long productId, int quantity) {
+    public CartDTO updateItem(Long cartItemId, int quantity) {
         if (quantity < 1) throw new RuntimeException("Quantity must be at least 1");
 
-        Cart cart = getOrCreateCart();
-
-        CartItem item = cart.getItems().stream()
-                .filter(i -> i.getProduct().getId().equals(productId))
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("Item not found in cart"));
+        CartItem item = cartItemService.getItemById(cartItemId)
+                .orElseThrow(() -> new RuntimeException("Cart item not found"));
 
         item.setQuantity(quantity);
+        cartItemService.save(item);
 
-        return cartRepository.save(cart);
+        Cart cart = item.getCart();
+        return new CartDTO(cart);
     }
 
     @Transactional
-    public Cart removeItem(Long productId) {
-        Cart cart = getOrCreateCart();
-        cart.getItems().removeIf(item -> item.getProduct().getId().equals(productId));
-        return cartRepository.save(cart);
+    public CartDTO removeItem(Long cartItemId) {
+        CartItem item = cartItemService.getItemById(cartItemId)
+                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+
+        Cart cart = item.getCart();
+        cartItemService.delete(cartItemId);
+
+        return new CartDTO(cart);
     }
 
     @Transactional
-    public Cart clearCart() {
-        Cart cart = getOrCreateCart();
-        cart.getItems().clear();
-        return cartRepository.save(cart);
-    }
-
-    @Transactional
-    public Cart mergeGuestCart(Cart guestCart) {
-        Cart userCart = getOrCreateCart();
-        for (CartItem guestItem : guestCart.getItems()) {
-            addItem(guestItem.getProduct().getId(), guestItem.getQuantity());
-        }
-        return userCart;
+    public CartDTO clearCart() {
+        Cart cart = getOrCreateCartEntity();
+        cartItemService.getItemsByCartId(cart.getId())
+                .forEach(item -> cartItemService.delete(item.getId()));
+        return new CartDTO(cart);
     }
 
     @Transactional
     public String checkout() {
-        Cart cart = getOrCreateCart();
+        Cart cart = getOrCreateCartEntity();
 
         if (cart.getItems().isEmpty()) {
             return "Your cart is empty.";
@@ -135,9 +141,19 @@ public class CartService {
             return "Checkout failed:\n" + messages.toString();
         }
 
-        cart.getItems().clear();
-        cartRepository.save(cart);
+        cartItemService.getItemsByCartId(cart.getId())
+                .forEach(item -> cartItemService.delete(item.getId()));
 
         return "Checkout successful! Your order has been placed.";
+    }
+
+    private Cart getOrCreateCartEntity() {
+        User user = getCurrentUser();
+        return cartRepository.findByUserId(user.getId())
+                .orElseGet(() -> {
+                    Cart newCart = new Cart();
+                    newCart.setUser(user);
+                    return cartRepository.save(newCart);
+                });
     }
 }
