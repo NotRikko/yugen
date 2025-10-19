@@ -18,6 +18,9 @@ import rikko.yugen.repository.UserRepository;
 
 import rikko.yugen.service.CartItemService;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import java.util.Optional;
 
 @Service
@@ -30,23 +33,24 @@ public class CartService {
     private final CartItemService cartItemService;
 
     private User getCurrentUser() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof User) {
-            return (User) principal;
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new RuntimeException("User not authenticated");
         }
+
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof User user) {
+            return user;
+        }
+
         throw new RuntimeException("User not authenticated");
     }
 
     @Transactional
     public CartDTO getOrCreateCart() {
-        User user = getCurrentUser();
-        Cart cart = cartRepository.findByUserId(user.getId())
-                .orElseGet(() -> {
-                    Cart newCart = new Cart();
-                    newCart.setUser(user);
-                    return cartRepository.save(newCart);
-                });
-
+        Cart cart = getOrCreateCartEntity();
         return new CartDTO(cart);
     }
 
@@ -74,7 +78,7 @@ public class CartService {
                         }
                 );
 
-        return new CartDTO(cartRepository.findById(cart.getId()).get());
+        return new CartDTO(cart);
     }
 
     @Transactional
@@ -87,8 +91,7 @@ public class CartService {
         item.setQuantity(quantity);
         cartItemService.save(item);
 
-        Cart cart = item.getCart();
-        return new CartDTO(cart);
+        return new CartDTO(item.getCart());
     }
 
     @Transactional
@@ -97,8 +100,7 @@ public class CartService {
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));
 
         Cart cart = item.getCart();
-        cartItemService.delete(cartItemId);
-
+        cart.getItems().remove(item);
         return new CartDTO(cart);
     }
 
