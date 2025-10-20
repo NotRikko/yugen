@@ -47,38 +47,38 @@ export default function SignupForm() {
         isArtist: false,
       },
     })
-   
-    async function onSubmit(values: z.infer<typeof formSchema>) {
-      const API_URL = import.meta.env.VITE_API_URL;
 
-      try {
-        const response = await fetch(`${API_URL}/users/create`, {
-          mode: "cors",
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
+async function onSubmit(values: z.infer<typeof formSchema>) {
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  try {
+    const response = await fetch(`${API_URL}/users/create`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      if (data.fieldErrors && typeof data.fieldErrors === "object") {
+        Object.entries(data.fieldErrors).forEach(([field, message]) => {
+          if (field in values) {
+            form.setError(field as keyof typeof values, { type: "server", message: message as string });
+          }
         });
-    
-        const data = await response.json();
-    
-        if (!response.ok) {
-          Object.entries(data).forEach(([field, message]) => {
-            if (form.getFieldState(field as keyof typeof values)) {
-              form.setError(field as keyof typeof values, { type: "server", message: message as string });
-            } else {
-              form.setError("username", { type: "server", message: data.error || "Signup failed" });
-            }
-          });
-          return;
-        }
-    
-        navigate('/login')
-      } catch (error) {
-        console.error("Signup error:", error);
+      } else {
+        form.setError("username", { type: "server", message: data?.message || "Signup failed" });
       }
+      return;
     }
+
+    navigate("/login");
+  } catch (error: any) {
+    console.error("Signup error:", error);
+    form.setError("username", { type: "server", message: error?.message || "Signup failed" });
+  }
+}
 
     return (
       <Form {...form}>
