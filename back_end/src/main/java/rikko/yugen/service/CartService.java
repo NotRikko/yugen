@@ -75,9 +75,10 @@ public class CartService {
                             newItem.setProduct(product);
                             newItem.setQuantity(quantity);
                             cartItemService.save(newItem);
+
+                            cart.getItems().add(newItem);
                         }
                 );
-
         return new CartDTO(cart);
     }
 

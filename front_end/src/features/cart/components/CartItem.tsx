@@ -3,7 +3,7 @@ import type { CartItem } from "../types/cartTypes";
 interface CartItemProps {
   item: CartItem;
   onUpdateQuantity: (productId: number, newQuantity: number) => void;
-  onRemove: (productId: number) => void;
+  onRemove: (cartItemId: number) => void;
 }
   
 const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQuantity, onRemove }) => {

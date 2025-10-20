@@ -1,9 +1,11 @@
 import { useUser } from "@/features/user/UserProvider";
+import { useCart } from "@/features/cart/CartProvider";
 import { Outlet } from "react-router-dom";
 import { House, Bookmark, Mail, Bell, Settings, Users, ShoppingCart, Newspaper } from "lucide-react";
 import MainNav from "@/shared/components/MainNav";
 function MainPage(): JSX.Element {
-  const { user, cart } = useUser();
+  const { user } = useUser();
+  const { cart } = useCart();
   const cartItemCount = cart?.items.reduce((t, i) => t + i.quantity, 0) || 0;
   const items = [
     { title: "Home", url: "/", icon: House },

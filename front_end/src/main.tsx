@@ -15,6 +15,7 @@ import SettingsForm from './features/user/components/SettingsForm.tsx';
 import FeedMain from './features/feed/pages/FeedMain.tsx';
 import CartPage from './features/cart/pages/CartPage.tsx';
 import ArtistDashBoard from './features/artists/pages/ArtistDashBoard.tsx';
+import { CartProvider } from './features/cart/CartProvider.tsx';
 
 
 const router = createBrowserRouter([
@@ -53,9 +54,11 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <UserProvider>
-      <SidebarProvider className="!block">
-        <RouterProvider router={router} />
-      </SidebarProvider>
+      <CartProvider>
+        <SidebarProvider className="!block">
+          <RouterProvider router={router} />
+        </SidebarProvider>
+      </CartProvider>
     </UserProvider>
   </StrictMode>,
 )

@@ -1,8 +1,7 @@
 import CartItem from "../components/CartItem";
-import { useCartHook } from "../hooks/useCart";
-
+import { useCart } from "../CartProvider";
 const CartPage: React.FC = () => {
-  const { cart, handleUpdateQuantity, handleRemove, totalPrice } = useCartHook();
+  const { cart, updateQuantity, removeFromCart, totalPrice } = useCart();
   console.log(cart);
   return (
     <div className="py-12 px-24">
@@ -14,8 +13,8 @@ const CartPage: React.FC = () => {
             <CartItem
               key={item.productId}
               item={item} 
-              onUpdateQuantity={handleUpdateQuantity}
-              onRemove={handleRemove}
+              onUpdateQuantity={updateQuantity}
+              onRemove={removeFromCart}
             />
           ))}
 

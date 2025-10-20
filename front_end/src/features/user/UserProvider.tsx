@@ -1,8 +1,7 @@
 import { createContext, ReactNode, useContext } from "react";
 import { useUserHook } from "./hooks/useUser";
-import { useCartHook } from "@/features/cart/hooks/useCart";
+
 type UserHook = ReturnType<typeof useUserHook>;
-type CartHook = ReturnType<typeof useCartHook>;
 
 interface UserContextType {
   user: UserHook["user"];
@@ -10,23 +9,12 @@ interface UserContextType {
   isLoggedIn: UserHook["isLoggedIn"];
   handleLogin: UserHook["handleLogin"];
   handleLogout: UserHook["handleLogout"];
-  cart: CartHook["cart"];
-  handleAddToCart: CartHook["handleAddToCart"];
-  handleUpdateQuantity: CartHook["handleUpdateQuantity"];
-  handleRemove: CartHook["handleRemove"];
-  handleClearCart: CartHook["handleClearCart"];
-  totalPrice: CartHook["totalPrice"];
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
-interface Props {
-  children: ReactNode;
-}
-
-export const UserProvider = ({ children }: Props) => {
+export const UserProvider = ({ children }: { children: ReactNode }) => {
   const user = useUserHook();
-  const cart = useCartHook();
 
   return (
     <UserContext.Provider
@@ -36,12 +24,6 @@ export const UserProvider = ({ children }: Props) => {
         isLoggedIn: user.isLoggedIn,
         handleLogin: user.handleLogin,
         handleLogout: user.handleLogout,
-        cart: cart.cart,
-        handleAddToCart: cart.handleAddToCart,
-        handleUpdateQuantity: cart.handleUpdateQuantity,
-        handleRemove: cart.handleRemove,
-        handleClearCart: cart.handleClearCart,
-        totalPrice: cart.totalPrice,
       }}
     >
       {children}

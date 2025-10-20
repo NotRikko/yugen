@@ -10,23 +10,23 @@ export const useCartHook = () => {
     setCart(data);
   };
 
-  const handleAddToCart = async (productId: number, quantity: number) => {
+  const addToCart = async (productId: number, quantity: number) => {
     const updated = await cartApi.addToCart(productId, quantity);
     setCart(updated);
   };
 
-  const handleUpdateQuantity = async (cartItemId: number, quantity: number) => {
+  const updateQuantity = async (cartItemId: number, quantity: number) => {
     if (quantity <= 0) return;
     const updated = await cartApi.updateCartItem(cartItemId, quantity);
     setCart(updated);
   };
 
-  const handleRemove = async (cartItemId: number) => {
+  const removeFromCart = async (cartItemId: number) => {
     const updated = await cartApi.removeFromCart(cartItemId);
     setCart(updated);
   };
 
-  const handleClearCart = async () => {
+  const clearCart = async () => {
     const updated = await cartApi.clearCart();
     setCart(updated);
   };
@@ -38,5 +38,5 @@ export const useCartHook = () => {
     fetchCart();
   }, []);
 
-  return { cart, fetchCart, handleAddToCart, handleUpdateQuantity, handleRemove, handleClearCart, totalPrice };
+  return { cart, totalPrice, fetchCart, addToCart, updateQuantity, removeFromCart, clearCart };
 };
