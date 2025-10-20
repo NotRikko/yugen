@@ -7,6 +7,10 @@ import org.springframework.web.server.ResponseStatusException;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+
+import rikko.yugen.exception.MultipleFieldValidationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -59,14 +63,18 @@ public class UserService {
 
     @Transactional
     public User createUser(UserCreateDTO userCreateDTO) {
+        Map<String, String> errors = new HashMap<>();
+
         userRepository.findByUsername(userCreateDTO.getUsername())
-                .ifPresent(u -> {
-                    throw new UserAlreadyExistsException("User with username '" + u.getUsername() + "' already exists.");
-                });
+                .ifPresent(u -> errors.put("username", "User with username '" + u.getUsername() + "' already exists."));
+
         userRepository.findByEmail(userCreateDTO.getEmail())
-                .ifPresent(u -> {
-                    throw new EmailAlreadyExistsException("User with email '" + u.getEmail() + "' already exists.");
-                });
+                .ifPresent(u -> errors.put("email", "User with email '" + u.getEmail() + "' already exists."));
+
+        if (!errors.isEmpty()) {
+            throw new MultipleFieldValidationException(errors);
+        }
+
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String hashedPassword = passwordEncoder.encode(userCreateDTO.getPassword());
 

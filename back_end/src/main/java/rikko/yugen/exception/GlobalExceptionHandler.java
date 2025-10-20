@@ -34,22 +34,55 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
             errors.put(error.getField(), error.getDefaultMessage());
         }
-        return ResponseEntity.badRequest().body(errors);
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Validation failed",
+                HttpStatus.BAD_REQUEST.value(),
+                "VALIDATION_ERROR",
+                errors
+        );
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> handleUserExists(UserAlreadyExistsException ex) {
-        return ResponseEntity.badRequest().body(Map.of("username", ex.getMessage()));
+    public ResponseEntity<ErrorResponse> handleUserExists(UserAlreadyExistsException ex) {
+        Map<String, String> errors = Map.of("username", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Validation failed",
+                HttpStatus.BAD_REQUEST.value(),
+                "USER_ALREADY_EXISTS",
+                errors
+        );
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
+
     @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> handleEmailExists(EmailAlreadyExistsException ex) {
-        return ResponseEntity.badRequest().body(Map.of("email", ex.getMessage()));
+    public ResponseEntity<ErrorResponse> handleEmailExists(EmailAlreadyExistsException ex) {
+        Map<String, String> errors = Map.of("email", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Validation failed",
+                HttpStatus.BAD_REQUEST.value(),
+                "EMAIL_ALREADY_EXISTS",
+                errors
+        );
+        return ResponseEntity.badRequest().body(errorResponse);
+    }
+
+
+    @ExceptionHandler(MultipleFieldValidationException.class)
+    public ResponseEntity<ErrorResponse> handleMultipleFieldValidation(MultipleFieldValidationException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(
+                "Validation failed",
+                HttpStatus.BAD_REQUEST.value(),
+                "MULTIPLE_FIELD_ERRORS",
+                ex.getErrors()
+        );
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
