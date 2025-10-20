@@ -28,7 +28,6 @@ public class UserController {
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
 
-    // ✅ Public: fetch a user by username (no authentication needed)
     @GetMapping("/user")
     public ResponseEntity<User> getUser(@RequestParam String username) {
         User user = userService.getUserByUsername(username);
@@ -38,7 +37,6 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    // ✅ Authenticated: get currently logged-in user
     @GetMapping("/me")
     public ResponseEntity<UserDTO> getAuthenticatedUser(@AuthenticationPrincipal User user) {
         if (user == null) {
@@ -47,7 +45,6 @@ public class UserController {
         return ResponseEntity.ok(new UserDTO(user));
     }
 
-    // ✅ Public: get all users (optional — could be restricted)
     @GetMapping("/all")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         List<UserDTO> userDTOs = userService.getAllUsers()
@@ -57,14 +54,12 @@ public class UserController {
         return ResponseEntity.ok(userDTOs);
     }
 
-    // ✅ Public: register user
     @PostMapping("/create")
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
         User createdUser = userService.createUser(userCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new UserDTO(createdUser));
     }
 
-    // ✅ Public: login (returns JWT)
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> authenticate(@RequestBody UserLoginDTO userLoginDTO) {
         User authenticatedUser = authenticationService.authenticate(userLoginDTO);
@@ -77,7 +72,6 @@ public class UserController {
         return ResponseEntity.ok(new LoginResponseDTO(loginResponse));
     }
 
-    // ✅ Authenticated: update user (multipart)
     @PatchMapping(value = "update/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<UserDTO> updateUser(
             @PathVariable long id,
@@ -88,7 +82,6 @@ public class UserController {
         return ResponseEntity.ok(new UserDTO(updatedUser));
     }
 
-    // ✅ Authenticated: delete user
     @DeleteMapping(value = "delete/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
