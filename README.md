@@ -12,6 +12,7 @@ A marketplace/social media hybrid web app geared towards the art community.
 
 * Artist Dashboard
 * Ability to view list of artist's products.
+* Ability to follow artists.
 
 ## Getting Started
 
