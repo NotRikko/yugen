@@ -10,8 +10,8 @@ A marketplace/social media hybrid web app geared towards the art community.
 
 ## Upcoming Features
 
-* User Dashboard
-* Post/Product Feature
+* Artist Dashboard
+* Ability to view list of artist's products.
 
 ## Getting Started
 
