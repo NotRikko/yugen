@@ -1,11 +1,7 @@
-"use client"
-
-import { useForm } from "react-hook-form"
-import {
-  zodResolver
-} from "@hookform/resolvers/zod"
-import * as z from "zod"
-import { Button } from "@/shared/ui/button"
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/shared/ui/button";
 import {
   Form,
   FormControl,
@@ -14,93 +10,98 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/shared/ui/form"
-import { Input } from "@/shared/ui/input"
-import { useNavigate } from "react-router-dom"
-import { useUser } from "@/features/user/UserProvider"
-
+} from "@/shared/ui/form";
+import { Input } from "@/shared/ui/input";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "@/features/user/UserProvider";
+import { useState } from "react";
 
 const formSchema = z.object({
-  username: z.string().min(4, "Username must be at least 4 characters").max(25, "Username must be at most 25 characters"),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters long")
-    .max(30, "Password must be at most 30 characters long"),
+  username: z.string().min(1, "Username is required"),
+  password: z.string().min(1, "Password is required"),
 });
 
 export default function LoginForm() {
-    const navigate = useNavigate();
-    const { handleLogin } = useUser();
-    const form = useForm<z.infer<typeof formSchema>>({
-      resolver: zodResolver(formSchema),
-      defaultValues: {
-        username: "",
-        password: "",
-      },
-    })
-   
-    async function onSubmit(values: z.infer<typeof formSchema>) {
-      try {
-        await handleLogin(values.username, values.password);
-        navigate("/feed"); 
-      } catch (err: unknown) {
-        console.error(err);
-        alert(err.message || "Login failed"); 
-      }
-    }
+  const navigate = useNavigate();
+  const { handleLogin } = useUser();
+  const [formError, setFormError] = useState<string | null>(null);
 
-    return (
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8  mx-auto py-8">
-                <FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Username</FormLabel>
-                        <FormControl>
-                            <Input 
-                                placeholder="Username"
-                                type="text"
-                                {...field} 
-                            />
-                        </FormControl>
-                        <FormDescription>Enter your username.</FormDescription>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                            <Input type="password" placeholder="Placeholder" {...field} />
-                        </FormControl>
-                        <FormDescription>Enter your password.</FormDescription>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-          <Button type="submit">Login</Button>
-          <p 
-            className="text-xs cursor-pointer text-blue-500 hover:underline"
-            onClick={() => navigate("/signup")}
-          >
-            Don't have an account? Signup here.
-          </p>
-          <div className="mt-4">
-          <button
-            type="button"
-            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 text-sm"
-            onClick={() => navigate("/")}
-          >
-            Home
-          </button>
-        </div>
-        </form>
-      </Form>
-    )
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: { username: "", password: "" },
+  });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setFormError(null);
+    try {
+      await handleLogin(values.username, values.password);
+      navigate("/feed");
+    } catch (err: any) {
+      console.error(err);
+
+      // Check if backend sent structured JSON
+      const message = err?.message || "Login failed";
+
+      // Show as a form-level error (not under inputs)
+      setFormError(message);
+    }
   }
+
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-6 max-w-md mx-auto py-8"
+      >
+        <h2 className="text-xl font-semibold text-center">Login</h2>
+
+        {formError && (
+          <div className="text-red-500 text-sm text-center bg-red-50 p-2 rounded">
+            {formError}
+          </div>
+        )}
+
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Username</FormLabel>
+              <FormControl>
+                <Input placeholder="Username" {...field} />
+              </FormControl>
+              <FormDescription>Enter your username.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Password</FormLabel>
+              <FormControl>
+                <Input type="password" placeholder="Password" {...field} />
+              </FormControl>
+              <FormDescription>Enter your password.</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit" className="w-full">
+          Login
+        </Button>
+
+        <p
+          className="text-xs cursor-pointer text-blue-500 hover:underline text-center"
+          onClick={() => navigate("/signup")}
+        >
+          Don’t have an account? Signup here.
+        </p>
+      </form>
+    </Form>
+  );
+}

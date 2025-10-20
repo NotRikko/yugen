@@ -32,7 +32,9 @@ export const useUserHook = () => {
     });
 
     const data = await res.json();
-    if (!res.ok) throw new Error(data.message || "Login failed");
+    if (!res.ok) {
+      throw new Error(data?.message || "Invalid username or password");
+    }
 
     if (data.token) localStorage.setItem("accessToken", data.token);
 
