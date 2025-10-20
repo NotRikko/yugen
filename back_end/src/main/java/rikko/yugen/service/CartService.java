@@ -32,21 +32,7 @@ public class CartService {
     private final UserRepository userRepository;
     private final CartItemService cartItemService;
 
-    private User getCurrentUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication == null || !authentication.isAuthenticated()) {
-            throw new RuntimeException("User not authenticated");
-        }
-
-        Object principal = authentication.getPrincipal();
-
-        if (principal instanceof User user) {
-            return user;
-        }
-
-        throw new RuntimeException("User not authenticated");
-    }
+    private final CurrentUserHelper currentUserHelper;
 
     @Transactional
     public CartDTO getOrCreateCart() {
@@ -151,11 +137,11 @@ public class CartService {
     }
 
     private Cart getOrCreateCartEntity() {
-        User user = getCurrentUser();
-        return cartRepository.findByUserId(user.getId())
+        User currentUser = currentUserHelper.getCurrentUser();
+        return cartRepository.findByUserId(currentUser.getId())
                 .orElseGet(() -> {
                     Cart newCart = new Cart();
-                    newCart.setUser(user);
+                    newCart.setUser(currentUser);
                     return cartRepository.save(newCart);
                 });
     }

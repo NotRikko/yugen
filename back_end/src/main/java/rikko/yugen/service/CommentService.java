@@ -28,6 +28,8 @@ public class CommentService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
 
+    private final CurrentUserHelper currentUserHelper;
+
     public List<CommentDTO> getCommentsByPostId(Long postId) {
         List<Comment> comments = commentRepository.findByPostId(postId);
         return comments.stream()
@@ -45,14 +47,13 @@ public class CommentService {
 
     @Transactional
     public CommentDTO createComment(CommentCreateDTO dto) {
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("No user found with ID " + dto.getUserId()));
+        User currentUser = currentUserHelper.getCurrentUser();
 
         Post post = postRepository.findById(dto.getPostId())
                 .orElseThrow(() -> new IllegalArgumentException("Post not found with ID " + dto.getPostId()));
 
         Comment comment = new Comment();
-        comment.setUser(user);
+        comment.setUser(currentUser);
         comment.setPost(post);
         comment.setContent(dto.getContent());
 

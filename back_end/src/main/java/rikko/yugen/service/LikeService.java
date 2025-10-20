@@ -4,29 +4,37 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+
 import rikko.yugen.dto.like.LikeDTO;
 import rikko.yugen.model.Like;
+import rikko.yugen.model.Post;
 import rikko.yugen.model.User;
 import rikko.yugen.repository.LikeRepository;
 import rikko.yugen.repository.UserRepository;
+import rikko.yugen.repository.PostRepository;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
+@RequiredArgsConstructor
 public class LikeService {
-    @Autowired
-    private LikeRepository likeRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final LikeRepository likeRepository;
+    private final UserRepository userRepository;
+    private final PostRepository postRepository;
+
+    private final CurrentUserHelper currentUserHelper;
 
     public Set<LikeDTO> getLikesForPost(Long postId) {
         Set<Like> likes = likeRepository.findByContentIdAndContentType(postId, "POST");
         return likes.stream()
-                    .map(LikeDTO::new)
-                    .collect(Collectors.toSet());
+                .map(LikeDTO::new)
+                .collect(Collectors.toSet());
     }
 
     public int getLikeCountForPost(Long postId) {
@@ -34,26 +42,25 @@ public class LikeService {
     }
 
     @Transactional
-    public int toggleLike(Long postId, Long userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
+    public int toggleLike(Long postId) {
+        User currentUser = currentUserHelper.getCurrentUser();
 
-        if (userOptional.isEmpty()) {
-            throw new IllegalArgumentException("User not found");
-        }
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        User user = userOptional.get();
-        Optional<Like> existingLike = likeRepository.findByUserIdAndContentIdAndContentType(userId, postId, "POST");
+        Optional<Like> existingLike = likeRepository
+                .findByUserIdAndContentIdAndContentType(currentUser.getId(), postId, "POST");
 
         if (existingLike.isPresent()) {
-            likeRepository.delete(existingLike.get());  // Unlike
+            likeRepository.delete(existingLike.get());
         } else {
             Like like = new Like();
-            like.setUser(user);
+            like.setUser(currentUser);
             like.setContentId(postId);
             like.setContentType("POST");
-            likeRepository.save(like);  // Like
+            likeRepository.save(like);
         }
 
-        return getLikeCountForPost(postId);  // Return updated count
+        return getLikeCountForPost(postId);
     }
 }

@@ -34,11 +34,8 @@ import rikko.yugen.service.CommentService;
 public class PostController {
     
     private final PostService postService;
-
     private final LikeService likeService;
-
     private final CommentService commentService;
-
     private final ImageService imageService;
 
     @GetMapping("/")
@@ -47,7 +44,7 @@ public class PostController {
         return ResponseEntity.ok(posts);
     }
 
-    @GetMapping("/posts/{postId}/comments")
+    @GetMapping("/{postId}/comments")
     public ResponseEntity<List<CommentDTO>> getComments(@PathVariable Long postId) {
         List<CommentDTO> comments = commentService.getCommentsByPostId(postId);
 
@@ -69,18 +66,16 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/like")
-    public ResponseEntity<?> toggleLike(@PathVariable Long postId, @RequestBody Map<String, Long> request) {
-        Long userId = request.get("userId");
-
-        if (userId == null) {
-            return ResponseEntity.badRequest().body(Map.of("error", "User ID is required"));
-        }
-
+    public ResponseEntity<?> toggleLike(@PathVariable Long postId) {
         try {
-            int updatedLikes = likeService.toggleLike(postId, userId);
+            int updatedLikes = likeService.toggleLike(postId);
             return ResponseEntity.ok(Map.of("likes", updatedLikes));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to toggle like: " + e.getMessage()));
         }
     }
 

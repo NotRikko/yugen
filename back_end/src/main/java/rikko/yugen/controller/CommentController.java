@@ -29,4 +29,9 @@ public class CommentController {
         CommentDTO createdComment = commentService.createComment(commentCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdComment);
     }
+
+    /*
+    @PostMapping("/{commentId}/like")
+    public ResponseEntity<?> toggleLike(@PathVariable Long postId, @Req)
+     */
 }
