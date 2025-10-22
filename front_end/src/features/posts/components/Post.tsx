@@ -1,4 +1,5 @@
 import PostFooter from "./PostFooter";
+import CustomDropdown from "@/shared/components/CustomDropDown";
 import type { Post } from "@/features/posts/types/postTypes";
 import { useNavigate } from "react-router-dom";
 
@@ -10,31 +11,50 @@ interface PostProps {
 function Post({ post, onSelect }: PostProps) {
   const navigate = useNavigate();
 
+  const handleDelete = () => {
+    console.log(`Deleting post ${post.id}`);
+  };
+
+  const postMenuItems = [
+    {
+      label: "Delete",
+      onClick: handleDelete,
+    },
+  ];
+
   const handleArtistClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); 
+    e.stopPropagation();
     navigate(`/artist/${post.artist.artistName}`);
   };
-  
+
   return (
     <div className="w-5/6 mx-auto p-8 border rounded-lg shadow-md bg-white max-h-[800px]">
       <div onClick={onSelect} className="cursor-pointer">
-        <div className="flex items-center gap-2">
-          <img
-            onClick={handleArtistClick}
-            src={
-              post.artist.profilePictureUrl ||
-              "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg"
-            }
-            onError={(e) => {
-              e.currentTarget.src =
-                "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg";
-            }}
-            className="w-10 h-10 rounded-full object-cover"
-          />
-          <p onClick={handleArtistClick} className="text-blue-500 text-sm font-semibold">
-            {post.artist.artistName}
-          </p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <img
+              onClick={handleArtistClick}
+              src={
+                post.artist.profilePictureUrl ||
+                "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg"
+              }
+              onError={(e) => {
+                e.currentTarget.src =
+                  "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg";
+              }}
+              className="w-10 h-10 rounded-full object-cover"
+            />
+            <p
+              onClick={handleArtistClick}
+              className="text-blue-500 text-sm font-semibold"
+            >
+              {post.artist.artistName}
+            </p>
+          </div>
+
+          <CustomDropdown triggerLabel="⋯" items={postMenuItems} />
         </div>
+
         <p className="text-gray-800 text-sm my-2">{post.content}</p>
       </div>
 
