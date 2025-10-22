@@ -1,36 +1,35 @@
 import type { PartialComment } from "../types/commentTypes";
+import { useUser } from "@/features/user/UserProvider";
+import { useComment } from "../hooks/useComment";
+import Comment from "./Comment";
 
 interface CommentSectionProps {
-    postId: number;
-    comments: PartialComment[];
+  comments: PartialComment[];
+  onDeleteComment?: (commentId: number) => void;
 }
-  
-export default function CommentSection({ postId, comments }: CommentSectionProps) {
-    return (
-      <div>
-        <h3 className="font-semibold text-lg text-gray-700 mb-4">Comments</h3>
-  
-        {comments.length === 0 ? (
-          <p className="text-gray-500 text-base">No comments yet.</p>
-        ) : (
-          <ul className="space-y-5">
-            {comments.map((c, i) => (
-              <li key={i} className="border-b pb-3">
-                <div className="flex items-center gap-3 mb-1">
-                  <img
-                    src={c.user.image || "https://i1.sndcdn.com/artworks-oVGHBbuwyLdlUcdL-AjMmqA-t500x500.jpg"} 
-                    alt={c.user.displayName}
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                  <p className="text-base font-semibold">{c.user.displayName}</p>
-                </div>
-  
-                <p className="text-gray-700 text-base">{c.content}</p>
-                <p className="text-sm text-gray-400">{c.postedAt}</p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    );
-  }
+
+export default function CommentSection({ comments }: CommentSectionProps) {
+  const { user } = useUser();
+  const { deleteComment } = useComment();
+
+  return (
+    <div>
+      <h3 className="font-semibold text-lg text-gray-700 mb-4">Comments</h3>
+
+      {comments.length === 0 ? (
+        <p className="text-gray-500 text-base">No comments yet.</p>
+      ) : (
+        <ul className="space-y-5">
+          {comments.map((comment) => (
+            <Comment
+              key={comment.id}
+              comment={comment}
+              currentUserId={user?.id}
+              onDelete={deleteComment}
+            />
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}

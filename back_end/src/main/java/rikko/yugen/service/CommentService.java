@@ -61,4 +61,18 @@ public class CommentService {
 
         return new CommentDTO(saved);
     }
+
+    @Transactional
+    public void deleteComment(Long commentId) {
+        User currentUser = currentUserHelper.getCurrentUser();
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new RuntimeException("Comment not found"));
+
+        if (!comment.getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("You are not allowed to delete this comment");
+        }
+
+        commentRepository.delete(comment);
+    }
 }
