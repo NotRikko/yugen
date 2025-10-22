@@ -1,8 +1,9 @@
 import PostFooter from "./PostFooter";
 import CustomDropdown from "@/shared/components/CustomDropDown";
+import { postApi } from "../api/postApi";
 import type { Post } from "@/features/posts/types/postTypes";
 import { useNavigate } from "react-router-dom";
-
+import { useUser } from "@/features/user/UserProvider";
 interface PostProps {
   post: Post;
   onSelect?: () => void;
@@ -10,10 +11,17 @@ interface PostProps {
 
 function Post({ post, onSelect }: PostProps) {
   const navigate = useNavigate();
+  const { user } = useUser();
 
-  const handleDelete = () => {
-    console.log(`Deleting post ${post.id}`);
-  };
+  async function handleDelete() {
+    try {
+      await postApi.deletePost(post.id);
+
+      console.log("Post deleted succesffuly");
+    } catch (error) {
+      console.error("Error deleting post", error);
+    }
+  }
 
   const postMenuItems = [
     {
@@ -43,6 +51,7 @@ function Post({ post, onSelect }: PostProps) {
                   "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg";
               }}
               className="w-10 h-10 rounded-full object-cover"
+              alt="Artist profile picture."
             />
             <p
               onClick={handleArtistClick}
@@ -52,7 +61,7 @@ function Post({ post, onSelect }: PostProps) {
             </p>
           </div>
 
-          <CustomDropdown triggerLabel="⋯" items={postMenuItems} />
+          {post.artist.user.id === user.id ? <CustomDropdown triggerLabel="⋯" items={postMenuItems} /> : ""}
         </div>
 
         <p className="text-gray-800 text-sm my-2">{post.content}</p>

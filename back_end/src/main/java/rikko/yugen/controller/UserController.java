@@ -1,6 +1,7 @@
 package rikko.yugen.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
@@ -82,9 +83,18 @@ public class UserController {
         return ResponseEntity.ok(new UserDTO(updatedUser));
     }
 
-    @DeleteMapping(value = "delete/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+    @DeleteMapping(value = "/delete/{id}")
+    public ResponseEntity<Map<String, String>> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
-        return ResponseEntity.ok("{\"message\": \"Deleted User\"}");
+        return ResponseEntity.ok(Map.of("message", "Account deleted successfully"));
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<Map<String, String>> deleteCurrentUser(@AuthenticationPrincipal User user) {
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
+        }
+        userService.deleteUser(user.getId());
+        return ResponseEntity.ok(Map.of("message", "Account deleted successfully"));
     }
 }

@@ -40,5 +40,11 @@ export const postApi = {
       method: "POST",
       body: JSON.stringify({ userId }),
       auth: true,
-    }),
+  }),
+
+  deletePost: (postId: number) =>
+    fetchClient<void>(`/posts/${postId}` , {
+      method: "DELETE",
+      auth: true,
+    })
 };

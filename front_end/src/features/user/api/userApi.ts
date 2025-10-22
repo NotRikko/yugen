@@ -27,4 +27,10 @@ export const userApi = {
     return res;
   },
 
+  deleteCurrentUser: async () =>
+    fetchClient<{ message: string }>("/users/me", {
+      method: "DELETE",
+      auth: true,
+    }),
+
 };

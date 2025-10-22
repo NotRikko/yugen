@@ -4,7 +4,7 @@ import type { Cart } from "@/features/cart/types/cartTypes";
 import { userApi } from "../api/userApi"; 
 import { cartApi } from "@/features/cart/api/cartApi";
 
-const guestUser: User = {
+export const guestUser: User = {
   id: 0,
   username: "Guest",
   displayName: "Guest User",

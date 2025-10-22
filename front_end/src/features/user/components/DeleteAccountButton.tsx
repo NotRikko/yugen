@@ -1,49 +1,49 @@
 import { useUser } from "@/features/user/UserProvider";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { userApi } from "@/features/user/api/userApi";
 
 export default function DeleteAccountButton() {
-    const {user, guestUser, setUser} = useUser();
-    const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
+  const { setUser, guestUser } = useUser();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-    async function deleteAccount() {
-        const API_URL = import.meta.env.VITE_API_URL;
-        const confirmed = window.confirm("Are you sure you want to delete your account? This action cannot be undone.");
-        if (!confirmed) return;
-        try {
-            setLoading(true);
-            const response = await fetch(`${API_URL}/users/delete/${user.id}`, {
-            mode: "cors",
-            method: "DELETE"
-        });
+  async function handleDeleteAccount() {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete your account? This action cannot be undone."
+    );
+    if (!confirmed) return;
 
-        const data = await response.json();
+    try {
+      setLoading(true);
+      const res = await userApi.deleteCurrentUser();
 
-        if (!response.ok) {
-            throw new Error(data.message);
-        };
+      if (!res || !res.message) {
+        throw new Error("Failed to delete account");
+      }
 
-        localStorage.removeItem("user");
-        localStorage.removeItem("accessToken");
-        setUser(guestUser);
-        navigate("/");
-        } catch (error) {
-            console.error("Account deletion error:", error);
-        } finally {
-            setLoading(false);
-        }
-        
-    };
-    return(
-        <button 
-            onClick={deleteAccount}
-            disabled={loading}
-            className="w-1/3 bg-red-600 text-white font-medium px-4 py-2 rounded-lg shadow-md 
-               hover:bg-red-700 focus:ring-2 focus:ring-red-400 focus:outline-none 
-               disabled:bg-red-300 disabled:cursor-not-allowed transition-all"
-        >
-                Delete Account
-        </button>
-    )
+      localStorage.removeItem("user");
+      localStorage.removeItem("accessToken");
+      setUser(guestUser);
+
+      navigate("/");
+    } catch (error) {
+      console.error("Account deletion error:", error);
+      alert("Failed to delete account. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <button
+      onClick={handleDeleteAccount}
+      disabled={loading}
+      className="w-1/3 bg-red-600 text-white font-medium px-4 py-2 rounded-lg shadow-md 
+        hover:bg-red-700 focus:ring-2 focus:ring-red-400 focus:outline-none 
+        disabled:bg-red-300 disabled:cursor-not-allowed transition-all"
+    >
+      {loading ? "Deleting..." : "Delete Account"}
+    </button>
+  );
 }

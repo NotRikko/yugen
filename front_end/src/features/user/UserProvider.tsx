@@ -1,5 +1,5 @@
 import { createContext, ReactNode, useContext } from "react";
-import { useUserHook } from "./hooks/useUser";
+import { useUserHook, guestUser } from "./hooks/useUser";
 
 type UserHook = ReturnType<typeof useUserHook>;
 
@@ -9,6 +9,7 @@ interface UserContextType {
   isLoggedIn: UserHook["isLoggedIn"];
   handleLogin: UserHook["handleLogin"];
   handleLogout: UserHook["handleLogout"];
+  guestUser: typeof guestUser;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -19,11 +20,12 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   return (
     <UserContext.Provider
       value={{
-        user: user.user,
+        user: user.user ?? guestUser,
         setUser: user.setUser,
         isLoggedIn: user.isLoggedIn,
         handleLogin: user.handleLogin,
         handleLogout: user.handleLogout,
+        guestUser,
       }}
     >
       {children}
