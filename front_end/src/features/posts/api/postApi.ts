@@ -1,5 +1,5 @@
 import { fetchClient } from "@/shared/api/fetchClient";
-import { Post } from "../types/postTypes";
+import { PostDTO } from "../types/postTypes";
 
 export const postApi = {
   createPost: async (data: {
@@ -7,7 +7,7 @@ export const postApi = {
     content: string;
     productId?: number | null;
     files?: File[];
-  }): Promise<Post> => {
+  }): Promise<PostDTO> => {
     const formData = new FormData();
 
     const postData = {
@@ -24,7 +24,7 @@ export const postApi = {
       data.files.forEach((file) => formData.append("files", file));
     }
 
-    const result = await fetchClient<Post>("/posts/create", {
+    const result = await fetchClient<PostDTO>("/posts/create", {
       method: "POST",
       body: formData,
       auth: true, 

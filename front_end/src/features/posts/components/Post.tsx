@@ -1,11 +1,11 @@
 import PostFooter from "./PostFooter";
 import CustomDropdown from "@/shared/components/CustomDropDown";
 import { postApi } from "../api/postApi";
-import type { Post } from "@/features/posts/types/postTypes";
+import type { PostDTO } from "@/features/posts/types/postTypes";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/features/user/UserProvider";
 interface PostProps {
-  post: Post;
+  post: PostDTO;
   onSelect?: () => void;
 }
 

@@ -1,13 +1,13 @@
-import Post from "./Post";
 import PostFooter from "./PostFooter";
 import CommentSection from "@/features/comments/components/CommentSection";
 import CommentCreate from "@/features/comments/components/CommentCreate";
+import type { PostDTO } from "../types/postTypes";
 import { useState, useEffect } from "react";
 import { useUser } from "@/features/user/UserProvider";
 import { useNavigate } from "react-router-dom";
 
 interface PostDetailsProps {
-    post: Post;
+    post: PostDTO;
 }
 function PostModal({ post }: PostDetailsProps) {
   const navigate = useNavigate();
@@ -26,7 +26,6 @@ function PostModal({ post }: PostDetailsProps) {
   const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
-    
     fetch(`${API_URL}/follow/check/${currentUserId}/${post.artist.id}`)
       .then((res) => res.json())
       .then((data) => setIsFollowing(data))
@@ -53,10 +52,11 @@ function PostModal({ post }: PostDetailsProps) {
       setLoading(false);
     }
   };
+
   return (
     <div className="w-5/6 h-5/6 mx-auto my-6 p-8 border rounded-2xl shadow-xl bg-white overflow-y-auto">
       <div className="flex items-center gap-4 mb-6">
-      <img    
+        <img    
           onClick={handleArtistClick}
           src={post.artist.profilePictureUrl || "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg"}
           onError={(e) => {
@@ -64,8 +64,11 @@ function PostModal({ post }: PostDetailsProps) {
           }}
           className="cursor-pointer w-14 h-14 rounded-full object-cover"
           alt="Post image"
-          />
-        <p onClick={handleArtistClick} className="cursor-pointer text-blue-600 text-lg font-semibold">
+        />
+        <p 
+          onClick={handleArtistClick} 
+          className="cursor-pointer text-blue-600 text-lg font-semibold"
+        >
           {post.artist.artistName}
         </p>
         <button
@@ -116,6 +119,5 @@ function PostModal({ post }: PostDetailsProps) {
     </div>
   );
 }
-
 
 export default PostModal;
