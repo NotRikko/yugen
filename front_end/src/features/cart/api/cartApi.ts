@@ -2,26 +2,42 @@ import { fetchClient } from "@/shared/api/fetchClient";
 import type { Cart } from "../types/cartTypes";
 
 export const cartApi = {
-  getCart: () => fetchClient<Cart>("/cart", { method: "GET", auth: true }),
+  getCart: async (): Promise<Cart> => {
+    const cart = await fetchClient<Cart>("/cart", { method: "GET", auth: true });
+    if (!cart) throw new Error("Cart not found");
+    return cart;
+  },
 
-  addToCart: (productId: number, quantity: number) =>
-    fetchClient<Cart>(`/cart/add?productId=${productId}&quantity=${quantity}`, {
-      method: "POST",
-      auth: true,
-    }),
+  addToCart: async (productId: number, quantity: number): Promise<Cart> => {
+    const cart = await fetchClient<Cart>(
+      `/cart/add?productId=${productId}&quantity=${quantity}`,
+      { method: "POST", auth: true }
+    );
+    if (!cart) throw new Error("Failed to add to cart");
+    return cart;
+  },
 
-  updateCartItem: (cartItemId: number, quantity: number) =>
-    fetchClient<Cart>(`/cart/update?cartItemId=${cartItemId}&quantity=${quantity}`, {
-      method: "PATCH",
-      auth: true,
-    }),
+  updateCartItem: async (cartItemId: number, quantity: number): Promise<Cart> => {
+    const cart = await fetchClient<Cart>(
+      `/cart/update?cartItemId=${cartItemId}&quantity=${quantity}`,
+      { method: "PATCH", auth: true }
+    );
+    if (!cart) throw new Error("Failed to update cart item");
+    return cart;
+  },
 
-  removeFromCart: (cartItemId: number) =>
-    fetchClient<Cart>(`/cart/remove?cartItemId=${cartItemId}`, {
-      method: "DELETE",
-      auth: true,
-    }),
+  removeFromCart: async (cartItemId: number): Promise<Cart> => {
+    const cart = await fetchClient<Cart>(
+      `/cart/remove?cartItemId=${cartItemId}`,
+      { method: "DELETE", auth: true }
+    );
+    if (!cart) throw new Error("Failed to remove cart item");
+    return cart;
+  },
 
-  clearCart: () =>
-    fetchClient<Cart>("/cart/clear", { method: "POST", auth: true }),
+  clearCart: async (): Promise<Cart> => {
+    const cart = await fetchClient<Cart>("/cart/clear", { method: "POST", auth: true });
+    if (!cart) throw new Error("Failed to clear cart");
+    return cart;
+  },
 };
