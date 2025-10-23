@@ -61,18 +61,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new UserDTO(createdUser));
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> authenticate(@RequestBody UserLoginDTO userLoginDTO) {
-        User authenticatedUser = authenticationService.authenticate(userLoginDTO);
-        String jwtToken = jwtService.generateToken(authenticatedUser);
-
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(jwtToken);
-        loginResponse.setExpiresIn(jwtService.getExpirationTime());
-
-        return ResponseEntity.ok(new LoginResponseDTO(loginResponse));
-    }
-
     @PatchMapping(value = "update/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<UserDTO> updateUser(
             @PathVariable long id,
