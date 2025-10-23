@@ -39,10 +39,8 @@ export default function LoginForm() {
     } catch (err: any) {
       console.error(err);
 
-      // Check if backend sent structured JSON
       const message = err?.message || "Login failed";
 
-      // Show as a form-level error (not under inputs)
       setFormError(message);
     }
   }

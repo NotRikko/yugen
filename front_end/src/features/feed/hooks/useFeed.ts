@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { feedApi } from "../api/feedApi";
-import type { Post } from "@/features/posts/types/postTypes";
+import type { PostDTO } from "@/features/posts/types/postTypes";
 
 export function useFeed({ userFeed = false, page = 0, size = 20 } = {}) {
-    const [posts, setPosts] = useState<Post[]>([]);
+    const [posts, setPosts] = useState<PostDTO[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
 
     useEffect(() => {
@@ -24,5 +24,5 @@ export function useFeed({ userFeed = false, page = 0, size = 20 } = {}) {
         fetchFeed();
     }, [userFeed, page, size]);
 
-    return { posts, loading };
+    return { posts, setPosts, loading };
 }

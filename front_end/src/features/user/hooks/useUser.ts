@@ -24,7 +24,7 @@ export const useUserHook = () => {
   const handleLogin = async (username: string, password: string) => {
     const API_URL = import.meta.env.VITE_API_URL;
 
-    const res = await fetch(`${API_URL}/users/login`, {
+    const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password }),
