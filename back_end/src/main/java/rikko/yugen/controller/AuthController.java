@@ -3,8 +3,11 @@ package rikko.yugen.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import rikko.yugen.model.LoginResponse;
 import rikko.yugen.model.User;
+import jakarta.validation.Valid;
 
 import rikko.yugen.dto.user.*;
 import rikko.yugen.service.*;
@@ -16,9 +19,10 @@ import rikko.yugen.service.*;
 public class AuthController {
 
     private final AuthenticationService authenticationService;
+    private final UserService userService;
     private final JwtService jwtService;
 
-    @PostMapping("/signup")
+    @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> authenticate(@RequestBody UserLoginDTO userLoginDTO) {
         User authenticatedUser = authenticationService.authenticate(userLoginDTO);
         String jwtToken = jwtService.generateToken(authenticatedUser);
