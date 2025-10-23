@@ -1,14 +1,21 @@
 import { useState, useEffect } from "react";
 import { cartApi } from "../api/cartApi";
+import { useUser } from "@/features/user/UserProvider";
 import type { Cart } from "../types/cartTypes";
 
 export const useCartHook = () => {
+  const { isLoggedIn } = useUser(); 
   const [cart, setCart] = useState<Cart | null>(null);
-
+  
   const fetchCart = async () => {
     const data = await cartApi.getCart();
     setCart(data);
   };
+
+  useEffect(() => {
+    if (!isLoggedIn) return; 
+    fetchCart();
+  }, [isLoggedIn]);
 
   const addToCart = async (productId: number, quantity: number) => {
     const updated = await cartApi.addToCart(productId, quantity);
@@ -33,10 +40,6 @@ export const useCartHook = () => {
 
   const totalPrice =
     cart?.items.reduce((sum, item) => sum + item.quantity * (item.product?.price || 0), 0) || 0;
-
-  useEffect(() => {
-    fetchCart();
-  }, []);
 
   return { cart, totalPrice, fetchCart, addToCart, updateQuantity, removeFromCart, clearCart };
 };

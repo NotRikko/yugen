@@ -41,7 +41,8 @@ public class SecurityConfiguration {
                                 "/auth/**",
                                 "/users/create",
                                 "/users/login",
-                                "/posts/"
+                                "/posts/",
+                                "/artists/"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
