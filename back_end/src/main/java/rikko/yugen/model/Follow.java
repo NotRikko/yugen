@@ -13,9 +13,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Follow {
-
     @EmbeddedId
-    private FollowId id = new FollowId();
+    private FollowId id;
 
     @ManyToOne
     @MapsId("followerId")

@@ -32,7 +32,7 @@ public class FollowService {
         this.artistRepository = artistRepository;
     }
 
-    public List<FollowDTO> getAllFollowing(Long userId) {
+    public List<FollowDTO> getAllFolloweesForUser(Long userId) {
         return followRepository.findByFollowerId(userId).stream()
                 .map(f -> new FollowDTO(
                         f.getFollower().getId(),
@@ -65,8 +65,8 @@ public class FollowService {
 
         FollowId followId = new FollowId(follower.getId(), followee.getId());
         if (followRepository.existsById(followId)) {
-            // return a DTO if already following
-            return new FollowDTO(followId.getFollowerId(), followId.getFolloweeId(), LocalDateTime.now());
+            Follow existing = followRepository.findById(followId).get();
+            return new FollowDTO(existing.getFollower().getId(), existing.getFollowee().getId(), existing.getFollowedAt());
         }
 
         Follow follow = new Follow(followId, follower, followee, LocalDateTime.now());

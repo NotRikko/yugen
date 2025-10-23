@@ -7,10 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import lombok.RequiredArgsConstructor;
 
 import rikko.yugen.model.Follow;
+import rikko.yugen.model.User;
 import rikko.yugen.dto.follow.FollowDTO;
 import rikko.yugen.service.FollowService;
 
@@ -23,42 +25,30 @@ public class FollowController {
 
     private final FollowService followService;
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<FollowDTO>> allFollowing(@PathVariable Long userId) {
-        List<FollowDTO> following = followService.getAllFollowing(userId);
-        return ResponseEntity.ok(following);
-    }
-
-    @GetMapping("/check/{userId}/{artistId}")
-    public ResponseEntity<Boolean> isFollowing(
-            @PathVariable Long userId,
-            @PathVariable Long artistId
-    ) {
-        boolean following = followService.isFollowing(userId, artistId);
-        return ResponseEntity.ok(following);
-    }
-
-    @GetMapping("/artist/{artistId}")
-    public ResponseEntity<List<FollowDTO>> getFollowersForArtist(@PathVariable Long artistId) {
-        List<FollowDTO> followers = followService.getFollowersForArtist(artistId);
-        return ResponseEntity.ok(followers);
-    }
-
-    @PostMapping("/{userId}/{artistId}")
+    @PostMapping("/artist/{artistId}")
     public ResponseEntity<FollowDTO> followArtist(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User currentUser,
             @PathVariable Long artistId
     ) {
-        FollowDTO follow = followService.followArtist(userId, artistId);
+        FollowDTO follow = followService.followArtist(currentUser.getId(), artistId);
         return ResponseEntity.ok(follow);
     }
 
-    @DeleteMapping("/{userId}/{artistId}")
+    @DeleteMapping("/artist/{artistId}")
     public ResponseEntity<Void> unfollowArtist(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal User currentUser,
             @PathVariable Long artistId
     ) {
-        followService.unfollowArtist(userId, artistId);
+        followService.unfollowArtist(currentUser.getId(), artistId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/artist/{artistId}/check")
+    public ResponseEntity<Boolean> isFollowing(
+            @AuthenticationPrincipal User currentUser,
+            @PathVariable Long artistId
+    ) {
+        boolean following = followService.isFollowing(currentUser.getId(), artistId);
+        return ResponseEntity.ok(following);
     }
 }
