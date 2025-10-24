@@ -44,7 +44,10 @@ public class SecurityConfiguration {
 
                         .requestMatchers(HttpMethod.GET,
                                 "/feed/global",
-                                "/artists/**"
+                                "/artists/**",
+                                "/follow/artist/*/followers",
+                                "/follow/user/*/following"
+
                         ).permitAll()
 
                         .anyRequest().authenticated()

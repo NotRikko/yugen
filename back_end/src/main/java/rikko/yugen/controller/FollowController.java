@@ -2,18 +2,14 @@ package rikko.yugen.controller;
 
 import java.util.List;
 
-
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import lombok.RequiredArgsConstructor;
 
-import rikko.yugen.model.Follow;
 import rikko.yugen.model.User;
-import rikko.yugen.dto.follow.FollowDTO;
+import rikko.yugen.dto.follow.FollowWithUserDTO;
 import rikko.yugen.service.FollowService;
 
 @RestController
@@ -22,15 +18,30 @@ import rikko.yugen.service.FollowService;
 @RequiredArgsConstructor
 public class FollowController {
 
-
     private final FollowService followService;
 
+    @GetMapping("/artist/{artistId}/followers")
+    public ResponseEntity<List<FollowWithUserDTO>> getFollowers(
+            @PathVariable Long artistId
+    ) {
+        List<FollowWithUserDTO> followers = followService.getFollowersForArtist(artistId);
+        return ResponseEntity.ok(followers);
+    }
+
+    @GetMapping("/user/{userId}/following")
+    public ResponseEntity<List<FollowWithUserDTO>> getFollowing(
+            @PathVariable Long userId
+    ) {
+        List<FollowWithUserDTO> followees = followService.getAllFolloweesForUser(userId);
+        return ResponseEntity.ok(followees);
+    }
+
     @PostMapping("/artist/{artistId}")
-    public ResponseEntity<FollowDTO> followArtist(
+    public ResponseEntity<FollowWithUserDTO> followArtist(
             @AuthenticationPrincipal User currentUser,
             @PathVariable Long artistId
     ) {
-        FollowDTO follow = followService.followArtist(currentUser.getId(), artistId);
+        FollowWithUserDTO follow = followService.followArtist(currentUser.getId(), artistId);
         return ResponseEntity.ok(follow);
     }
 

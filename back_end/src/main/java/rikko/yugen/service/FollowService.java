@@ -10,7 +10,7 @@ import rikko.yugen.model.FollowId;
 import rikko.yugen.model.User;
 import rikko.yugen.model.Artist;
 
-import rikko.yugen.dto.follow.FollowDTO;
+import rikko.yugen.dto.follow.FollowWithUserDTO;
 import rikko.yugen.repository.FollowRepository;
 import rikko.yugen.repository.UserRepository;
 import rikko.yugen.repository.ArtistRepository;
@@ -32,28 +32,36 @@ public class FollowService {
         this.artistRepository = artistRepository;
     }
 
-    public List<FollowDTO> getAllFolloweesForUser(Long userId) {
+    public List<FollowWithUserDTO> getAllFolloweesForUser(Long userId) {
         return followRepository.findByFollowerId(userId).stream()
-                .map(f -> new FollowDTO(
-                        f.getFollower().getId(),
+                .map(f -> new FollowWithUserDTO(
                         f.getFollowee().getId(),
+                        f.getFollowee().getUser().getUsername(),
+                        f.getFollowee().getArtistName(),
+                        f.getFollowee().getProfilePictureUrl(),
                         f.getFollowedAt()
                 ))
                 .toList();
     }
 
-    public List<FollowDTO> getFollowersForArtist(Long artistId) {
+    public List<FollowWithUserDTO> getFollowersForArtist(Long artistId) {
         return followRepository.findByFolloweeId(artistId).stream()
-                .map(f -> new FollowDTO(
-                        f.getFollower().getId(),
-                        f.getFollowee().getId(),
-                        f.getFollowedAt()
-                ))
+                .map(f -> {
+                    User follower = f.getFollower();
+                    String imageUrl = (follower.getImage() != null) ? follower.getImage().getUrl() : null;
+                    return new FollowWithUserDTO(
+                            follower.getId(),
+                            follower.getUsername(),
+                            follower.getDisplayName(),
+                            imageUrl,
+                            f.getFollowedAt()
+                    );
+                })
                 .toList();
     }
 
     @Transactional
-    public FollowDTO followArtist(Long userId, Long artistId) {
+    public FollowWithUserDTO followArtist(Long userId, Long artistId) {
         User follower = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found: " + userId));
         Artist followee = artistRepository.findById(artistId)
@@ -66,13 +74,25 @@ public class FollowService {
         FollowId followId = new FollowId(follower.getId(), followee.getId());
         if (followRepository.existsById(followId)) {
             Follow existing = followRepository.findById(followId).get();
-            return new FollowDTO(existing.getFollower().getId(), existing.getFollowee().getId(), existing.getFollowedAt());
+            return new FollowWithUserDTO(
+                    existing.getFollowee().getId(),
+                    existing.getFollowee().getUser().getUsername(),
+                    existing.getFollowee().getArtistName(),
+                    existing.getFollowee().getProfilePictureUrl(),
+                    existing.getFollowedAt()
+            );
         }
 
         Follow follow = new Follow(followId, follower, followee, LocalDateTime.now());
         Follow saved = followRepository.save(follow);
 
-        return new FollowDTO(saved.getFollower().getId(), saved.getFollowee().getId(), saved.getFollowedAt());
+        return new FollowWithUserDTO(
+                saved.getFollowee().getId(),
+                saved.getFollowee().getUser().getUsername(),
+                saved.getFollowee().getArtistName(),
+                saved.getFollowee().getProfilePictureUrl(),
+                saved.getFollowedAt()
+        );
     }
 
     @Transactional
