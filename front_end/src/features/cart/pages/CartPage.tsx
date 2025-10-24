@@ -1,8 +1,7 @@
 import CartItem from "../components/CartItem";
-import { useCart } from "../CartProvider";
+import { useCart } from "../useCartContext";
 const CartPage: React.FC = () => {
   const { cart, updateQuantity, removeFromCart, totalPrice } = useCart();
-  console.log(cart);
   return (
     <div className="py-12 px-24">
       <h2 className="text-2xl font-bold mb-4">Your Cart</h2>

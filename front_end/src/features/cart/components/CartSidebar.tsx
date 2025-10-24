@@ -1,4 +1,4 @@
-import { useCart } from "../CartProvider";
+import { useCart } from "../useCartContext";
 import { X } from "lucide-react";
 import { CartItem } from "../types/cartTypes";
 

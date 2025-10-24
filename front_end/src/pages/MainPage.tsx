@@ -1,7 +1,7 @@
 import { useUser } from "@/features/user/UserProvider";
-import { useCart } from "@/features/cart/CartProvider";
+import { useCart } from "@/features/cart/useCartContext";
 import { Outlet } from "react-router-dom";
-import { House, Bookmark, Mail, Bell, Settings, Users, ShoppingCart, Newspaper } from "lucide-react";
+import { House, Bookmark, Mail, Bell, Settings, Users, ShoppingCart, Newspaper, Package } from "lucide-react";
 import MainNav from "@/shared/components/MainNav";
 function MainPage(): JSX.Element {
   const { user } = useUser();
@@ -13,6 +13,7 @@ function MainPage(): JSX.Element {
     { title: "Cart", url: "/cart", icon: ShoppingCart, badge: cartItemCount },
     { title: "Notifications", url: "/notifications", icon: Bell },
     { title: "Following", url: "/following", icon: Users },
+    ...(user.artistId ? [{ title: "Products", url: "/products", icon: Package}] : [] ),
     { title: "Saved", url: "/saved", icon: Bookmark },
     { title: "Messages", url: "/messages", icon: Mail },
     ...(user.isGuest ? [] : [{ title: "Settings", url: "/settings", icon: Settings }]),

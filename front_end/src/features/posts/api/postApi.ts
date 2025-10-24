@@ -1,5 +1,5 @@
 import { fetchClient } from "@/shared/api/fetchClient";
-import { PostDTO } from "../types/postTypes";
+import type { PostDTO } from "../types/postTypes";
 
 export const postApi = {
   createPost: async (data: {
