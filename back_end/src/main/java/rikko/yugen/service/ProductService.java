@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
@@ -19,19 +19,19 @@ import rikko.yugen.model.Artist;
 import rikko.yugen.model.Collection;
 import rikko.yugen.model.Series;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+
 @Service
+@RequiredArgsConstructor
 public class ProductService {
-    @Autowired
-    private ProductRepository productRepository;
 
-    @Autowired
-    private ArtistRepository artistRepository;
+    private final  ProductRepository productRepository;
+    private final ArtistRepository artistRepository;
+    private final SeriesRepository seriesRepository;
+    private final CollectionRepository collectionRepository;
 
-    @Autowired
-    private SeriesRepository seriesRepository;
-
-    @Autowired
-    private CollectionRepository collectionRepository;
+    private final CurrentUserHelper currentUserHelper;
 
     public List<Product> getAllProducts() {
         return productRepository.findAll();
@@ -51,9 +51,10 @@ public class ProductService {
 
     @Transactional
     public Product createProduct(ProductCreateDTO productCreateDTO) {
+        User currentUser = currentUserHelper.getCurrentUser();
 
-        Artist artist = artistRepository.findById(productCreateDTO.getArtistId())
-                        .orElseThrow(() -> new RuntimeException("Artist not found with"));
+        Artist artist = artistRepository.findByUserId(currentUser.getId())
+                .orElseThrow(() -> new RuntimeException("Artist not found for current user"));
 
         Product product = new Product();
         product.setName(productCreateDTO.getName());
