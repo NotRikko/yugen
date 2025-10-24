@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { productApi } from "../api/productApi";
-import { useUser } from "@/features/user/UserProvider";
+import { useUser } from "@/features/user/useUserContext";
 import type { Product } from "../types/productTypes";
 
 export const useProductHook = () => {

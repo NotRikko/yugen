@@ -9,8 +9,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/shared/ui/sidebar"
-import { useNavigate, Link } from "react-router-dom"
-import { useUser } from "@/features/user/UserProvider";
+import { useNavigate, Link } from "react-router-dom";
+import { useUser } from "../useUserContext";
 import { User } from "../types/userTypes";
   
 interface UserProps {
