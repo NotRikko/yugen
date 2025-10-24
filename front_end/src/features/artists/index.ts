@@ -1,9 +1,9 @@
-import { Artist, Post } from "../types/artistTypes";
-import { Product } from "../types/productTypes";
+import type { Artist } from "./types/artistTypes";
+import type { PostDTO } from "../posts/types/postTypes";
+import type { Product } from "../user/types/userTypes";
 
 const BASE_URL = import.meta.env.VITE_API_URL; 
 
-// helper to handle fetch responses
 async function fetchJson<T>(url: string): Promise<T> {
   const res = await fetch(url);
   if (!res.ok) {
@@ -16,8 +16,8 @@ export async function fetchArtistById(artistId: number): Promise<Artist> {
   return fetchJson<Artist>(`${BASE_URL}/artists/${artistId}`);
 }
 
-export async function fetchArtistPosts(artistId: number): Promise<Post[]> {
-  return fetchJson<Post[]>(`${BASE_URL}/artists/${artistId}/posts`);
+export async function fetchArtistPosts(artistId: number): Promise<PostDTO[]> {
+  return fetchJson<PostDTO[]>(`${BASE_URL}/artists/${artistId}/posts`);
 }
 
 export async function fetchArtistProducts(artistId: number): Promise<Product[]> {

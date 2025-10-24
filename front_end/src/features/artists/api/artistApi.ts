@@ -1,7 +1,7 @@
 import { fetchClient } from "@/shared/api/fetchClient";
 import { PartialArtist, Artist } from "../types/artistTypes";
-import { Post } from "@/features/posts/types/postTypes";
-import { Product } from "../types/productTypes";
+import { PostDTO } from "@/features/posts/types/postTypes";
+import { Product } from "@/features/user/types/userTypes";
 
 export const artistApi = {
   getArtists: () =>
@@ -14,16 +14,16 @@ export const artistApi = {
     fetchClient<PartialArtist>(`/artists/${artistName}`, { method: "GET" }),
 
   getPostsById: (artistId: number) =>
-    fetchClient<Post[]>(`/artists/${artistId}/posts`, { method: "GET" }),
+    fetchClient<PostDTO[]>(`/artists/${artistId}/posts`, { method: "GET" }),
 
   getPostsByArtistName: (artistName: string) =>
-    fetchClient<Post[]>(`/artists/${artistName}/posts`, { method: "GET" }),
+    fetchClient<PostDTO[]>(`/artists/${artistName}/posts`, { method: "GET" }),
   
   getProducts: (artistId: number) =>
     fetchClient<Product[]>(`/artists/${artistId}/products`, { method: "GET" }),
 
   createPost: (artistId: number, data: { title: string; content: string }) =>
-    fetchClient<Post>(`/artists/${artistId}/posts`, {
+    fetchClient<PostDTO>(`/artists/${artistId}/posts`, {
       method: "POST",
       body: JSON.stringify(data),
       auth: true, 

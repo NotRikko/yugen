@@ -2,11 +2,11 @@ import { useUser } from "@/features/user/UserProvider"
 import { useEffect, useState } from "react";
 import { artistApi } from "../api/artistApi";
 import PostCard from "@/features/posts/components/Post"; 
-import type { Post } from "@/features/posts/types/postTypes";
+import type { PostDTO } from "@/features/posts/types/postTypes";
 import type { Product } from "@/features/user/types/userTypes";
 const ArtistDashBoard: React.FC = () => {
     const { user } = useUser();
-    const [posts, setPosts] = useState<Post[]>([]);
+    const [posts, setPosts] = useState<PostDTO[]>([]);
     const [products, setProducts] = useState<Product[]>([]);
     useEffect(() => {
         if (!user?.artistId) return;

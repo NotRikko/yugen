@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import ArtistProfileHeader from "@/features/artists/components/ArtistProfileHeader";
 import Post from "@/features/posts/components/Post";
 import type { PartialArtist } from "@/features/artists/types/artistTypes";
-import type { Post as PostType } from "@/features/posts/types/postTypes";
+import type { PostDTO as PostType } from "@/features/posts/types/postTypes";
 import { artistApi } from "@/features/artists/api/artistApi"; 
 
 const ArtistProfilePage: React.FC = () => {

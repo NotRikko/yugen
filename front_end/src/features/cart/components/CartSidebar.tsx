@@ -1,12 +1,13 @@
-import { useUser } from "@/features/user/UserProvider";
+import { useCart } from "../CartProvider";
 import { X } from "lucide-react";
+import { CartItem } from "../types/cartTypes";
 
 interface CartSidebarProps {
   onClose: () => void;
 }
 
 export default function CartSidebar({ onClose }: CartSidebarProps) {
-  const { cart } = useUser();
+  const { cart } = useCart();
 
   return (
     <div className="w-full min-h-screen bg-white px-8 py-8">
@@ -19,7 +20,7 @@ export default function CartSidebar({ onClose }: CartSidebarProps) {
 
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {cart?.items.length ? (
-          cart.items.map((item) => (
+          cart.items.map((item : CartItem) => (
             <div key={item.productId} className="flex justify-between items-center border-b pb-2">
               <div className="flex flex-col">
                 <span className="font-medium">{item.product.name}</span>

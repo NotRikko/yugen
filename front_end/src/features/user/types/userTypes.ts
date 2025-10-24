@@ -16,6 +16,7 @@ export interface User {
 }
 
 export interface PartialUser {
+  id: number;
   displayName: string;
   image: string;
 }

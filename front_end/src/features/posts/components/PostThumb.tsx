@@ -1,7 +1,7 @@
-import type { Post } from "@/features/posts/types/postTypes";
+import type { PostDTO } from "@/features/posts/types/postTypes";
 
 interface PostThumbProps {
-    post: Post;
+    post: PostDTO;
 }
 
 
