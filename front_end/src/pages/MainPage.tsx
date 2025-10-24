@@ -15,9 +15,7 @@ function MainPage(): JSX.Element {
     { title: "Following", url: "/following", icon: Users },
     { title: "Saved", url: "/saved", icon: Bookmark },
     { title: "Messages", url: "/messages", icon: Mail },
-    ...(user.isGuest
-      ? []
-      : [{ title: "Settings", url: "/settings", icon: Settings }]),
+    ...(user.isGuest ? [] : [{ title: "Settings", url: "/settings", icon: Settings }]),
   ];
 
 

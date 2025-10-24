@@ -9,6 +9,7 @@ import ArtistProfilePage from "@/features/artists/pages/ArtistProfilePage";
 import SignupPage from './features/auth/pages/SignupPage.tsx';
 import LoginPage from './features/auth/pages/LoginPage.tsx';
 import MainPage from './pages/MainPage.tsx';
+import FollowMain from './features/follow/pages/FollowMain.tsx';
 import { UserProvider } from './features/user/UserProvider.tsx';
 import { SidebarProvider } from './shared/ui/sidebar.tsx';
 import SettingsForm from './features/user/components/SettingsForm.tsx';
@@ -30,6 +31,7 @@ const router = createBrowserRouter([
       { path: 'feed', element: <FeedMain /> },
       { path: 'settings', element: <SettingsForm /> },
       { path: 'cart', element: <CartPage /> },
+      { path: 'following', element: <FollowMain />},
       {
         path: 'artist',
         element: <ArtistMain />,
