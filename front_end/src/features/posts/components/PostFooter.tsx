@@ -1,9 +1,9 @@
-import { Heart, MessageCircle, ShoppingBag, Share2 } from "lucide-react"
-import { useState } from "react"
+import { Heart, MessageCircle, ShoppingBag, Share2 } from "lucide-react";
+import { useState } from "react";
 import { useUser } from "@/features/user/UserProvider";
-import { useCart } from "@/features/cart/CartProvider";
-import type { PostDTO } from "@/features/posts/types/postTypes";
 import { postApi } from "../api/postApi";
+import ProductModal from "@/features/products/components/ProductModal";
+import type { PostDTO } from "@/features/posts/types/postTypes";
 
 interface PostFooterProps {
   post: PostDTO;
@@ -11,11 +11,11 @@ interface PostFooterProps {
 
 const PostFooter = ({ post }: PostFooterProps) => {
   const { user } = useUser();
-  const { addToCart } = useCart();
   const [likes, setLikes] = useState(post.likes?.length ?? 0);
   const [liked, setLiked] = useState(
     post.likes?.some((like) => like.userId === user?.id) ?? false
   );
+  const [showProductModal, setShowProductModal] = useState(false);
 
   const handleLike = async () => {
     if (!user) return;
@@ -34,21 +34,13 @@ const PostFooter = ({ post }: PostFooterProps) => {
     }
   };
 
-  const handlePurchase = async () => {
-    if (!post.product) {
-      console.warn("No product associated with this post");
-      return;
-    }
-
-    try {
-      await addToCart(post.product.id, 1);
-    } catch (error) {
-      console.error("Error purchasing product:", error);
-    }
+  const handleViewProduct = () => {
+    if (!post.product) return;
+    setShowProductModal(true);
   };
 
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between relative">
       <div className="flex items-center gap-2 text-gray-600 text-base">
         <button onClick={handleLike}>
           <Heart className={`w-6 h-6 ${liked ? "text-red-500" : ""}`} />
@@ -71,9 +63,22 @@ const PostFooter = ({ post }: PostFooterProps) => {
 
       {post.product && (
         <div className="flex items-center gap-2 text-gray-600 text-base">
-          <button onClick={handlePurchase}>
+          <button onClick={handleViewProduct}>
             <ShoppingBag className="w-6 h-6" />
           </button>
+        </div>
+      )}
+
+      {showProductModal && post.product && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowProductModal(false);
+          }}
+        >
+          <div className="bg-white rounded-xl shadow-lg w-11/12 md:w-3/4 lg:w-1/2 relative max-h-[90vh] overflow-y-auto">
+            <ProductModal product={post.product} />
+          </div>
         </div>
       )}
     </div>

@@ -40,7 +40,6 @@ export default function PostModal({ post }: PostDetailsProps) {
           {post.artist.artistName}
         </p>
 
-        {/* Reusable follow button */}
         <FollowButton artistId={post.artist.id} />
       </div>
 
