@@ -1,7 +1,7 @@
 import { ReactNode, useEffect } from "react";
 import { CartContext } from "./CartContext";
 import { useCartHook } from "./hooks/useCart";
-import { useUser } from "@/features/user/UserProvider";
+import { useUser } from "../user/useUserContext";
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const { isLoggedIn } = useUser();

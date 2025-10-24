@@ -2,7 +2,7 @@ import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useState, useEffect, useRef } from "react";
 import { NavLink } from 'react-router-dom';
-import { useUser } from "@/features/user/UserProvider";
+import { useUser } from '@/features/user/useUserContext';
 import MainNav from './MainNav';
 import CartSidebar from '@/features/cart/components/CartSidebar';
 import { Calendar, Inbox } from "lucide-react";

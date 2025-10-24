@@ -13,7 +13,7 @@ import {
 } from "@/shared/ui/form";
 import { Input } from "@/shared/ui/input";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "@/features/user/UserProvider";
+import { useUser } from "@/features/user/useUserContext";
 import { useState } from "react";
 
 const formSchema = z.object({

@@ -12,8 +12,7 @@ import {
 } from "@/shared/ui/form"
 import { Input } from "@/shared/ui/input"
 import { Textarea } from "@/shared/ui/textarea"
-
-import { useUser } from "@/features/user/UserProvider";
+import { useUser } from "@/features/user/useUserContext"
 import { useState } from "react"
 import { postApi } from "../api/postApi";
 

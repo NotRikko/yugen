@@ -1,5 +1,5 @@
 import type { PartialComment } from "../types/commentTypes";
-import { useUser } from "@/features/user/UserProvider";
+import { useUser } from "@/features/user/useUserContext";
 import { useComment } from "../hooks/useComment";
 import Comment from "./Comment";
 

@@ -1,6 +1,6 @@
 import { Heart, MessageCircle, ShoppingBag, Share2 } from "lucide-react";
 import { useState } from "react";
-import { useUser } from "@/features/user/UserProvider";
+import { useUser } from "@/features/user/useUserContext";
 import { postApi } from "../api/postApi";
 import ProductModal from "@/features/products/components/ProductModal";
 import type { PostDTO } from "@/features/posts/types/postTypes";

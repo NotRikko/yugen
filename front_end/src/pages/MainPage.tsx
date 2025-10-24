@@ -1,4 +1,4 @@
-import { useUser } from "@/features/user/UserProvider";
+import { useUser } from "@/features/user/useUserContext";
 import { useCart } from "@/features/cart/useCartContext";
 import { Outlet } from "react-router-dom";
 import { House, Bookmark, Mail, Bell, Settings, Users, ShoppingCart, Newspaper, Package } from "lucide-react";

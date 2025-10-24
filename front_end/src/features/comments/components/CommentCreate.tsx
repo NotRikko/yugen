@@ -11,9 +11,7 @@ import {
 } from "@/shared/ui/form"
 import { Textarea } from "@/shared/ui/textarea"
 import { commentApi } from "../api/commentApi"
-
-import { useUser } from "@/features/user/UserProvider";
-
+import { useUser } from "@/features/user/useUserContext"
 interface CommentCreateProps {
     postId: number;
 }

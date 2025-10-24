@@ -12,7 +12,7 @@ import {
 } from "@/shared/ui/form"
 import { Input } from "@/shared/ui/input"
 import DeleteAccountButton from "./DeleteAccountButton"
-import { useUser } from "@/features/user/UserProvider"
+import { useUser } from "../useUserContext"
 import { userApi } from "../api/userApi";
    
 const formSchema = z.object({

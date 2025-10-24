@@ -1,4 +1,4 @@
-import { useUser } from "@/features/user/UserProvider";
+import { useUser } from "../useUserContext";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userApi } from "@/features/user/api/userApi";

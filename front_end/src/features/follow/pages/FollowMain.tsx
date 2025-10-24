@@ -1,6 +1,6 @@
 import { useState, useEffect} from "react";
 import { useFollow } from "../hooks/useFollow";
-import { useUser } from "@/features/user/UserProvider";
+import { useUser } from "@/features/user/useUserContext";
 import type { PartialUser } from "@/features/user/types/userTypes";
 
 type ViewMode = "followers" | "followees";

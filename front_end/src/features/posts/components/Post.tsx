@@ -3,7 +3,7 @@ import CustomDropdown from "@/shared/components/CustomDropDown";
 import { postApi } from "../api/postApi";
 import type { PostDTO } from "@/features/posts/types/postTypes";
 import { useNavigate } from "react-router-dom";
-import { useUser } from "@/features/user/UserProvider";
+import { useUser } from "@/features/user/useUserContext";
 interface PostProps {
   post: PostDTO;
   onSelect?: () => void;

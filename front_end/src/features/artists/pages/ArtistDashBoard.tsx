@@ -1,4 +1,4 @@
-import { useUser } from "@/features/user/UserProvider"
+import { useUser } from "@/features/user/useUserContext";
 import { useEffect, useState } from "react";
 import { artistApi } from "../api/artistApi";
 import PostCard from "@/features/posts/components/Post"; 
