@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import rikko.yugen.model.Artist;
 import rikko.yugen.model.Product;
+import rikko.yugen.model.Image;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.ProductRepository;
 
@@ -29,14 +30,22 @@ public class ProductBootstrap {
             Product p1 = new Product();
             p1.setName("Cool Poster");
             p1.setPrice(19.99f);
-            p1.setImage("https://pbs.twimg.com/media/GzhOWSpWcAAxTrI.png");
             p1.setArtist(artists.get(0));
+
+            Image img1 = new Image();
+            img1.setUrl("https://pbs.twimg.com/media/GzhOWSpWcAAxTrI.png");
+            img1.setProduct(p1);
+            p1.getImages().add(img1);
 
             Product p2 = new Product();
             p2.setName("Art Print");
             p2.setPrice(29.99f);
-            p2.setImage("https://pbs.twimg.com/media/GzhOWSpWcAAxTrI.png");
             p2.setArtist(artists.get(1));
+
+            Image img2 = new Image();
+            img2.setUrl("https://pbs.twimg.com/media/GzhOWSpWcAAxTrI.png");
+            img2.setProduct(p2);
+            p2.getImages().add(img2);
 
             productRepository.saveAll(List.of(p1, p2));
         }

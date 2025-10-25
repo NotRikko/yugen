@@ -7,7 +7,7 @@ public class ProductCreateDTO {
     private String description;
     private Float price;
     private Integer quantityInStock;
-    private String image;
+    private Set<String> images;
     private Set<Long> seriesIds;
     private Set<Long> collectionIds;
 
@@ -27,8 +27,8 @@ public class ProductCreateDTO {
         return quantityInStock;
     }
 
-    public String getImage() {
-        return image;
+    public Set<String> getImages() {
+        return images;
     }
 
     public Set<Long> getSeriesIds() {

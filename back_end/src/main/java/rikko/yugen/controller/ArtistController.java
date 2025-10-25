@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +17,7 @@ import rikko.yugen.dto.artist.ArtistDTO;
 import rikko.yugen.dto.product.ProductDTO;
 import rikko.yugen.dto.post.PostDTO;
 import rikko.yugen.model.Artist;
+import rikko.yugen.model.User;
 import rikko.yugen.service.ArtistService;
 import rikko.yugen.service.ProductService;
 import rikko.yugen.service.PostService;
@@ -63,8 +65,23 @@ public class ArtistController {
     public ResponseEntity<List<ProductDTO>> getProductsByArtistId(@PathVariable Long artistId) {
         List<ProductDTO> products = productService.getProductsByArtistId(artistId)
                 .stream()
-                .map(ProductDTO::new)
+                .map(ProductDTO::fromProduct)
                 .collect(Collectors.toList());
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/me/products")
+    public ResponseEntity<List<ProductDTO>> getProductsOfLoggedInArtist(@AuthenticationPrincipal User user) {
+        if (user.getArtist() == null) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        Long artistId = user.getArtist().getId();
+        List<ProductDTO> products = productService.getProductsByArtistId(artistId)
+                .stream()
+                .map(ProductDTO::fromProduct)
+                .collect(Collectors.toList());
+
         return ResponseEntity.ok(products);
     }
 

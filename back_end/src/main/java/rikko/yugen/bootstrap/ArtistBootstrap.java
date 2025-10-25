@@ -24,7 +24,6 @@ public class ArtistBootstrap {
         if (artistRepository.count() == 0) {
             List<User> artistUsers = userRepository.findAll().stream()
                     .filter(User::getIsArtist)
-                    .limit(3)
                     .collect(Collectors.toList());
 
             if (artistUsers.isEmpty()) {
@@ -47,7 +46,12 @@ public class ArtistBootstrap {
                             "Abstract painter & digital artist.",
                             "https://m.media-amazon.com/images/I/612SzJjmqGL.jpg",
                             "https://preview.redd.it/sandrone-being-playable-v0-ic6fiimnuzjf1.jpeg?auto=webp&s=0b1b20d08edb2fabe5809ce07ec97ea9be8329fa",
-                            artistUsers.get(2))
+                            artistUsers.get(2)),
+                    new Artist("Rikko",
+                            "Test Rikko.",
+                            "https://m.media-amazon.com/images/I/612SzJjmqGL.jpg",
+                            "https://preview.redd.it/sandrone-being-playable-v0-ic6fiimnuzjf1.jpeg?auto=webp&s=0b1b20d08edb2fabe5809ce07ec97ea9be8329fa",
+                            artistUsers.get(3))
             );
 
             artistRepository.saveAll(artists);

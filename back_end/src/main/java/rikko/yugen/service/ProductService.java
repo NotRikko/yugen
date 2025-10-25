@@ -1,4 +1,3 @@
-
 package rikko.yugen.service;
 
 import java.util.HashSet;
@@ -7,6 +6,7 @@ import java.util.Set;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.transaction.Transactional;
 import rikko.yugen.repository.ProductRepository;
@@ -14,6 +14,10 @@ import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.CollectionRepository;
 import rikko.yugen.repository.SeriesRepository;
 import rikko.yugen.dto.product.ProductCreateDTO;
+import rikko.yugen.dto.product.ProductDTO;
+import rikko.yugen.dto.image.ImageDTO;
+
+import rikko.yugen.model.Image;
 import rikko.yugen.model.Product;
 import rikko.yugen.model.User;
 import rikko.yugen.model.Artist;
@@ -31,6 +35,9 @@ public class ProductService {
     private final ArtistRepository artistRepository;
     private final SeriesRepository seriesRepository;
     private final CollectionRepository collectionRepository;
+
+    private final CloudinaryService cloudinaryService;
+    private final ImageService imageService;
 
     private final CurrentUserHelper currentUserHelper;
 
@@ -51,7 +58,7 @@ public class ProductService {
     }
 
     @Transactional
-    public Product createProduct(ProductCreateDTO productCreateDTO) {
+    public ProductDTO createProduct(ProductCreateDTO productCreateDTO, List<MultipartFile> files) {
         User currentUser = currentUserHelper.getCurrentUser();
 
         Artist artist = artistRepository.findByUserId(currentUser.getId())
@@ -62,7 +69,6 @@ public class ProductService {
         product.setDescription(productCreateDTO.getDescription());
         product.setPrice(productCreateDTO.getPrice());
         product.setQuantityInStock(productCreateDTO.getQuantityInStock());
-        product.setImage(productCreateDTO.getImage());
         product.setArtist(artist);
 
         if (productCreateDTO.getSeriesIds() != null) {
@@ -77,7 +83,11 @@ public class ProductService {
             product.setCollections(collectionSet);
         }
 
-        return productRepository.save(product);
+        Product savedProduct = productRepository.save(product);
+
+        Set<ImageDTO> imageDTOs = uploadAndSaveFiles(files, savedProduct.getId());
+
+        return new ProductDTO(savedProduct, imageDTOs);
 
     }
 
@@ -86,7 +96,27 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
 
-        // Later: reduce stock, record purchase, send confirmation, etc.
         return "Product '" + product.getName() + "' bought!";
+    }
+
+    private Set<ImageDTO> uploadAndSaveFiles(List<MultipartFile> files, Long productId) {
+        Set<ImageDTO> imageDTOs = new HashSet<>();
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found with id " + productId));
+
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile file : files) {
+                try {
+                    String uploadedUrl = cloudinaryService.uploadImage(file);
+                    Image image = imageService.createImageForProduct(uploadedUrl, product);
+                    imageDTOs.add(new ImageDTO(image));
+                } catch (Exception e) {
+                    System.err.println("Failed to upload image: " + e.getMessage());
+                }
+            }
+        }
+
+        return imageDTOs;
     }
 }

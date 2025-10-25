@@ -6,13 +6,13 @@ import rikko.yugen.dto.product.ProductDTO;
 public class CartItemDTO {
     private final Long id;
     private final Long productId;
-    private final ProductDTO product; // use DTO instead of entity
+    private final ProductDTO product;
     private final int quantity;
 
     public CartItemDTO(CartItem cartItem) {
         this.id = cartItem.getId();
         this.productId = cartItem.getProduct().getId();
-        this.product = new ProductDTO(cartItem.getProduct()); // safely map to DTO
+        this.product = ProductDTO.fromProduct(cartItem.getProduct());
         this.quantity = cartItem.getQuantity();
     }
 

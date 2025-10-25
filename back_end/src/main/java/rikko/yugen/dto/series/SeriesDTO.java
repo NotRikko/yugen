@@ -2,9 +2,11 @@ package rikko.yugen.dto.series;
 
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.Collections;
 
 import rikko.yugen.dto.product.ProductDTO;
 import rikko.yugen.model.Series;
+
 
 public class SeriesDTO {
     private final Long id;
@@ -18,14 +20,14 @@ public class SeriesDTO {
         this.name = series.getName();
         this.image = series.getImage();
         this.description = series.getDescription();
+
         this.products = series.getProducts() != null
-                        ? series.getProducts().stream()
-                                  .map(ProductDTO::new)
-                                  .collect(Collectors.toSet()) 
-                        : null;
+                ? series.getProducts().stream()
+                .map(ProductDTO::fromProduct)
+                .collect(Collectors.toSet())
+                : Collections.emptySet();
     }
 
-    // Getters
     public Long getId() {
         return id;
     }
@@ -45,4 +47,4 @@ public class SeriesDTO {
     public Set<ProductDTO> getProducts() {
         return products;
     }
-}
+    }

@@ -33,7 +33,8 @@ public class UserBootstrap {
                     new User("bob", "Bob Johnson", "bob@example.com", passwordEncoder.encode("password2"), "bob.png", true),
                     new User("charlie", "Charlie Rose", "charlie@example.com", passwordEncoder.encode("password3"), "charlie.png", false),
                     new User("diana", "Diana Prince", "diana@example.com", passwordEncoder.encode("password4"), "diana.png", true),
-                    new User("edward", "Edward Nigma", "edward@example.com", passwordEncoder.encode("password5"), "edward.png", true)
+                    new User("edward", "Edward Nigma", "edward@example.com", passwordEncoder.encode("password5"), "edward.png", true),
+                    new User("Test", "Rikko", "holymoly@email.com", passwordEncoder.encode("asdfasdf"), "https://pbs.twimg.com/profile_images/1966106142481731584/0U9vHmdl_400x400.jpg", true)
             );
 
             userRepository.saveAll(users);

@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import rikko.yugen.dto.image.ImageDTO;
 import rikko.yugen.model.Image;
 import rikko.yugen.model.Post;
+import rikko.yugen.model.Product;
 import rikko.yugen.model.User;
 import rikko.yugen.repository.ImageRepository;
 
@@ -23,10 +24,17 @@ public class ImageService {
     public Set<ImageDTO> getImagesForPost(Post post) {
         List<Image> images = imageRepository.findByPost(post);
 
-        // Convert to DTOs for API response
         return images.stream()
                      .map(ImageDTO::new) 
                      .collect(Collectors.toSet());
+    }
+
+    public Set<ImageDTO> getImagesForProduct(Product product) {
+        List<Image> images = imageRepository.findByProduct(product);
+
+        return images.stream()
+                .map(ImageDTO::new)
+                .collect(Collectors.toSet());
     }
 
     @Transactional
@@ -39,6 +47,18 @@ public class ImageService {
 
         return imageRepository.save(image);
     }
+
+    @Transactional
+    public Image createImageForProduct(String imageUrl, Product product) {
+        Image image = new Image();
+        image.setUrl(imageUrl);
+        image.setProduct(product);
+
+        product.getImages().add(image);
+
+        return imageRepository.save(image);
+    }
+
 
 
     @Transactional

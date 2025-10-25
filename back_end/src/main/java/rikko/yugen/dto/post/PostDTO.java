@@ -25,23 +25,27 @@ public class PostDTO {
     public PostDTO(Post post, Set<LikeDTO> likes, Set<ImageDTO> images, List<CommentDTO> comments) {
         this.id = post.getId();
         this.likes = likes != null ? likes : new HashSet<>();
-        this.images = images != null ? images: new HashSet<>();
+        this.images = images != null ? images : new HashSet<>();
         this.comments = comments != null ? comments : new ArrayList<>();
         this.content = post.getContent();
         this.artist = post.getArtist() != null ? new ArtistDTO(post.getArtist()) : null;
-        this.product = post.getProduct() != null ? new ProductDTO(post.getProduct()) : null;
+        this.product = post.getProduct() != null ? ProductDTO.fromProduct(post.getProduct()) : null;
     }
 
     public static PostDTO fromPost(Post post, Set<LikeDTO> likes) {
         return new PostDTO(
                 post,
                 likes,
-                post.getImages().stream().map(ImageDTO::new).collect(Collectors.toSet()),
-                post.getComments().stream().map(CommentDTO::new).collect(Collectors.toList())
+                post.getImages() != null
+                        ? post.getImages().stream().map(ImageDTO::new).collect(Collectors.toSet())
+                        : new HashSet<>(),
+                post.getComments() != null
+                        ? post.getComments().stream().map(CommentDTO::new).collect(Collectors.toList())
+                        : new ArrayList<>()
         );
     }
 
-    //Getters
+    // Getters
     public Long getId() {
         return id;
     }
@@ -54,7 +58,9 @@ public class PostDTO {
         return images;
     }
 
-    public List<CommentDTO> getComments() { return comments; }
+    public List<CommentDTO> getComments() {
+        return comments;
+    }
 
     public String getContent() {
         return content;
