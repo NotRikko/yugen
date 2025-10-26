@@ -31,7 +31,7 @@ export async function fetchClient<T>(
       throw new Error(message || `Request failed: ${res.status}`);
     }
   
-    if (res.status === 204) return null
+    if (res.status === 204) return undefined as T;
   
     return res.json() as Promise<T>;
   }
