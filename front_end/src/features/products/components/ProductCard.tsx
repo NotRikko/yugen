@@ -1,6 +1,7 @@
 import { useUser } from "@/features/user/useUserContext";
 import type { Product } from "../types/productTypes";
 import { useCart } from "@/features/cart/useCartContext";
+import DeleteProductButton from "./DeleteProductButton";
 interface ProductItemProps {
   product: Product;
 }
@@ -11,6 +12,7 @@ const ProductCard: React.FC<ProductItemProps> = ({ product }) => {
   const handleAddToCart = () => {
     addToCart(product.id, 1);
   };
+  const isOwner = user.id === product.artist.user.id;
 
   return (
     <div className="border rounded-lg p-4 shadow-sm flex flex-col gap-2">
@@ -21,22 +23,23 @@ const ProductCard: React.FC<ProductItemProps> = ({ product }) => {
       />
       <h2 className="text-lg font-semibold">{product.name}</h2>
       <p className="text-gray-600">${product.price.toFixed(2)}</p>
-      {user.id === product.artist.user.id ? "" : 
+      {isOwner ? (
+        <>
+          <button
+            className="mt-auto bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            Edit
+          </button>
+          <DeleteProductButton productId={product.id} />
+        </>
+      ) : (
         <button
           onClick={handleAddToCart}
           className="mt-auto bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
           Add to Cart
         </button>
-      }
-      {
-        user.id === product.artist.user.id ? 
-          <button
-            className="mt-auto bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Edit 
-          </button> : ""
-      }
+      )}
       
     </div>
   );
