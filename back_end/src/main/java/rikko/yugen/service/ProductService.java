@@ -3,6 +3,7 @@ package rikko.yugen.service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -44,6 +45,21 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    public List<ProductDTO> getProductsOfCurrentArtist() {
+        User currentUser = currentUserHelper.getCurrentUser();
+        Artist artist = currentUser.getArtist();
+
+        if (artist == null) {
+            throw new RuntimeException("Artist not found for current user");
+        }
+
+        List<Product> products = productRepository.findByArtistId(artist.getId());
+
+        return products.stream()
+                .map(ProductDTO::fromProduct)
+                .collect(Collectors.toList());
+    }
+
     public List<Product> getProductsByArtistName(String artistName) {
         return productRepository.findByArtist_ArtistName(artistName);
     }
@@ -51,6 +67,7 @@ public class ProductService {
     public List<Product> getProductsByArtistId(Long artistId) {
         return productRepository.findByArtistId(artistId);
     }
+
 
     public List<Product> getProductsByCollectionName(String collectionName) {
         return productRepository.findByCollections_Name(collectionName);

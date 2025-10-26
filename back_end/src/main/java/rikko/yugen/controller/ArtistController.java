@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,7 +15,6 @@ import rikko.yugen.dto.artist.ArtistDTO;
 import rikko.yugen.dto.product.ProductDTO;
 import rikko.yugen.dto.post.PostDTO;
 import rikko.yugen.model.Artist;
-import rikko.yugen.model.User;
 import rikko.yugen.service.ArtistService;
 import rikko.yugen.service.ProductService;
 import rikko.yugen.service.PostService;
@@ -67,12 +65,8 @@ public class ArtistController {
     }
 
     @GetMapping("/me/products")
-    public ResponseEntity<List<ProductDTO>> getProductsOfLoggedInArtist(@AuthenticationPrincipal User user) {
-        Long artistId = user.getArtist().getId(); // throws if null, handled globally
-        List<ProductDTO> products = productService.getProductsByArtistId(artistId)
-                .stream()
-                .map(ProductDTO::fromProduct)
-                .collect(Collectors.toList());
+    public ResponseEntity<List<ProductDTO>> getProductsOfLoggedInArtist() {
+        List<ProductDTO> products = productService.getProductsOfCurrentArtist();
         return ResponseEntity.ok(products);
     }
 

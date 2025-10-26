@@ -26,6 +26,7 @@ public class ProductController {
         String message = productService.purchaseProduct(productId);
         return ResponseEntity.ok(message);
     }
+
     @PostMapping(value = "/", consumes = {"multipart/form-data"})
     public ResponseEntity<ProductDTO> createProduct(
             @RequestPart("product") ProductCreateDTO productCreateDTO,
