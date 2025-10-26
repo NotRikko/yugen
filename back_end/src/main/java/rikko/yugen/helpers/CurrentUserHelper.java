@@ -1,4 +1,4 @@
-package rikko.yugen.service;
+package rikko.yugen.helpers;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

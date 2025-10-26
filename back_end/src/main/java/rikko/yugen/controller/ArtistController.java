@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import lombok.RequiredArgsConstructor;
@@ -44,16 +43,13 @@ public class ArtistController {
     @GetMapping("/artist")
     public ResponseEntity<Artist> getArtist(@RequestParam String artistName) {
         Artist artist = artistService.getArtistByName(artistName);
-        if (artist == null) {
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Artist not found with name: " + artistName);
-        }
         return ResponseEntity.ok(artist);
     }
 
     @GetMapping("/{artistName}")
     public ResponseEntity<ArtistDTO> getArtistByArtistName(@PathVariable String artistName) {
-       ArtistDTO artist = artistService.getArtistByArtistName(artistName);
-       return ResponseEntity.ok(artist);
+        ArtistDTO artist = artistService.getArtistByArtistName(artistName);
+        return ResponseEntity.ok(artist);
     }
 
     @GetMapping("/{artistName}/posts")
@@ -72,26 +68,17 @@ public class ArtistController {
 
     @GetMapping("/me/products")
     public ResponseEntity<List<ProductDTO>> getProductsOfLoggedInArtist(@AuthenticationPrincipal User user) {
-        if (user.getArtist() == null) {
-            return ResponseEntity.badRequest().body(null);
-        }
-
-        Long artistId = user.getArtist().getId();
+        Long artistId = user.getArtist().getId(); // throws if null, handled globally
         List<ProductDTO> products = productService.getProductsByArtistId(artistId)
                 .stream()
                 .map(ProductDTO::fromProduct)
                 .collect(Collectors.toList());
-
         return ResponseEntity.ok(products);
     }
 
     @PostMapping("/create")
     public ResponseEntity<ArtistDTO> createArtist(@RequestBody ArtistCreateDTO artistCreateDTO) {
         Artist createdArtist = artistService.createArtist(artistCreateDTO);
-
-        ArtistDTO artistDTO = new ArtistDTO(createdArtist);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(artistDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ArtistDTO(createdArtist));
     }
-
 }

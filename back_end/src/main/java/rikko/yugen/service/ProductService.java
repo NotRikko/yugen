@@ -24,8 +24,7 @@ import rikko.yugen.model.Artist;
 import rikko.yugen.model.Collection;
 import rikko.yugen.model.Series;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import rikko.yugen.helpers.CurrentUserHelper;
 
 @Service
 @RequiredArgsConstructor
@@ -118,5 +117,18 @@ public class ProductService {
         }
 
         return imageDTOs;
+    }
+
+    @Transactional
+    public void deleteProduct(Long productId) {
+        User currentUser = currentUserHelper.getCurrentUser();
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
+
+        if (!product.getArtist().getUser().equals(currentUser)) {
+            throw new RuntimeException("You are not allowed to delete this product.");
+        }
+        productRepository.delete(product);
     }
 }

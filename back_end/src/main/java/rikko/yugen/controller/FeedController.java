@@ -7,8 +7,8 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 import rikko.yugen.dto.post.PostDTO;
+import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.service.FeedService;
-import rikko.yugen.service.CurrentUserHelper;
 
 @RestController
 @CrossOrigin(origins = "${frontend.url}")

@@ -22,7 +22,6 @@ import rikko.yugen.dto.image.ImageDTO;
 import rikko.yugen.dto.post.PostCreateDTO;
 import rikko.yugen.dto.post.PostDTO;
 import rikko.yugen.dto.like.LikeDTO;
-import rikko.yugen.dto.comment.CommentDTO;
 
 import rikko.yugen.model.Artist;
 import rikko.yugen.model.Image;
@@ -31,10 +30,9 @@ import rikko.yugen.model.Post;
 import rikko.yugen.model.Product;
 import rikko.yugen.model.User;
 
-import lombok.RequiredArgsConstructor;
+import rikko.yugen.helpers.CurrentUserHelper;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -59,7 +57,7 @@ public class PostService {
 
         Map<Long, Set<LikeDTO>> likesByPost = likes.stream()
                 .collect(Collectors.groupingBy(
-                        l -> l.getContentId(),
+                        Like::getContentId,
                         Collectors.mapping(LikeDTO::new, Collectors.toSet())
                 ));
 
@@ -77,7 +75,7 @@ public class PostService {
 
         Map<Long, Set<LikeDTO>> likesByPost = likes.stream()
                 .collect(Collectors.groupingBy(
-                        l -> l.getContentId(),
+                        Like::getContentId,
                         Collectors.mapping(LikeDTO::new, Collectors.toSet())
                 ));
 
@@ -108,7 +106,7 @@ public class PostService {
 
         Set<ImageDTO> imageDTOs = uploadAndSaveFiles(files, savedPost.getId());
 
-        return new PostDTO(savedPost, new HashSet<>(), imageDTOs, new ArrayList<CommentDTO>());
+        return new PostDTO(savedPost, new HashSet<>(), imageDTOs, new ArrayList<>());
     }
 
     private Set<ImageDTO> uploadAndSaveFiles(List<MultipartFile> files, Long postId) {
@@ -142,7 +140,6 @@ public class PostService {
         if (!post.getArtist().getUser().getId().equals(currentUser.getId())) {
             throw new RuntimeException("You are not allowed to delete this post");
         }
-
         postRepository.delete(post);
     }
 }
