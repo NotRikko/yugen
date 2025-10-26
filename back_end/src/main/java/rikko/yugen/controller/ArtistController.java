@@ -12,12 +12,14 @@ import lombok.RequiredArgsConstructor;
 
 import rikko.yugen.dto.artist.ArtistCreateDTO;
 import rikko.yugen.dto.artist.ArtistDTO;
+import rikko.yugen.dto.follow.FollowWithUserDTO;
 import rikko.yugen.dto.product.ProductDTO;
 import rikko.yugen.dto.post.PostDTO;
 import rikko.yugen.model.Artist;
 import rikko.yugen.service.ArtistService;
 import rikko.yugen.service.ProductService;
 import rikko.yugen.service.PostService;
+import rikko.yugen.service.FollowService;
 
 @RestController
 @CrossOrigin(origins = "${frontend.url}")
@@ -28,6 +30,7 @@ public class ArtistController {
     private final ArtistService artistService;
     private final ProductService productService;
     private final PostService postService;
+    private final FollowService followService;
 
     @GetMapping("/")
     public ResponseEntity<List<ArtistDTO>> getAllArtists() {
@@ -74,5 +77,37 @@ public class ArtistController {
     public ResponseEntity<ArtistDTO> createArtist(@RequestBody ArtistCreateDTO artistCreateDTO) {
         Artist createdArtist = artistService.createArtist(artistCreateDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ArtistDTO(createdArtist));
+    }
+
+    @PostMapping("/{artistId}/followers")
+    public ResponseEntity<FollowWithUserDTO> followArtist(
+            @PathVariable Long artistId
+    ) {
+        FollowWithUserDTO follow = followService.followArtist(artistId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(follow);
+    }
+
+    @DeleteMapping("/{artistId}/followers")
+    public ResponseEntity<Void> unfollowArtist(
+            @PathVariable Long artistId
+    ) {
+        followService.unfollowArtist(artistId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{artistId}/followers")
+    public ResponseEntity<List<FollowWithUserDTO>> getFollowers(
+            @PathVariable Long artistId
+    ) {
+        List<FollowWithUserDTO> followers = followService.getFollowersForArtist(artistId);
+        return ResponseEntity.ok(followers);
+    }
+
+    @GetMapping("/artist/{artistId}/check")
+    public ResponseEntity<Boolean> isFollowing(
+            @PathVariable Long artistId
+    ) {
+        boolean following = followService.isFollowing(artistId);
+        return ResponseEntity.ok(following);
     }
 }
