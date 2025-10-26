@@ -28,7 +28,7 @@ export const userApi = {
   },
 
   deleteCurrentUser: async () =>
-    fetchClient<{ message: string }>("/users/me", {
+    fetchClient<void>("/users/me", {
       method: "DELETE",
       auth: true,
     }),
