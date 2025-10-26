@@ -8,8 +8,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import lombok.RequiredArgsConstructor;
 
-import rikko.yugen.model.Product;
-
 import rikko.yugen.dto.product.ProductCreateDTO;
 import rikko.yugen.dto.product.ProductDTO;
 
@@ -28,7 +26,7 @@ public class ProductController {
         String message = productService.purchaseProduct(productId);
         return ResponseEntity.ok(message);
     }
-    @PostMapping("/")
+    @PostMapping(value = "/", consumes = {"multipart/form-data"})
     public ResponseEntity<ProductDTO> createProduct(
             @RequestPart("product") ProductCreateDTO productCreateDTO,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
