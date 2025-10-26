@@ -72,6 +72,7 @@ function Navbar() {
               items={accountItems}
               handleLogout={handleLogout}
               layout="sidebar"
+              type="user"
             />
           )}
         </div>

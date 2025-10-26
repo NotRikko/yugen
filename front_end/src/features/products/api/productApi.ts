@@ -53,4 +53,10 @@ export const productApi = {
         return products;
     },
     
+    deleteProduct: async () : Promise<void> => {
+        fetchClient<void>(`/products/${productId}`, {
+            method: "DELETE",
+            auth: true
+        });
+    }
 }

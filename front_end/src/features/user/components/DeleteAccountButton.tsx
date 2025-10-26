@@ -2,6 +2,7 @@ import { useUser } from "../useUserContext";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userApi } from "@/features/user/api/userApi";
+import { Button } from "@/shared/ui/button";
 
 export default function DeleteAccountButton() {
   const { setUser, guestUser } = useUser();
@@ -36,14 +37,14 @@ export default function DeleteAccountButton() {
   }
 
   return (
-    <button
+    <Button
       onClick={handleDeleteAccount}
       disabled={loading}
-      className="w-1/3 bg-red-600 text-white font-medium px-4 py-2 rounded-lg shadow-md 
-        hover:bg-red-700 focus:ring-2 focus:ring-red-400 focus:outline-none 
-        disabled:bg-red-300 disabled:cursor-not-allowed transition-all"
+      variant="destructive"
+      size="lg"
+      className="w-1/3"
     >
       {loading ? "Deleting..." : "Delete Account"}
-    </button>
+    </Button>
   );
 }

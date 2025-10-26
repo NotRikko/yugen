@@ -22,6 +22,7 @@ interface MainNavProps {
   cartItemCount?: number;
   handleLogout?: () => void;
   layout?: "sidebar" | "topbar";
+  type?: "feed" | "user";
 }
 
 export default function MainNav({
@@ -29,11 +30,13 @@ export default function MainNav({
   items,
   handleLogout,
   layout = "sidebar",
+  type = "feed",
 }: MainNavProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
   const isSidebar = layout === "sidebar";
+  const isFeed = type === "feed";
 
   return (
     <nav
@@ -61,7 +64,7 @@ export default function MainNav({
     <h2 className="font-semibold">{user.displayName || "Guest"}</h2>
   </div>
 
-  {isSidebar && (
+  {isSidebar && isFeed && (
     <>
       {user.isGuest ? (
         <button
