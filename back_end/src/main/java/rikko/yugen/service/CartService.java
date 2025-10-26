@@ -1,10 +1,10 @@
 package rikko.yugen.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Cart;
 import rikko.yugen.model.CartItem;
 import rikko.yugen.model.Product;
@@ -14,14 +14,6 @@ import rikko.yugen.dto.cart.CartDTO;
 
 import rikko.yugen.repository.CartRepository;
 import rikko.yugen.repository.ProductRepository;
-import rikko.yugen.repository.UserRepository;
-
-import rikko.yugen.service.CartItemService;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +21,6 @@ public class CartService {
 
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
     private final CartItemService cartItemService;
 
     private final CurrentUserHelper currentUserHelper;
@@ -126,8 +117,8 @@ public class CartService {
             productRepository.save(product);
         }
 
-        if (messages.length() > 0) {
-            return "Checkout failed:\n" + messages.toString();
+        if (!messages.isEmpty()) {
+            return "Checkout failed:\n" + messages;
         }
 
         cartItemService.getItemsByCartId(cart.getId())

@@ -10,22 +10,18 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import rikko.yugen.dto.like.LikeDTO;
+import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Like;
 import rikko.yugen.model.Post;
 import rikko.yugen.model.User;
 import rikko.yugen.repository.LikeRepository;
-import rikko.yugen.repository.UserRepository;
 import rikko.yugen.repository.PostRepository;
-
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 @Service
 @RequiredArgsConstructor
 public class LikeService {
 
     private final LikeRepository likeRepository;
-    private final UserRepository userRepository;
     private final PostRepository postRepository;
 
     private final CurrentUserHelper currentUserHelper;

@@ -1,11 +1,7 @@
 package rikko.yugen.service;
 
-import java.util.Optional;
-import java.util.Set;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
@@ -13,11 +9,11 @@ import lombok.RequiredArgsConstructor;
 import jakarta.transaction.Transactional;
 import rikko.yugen.dto.comment.CommentDTO;
 import rikko.yugen.dto.comment.CommentCreateDTO;
+import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Comment;
 import rikko.yugen.model.User;
 import rikko.yugen.model.Post;
 import rikko.yugen.repository.CommentRepository;
-import rikko.yugen.repository.UserRepository;
 import rikko.yugen.repository.PostRepository;
 
 @Service
@@ -25,7 +21,6 @@ import rikko.yugen.repository.PostRepository;
 public class CommentService {
 
     private final CommentRepository commentRepository;
-    private final UserRepository userRepository;
     private final PostRepository postRepository;
 
     private final CurrentUserHelper currentUserHelper;
