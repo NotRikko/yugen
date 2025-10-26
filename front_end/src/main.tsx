@@ -17,6 +17,8 @@ import FeedMain from './features/feed/pages/FeedMain.tsx';
 import CartPage from './features/cart/pages/CartPage.tsx';
 import ArtistDashBoard from './features/artists/pages/ArtistDashBoard.tsx';
 import { CartProvider } from './features/cart/CartProvider.tsx';
+import ProductPage from './features/products/pages/ProductPage.tsx';
+import { ProductProvider } from './features/products/ProductProvider.tsx';
 
 
 const router = createBrowserRouter([
@@ -31,6 +33,7 @@ const router = createBrowserRouter([
       { path: 'feed', element: <FeedMain /> },
       { path: 'settings', element: <SettingsForm /> },
       { path: 'cart', element: <CartPage /> },
+      {path: 'products', element: <ProductPage />},
       { path: 'following', element: <FollowMain />},
       {
         path: 'artist',
@@ -53,14 +56,16 @@ const router = createBrowserRouter([
   },
 ]);
 
-createRoot(document.getElementById('root')!).render(
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <UserProvider>
       <CartProvider>
-        <SidebarProvider className="!block">
-          <RouterProvider router={router} />
-        </SidebarProvider>
+        <ProductProvider>
+          <SidebarProvider className="!block">
+            <RouterProvider router={router} />
+          </SidebarProvider>
+        </ProductProvider>
       </CartProvider>
     </UserProvider>
-  </StrictMode>,
-)
+  </StrictMode>
+);

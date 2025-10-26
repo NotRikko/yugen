@@ -24,7 +24,7 @@ export const productApi = {
         };
 
         formData.append(
-            "post",
+            "product",
             new Blob([JSON.stringify(productData)], { type: "application/json"})
         );
 
@@ -32,7 +32,7 @@ export const productApi = {
             data.files.forEach((file) => formData.append("files", file));
         }
 
-        const result = await fetchClient<Product>("/products" , {
+        const result = await fetchClient<Product>("/products/" , {
             method: "POST",
             body: formData,
             auth: true,
@@ -44,7 +44,7 @@ export const productApi = {
     },
 
     fetchCurrentArtistProducts: async () : Promise<Product[]> => {
-        const products = await fetchClient<Product[]>("/product/me", {
+        const products = await fetchClient<Product[]>("/artists/me/products", {
             method: "GET",
             auth: true
         });
