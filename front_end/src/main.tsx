@@ -20,7 +20,6 @@ import { CartProvider } from './features/cart/CartProvider.tsx';
 import ProductPage from './features/products/pages/ProductPage.tsx';
 import { ProductProvider } from './features/products/ProductProvider.tsx';
 
-
 const router = createBrowserRouter([
   {
     path: '/',
