@@ -1,9 +1,11 @@
 package rikko.yugen.dto.user;
 
+import lombok.Getter;
 import rikko.yugen.model.User;
 
+@Getter
 public class UserDTO extends BaseUserDTO {
-    private Long artistId;
+    private final Long artistId;
 
     public UserDTO(User user) {
         this.setId(user.getId());
@@ -13,13 +15,5 @@ public class UserDTO extends BaseUserDTO {
         this.setImage(user.getImage() != null ? user.getImage().getUrl() : null);
         this.setIsArtist(user.getIsArtist());
         this.artistId = user.getArtist() != null ? user.getArtist().getId() : null;
-    }
-
-    public Long getArtistId() {
-        return artistId;
-    }
-
-    public void setArtistId(Long artistId) {
-        this.artistId = artistId;
     }
 }

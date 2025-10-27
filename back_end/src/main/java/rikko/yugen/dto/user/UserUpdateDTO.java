@@ -2,7 +2,11 @@ package rikko.yugen.dto.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
+import lombok.Getter;
+import lombok.Setter;
 
+@Setter
+@Getter
 public class UserUpdateDTO extends BaseUserDTO {
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
@@ -24,11 +28,4 @@ public class UserUpdateDTO extends BaseUserDTO {
         return super.getDisplayName();
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

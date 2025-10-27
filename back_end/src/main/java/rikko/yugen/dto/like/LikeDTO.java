@@ -5,28 +5,16 @@ import java.time.LocalDateTime;
 import rikko.yugen.dto.user.UserDTO;
 import rikko.yugen.model.Like;
 
-public class LikeDTO {
-    private final Long id;
-    private final UserDTO user;
-    private final LocalDateTime createdAt;
-
+public record LikeDTO(
+        Long id,
+        UserDTO user,
+        LocalDateTime createdAt
+) {
     public LikeDTO(Like like) {
-        this.id = like.getId();
-        this.user = like.getUser() != null ? new UserDTO(like.getUser()) : null; 
-        this.createdAt = like.getCreatedAt();
-    }
-
-    // Getters
-    public Long getId() {
-        return id;
-    }
-
-    public UserDTO getUser() {
-        return user;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
+        this(
+                like.getId(),
+                like.getUser() != null ? new UserDTO(like.getUser()) : null,
+                like.getCreatedAt()
+        );
     }
 }
-

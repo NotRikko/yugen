@@ -13,23 +13,26 @@ import rikko.yugen.dto.like.LikeDTO;
 import rikko.yugen.dto.product.ProductDTO;
 import rikko.yugen.model.Post;
 
-public class PostDTO {
-    private final Long id;
-    private final Set<LikeDTO> likes;
-    private final Set<ImageDTO> images;
-    private final List<CommentDTO> comments;
-    private final String content;
-    private final ArtistDTO artist;
-    private final ProductDTO product;
 
+public record PostDTO(
+        Long id,
+        Set<LikeDTO> likes,
+        Set<ImageDTO> images,
+        List<CommentDTO> comments,
+        String content,
+        ArtistDTO artist,
+        ProductDTO product
+) {
     public PostDTO(Post post, Set<LikeDTO> likes, Set<ImageDTO> images, List<CommentDTO> comments) {
-        this.id = post.getId();
-        this.likes = likes != null ? likes : new HashSet<>();
-        this.images = images != null ? images : new HashSet<>();
-        this.comments = comments != null ? comments : new ArrayList<>();
-        this.content = post.getContent();
-        this.artist = post.getArtist() != null ? new ArtistDTO(post.getArtist()) : null;
-        this.product = post.getProduct() != null ? ProductDTO.fromProduct(post.getProduct()) : null;
+        this(
+                post.getId(),
+                likes != null ? likes : new HashSet<>(),
+                images != null ? images : new HashSet<>(),
+                comments != null ? comments : new ArrayList<>(),
+                post.getContent(),
+                post.getArtist() != null ? new ArtistDTO(post.getArtist()) : null,
+                post.getProduct() != null ? ProductDTO.fromProduct(post.getProduct()) : null
+        );
     }
 
     public static PostDTO fromPost(Post post, Set<LikeDTO> likes) {
@@ -43,34 +46,5 @@ public class PostDTO {
                         ? post.getComments().stream().map(CommentDTO::new).collect(Collectors.toList())
                         : new ArrayList<>()
         );
-    }
-
-    // Getters
-    public Long getId() {
-        return id;
-    }
-
-    public Set<LikeDTO> getLikes() {
-        return likes;
-    }
-
-    public Set<ImageDTO> getImages() {
-        return images;
-    }
-
-    public List<CommentDTO> getComments() {
-        return comments;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public ArtistDTO getArtist() {
-        return artist;
-    }
-
-    public ProductDTO getProduct() {
-        return product;
     }
 }

@@ -11,80 +11,39 @@ import rikko.yugen.dto.image.ImageDTO;
 import rikko.yugen.dto.series.SeriesDTO;
 import rikko.yugen.model.Product;
 
-public class ProductDTO {
-    private final Long id;
-    private final String name;
-    private final String description;
-    private final Float price;
-    private final Integer quantityInStock;
-    private final Set<ImageDTO> images;
-    private final ArtistDTO artist;
-    private final Set<SeriesDTO> series;
-    private final Set<CollectionDTO> collections;
-
+public record ProductDTO(
+        Long id,
+        String name,
+        String description,
+        Float price,
+        Integer quantityInStock,
+        Set<ImageDTO> images,
+        ArtistDTO artist,
+        Set<SeriesDTO> series,
+        Set<CollectionDTO> collections
+) {
     public ProductDTO(Product product, Set<ImageDTO> images) {
-        this.id = product.getId();
-        this.name = product.getName();
-        this.description = product.getDescription();
-        this.price = product.getPrice();
-        this.quantityInStock = product.getQuantityInStock();
-        this.images = images != null ? images : new HashSet<>();
-        this.artist = product.getArtist() != null ? new ArtistDTO(product.getArtist()) : null;
-
-        this.series = product.getSeries() != null
-                ? product.getSeries().stream()
-                .map(SeriesDTO::new)
-                .collect(Collectors.toSet())
-                : Collections.emptySet();
-
-        this.collections = product.getCollections() != null
-                ? product.getCollections().stream()
-                .map(CollectionDTO::new)
-                .collect(Collectors.toSet())
-                : Collections.emptySet();
+        this(
+                product.getId(),
+                product.getName(),
+                product.getDescription(),
+                product.getPrice(),
+                product.getQuantityInStock(),
+                images != null ? images : new HashSet<>(),
+                product.getArtist() != null ? new ArtistDTO(product.getArtist()) : null,
+                product.getSeries() != null
+                        ? product.getSeries().stream().map(SeriesDTO::new).collect(Collectors.toSet())
+                        : Collections.emptySet(),
+                product.getCollections() != null
+                        ? product.getCollections().stream().map(CollectionDTO::new).collect(Collectors.toSet())
+                        : Collections.emptySet()
+        );
     }
 
     public static ProductDTO fromProduct(Product product) {
         Set<ImageDTO> imageDTOs = product.getImages() != null
                 ? product.getImages().stream().map(ImageDTO::new).collect(Collectors.toSet())
                 : new HashSet<>();
-
         return new ProductDTO(product, imageDTOs);
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public Float getPrice() {
-        return price;
-    }
-
-    public Integer getQuantityInStock() {
-        return quantityInStock;
-    }
-
-    public Set<ImageDTO> getImages() {
-        return images;
-    }
-
-    public ArtistDTO getArtist() {
-        return artist;
-    }
-
-    public Set<SeriesDTO> getSeries() {
-        return series;
-    }
-
-    public Set<CollectionDTO> getCollections() {
-        return collections;
     }
 }
