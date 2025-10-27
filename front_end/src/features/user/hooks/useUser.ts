@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { User } from "../types/userTypes";
 import type { Cart } from "@/features/cart/types/cartTypes";
-import { userApi } from "../api/userApi"; 
 
 export const guestUser: User = {
   id: 0,
@@ -21,6 +20,8 @@ export const useUserHook = () => {
   const [cart, setCart] = useState<Cart | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  const accessTokenRef = useRef<string | null>(null);
+
   const handleLogin = async (username: string, password: string) => {
     const API_URL = import.meta.env.VITE_API_URL;
 
@@ -35,12 +36,11 @@ export const useUserHook = () => {
       throw new Error(data?.message || "Invalid username or password");
     }
 
-    if (data.accessToken) localStorage.setItem("accessToken", data.accessToken);
-
-    const accessToken = localStorage.getItem("accessToken");
+    accessTokenRef.current = data.accessToken; 
+    if (data.refreshToken) localStorage.setItem("refreshToken", data.refreshToken); 
     const userRes = await fetch(`${API_URL}/users/me`, {
       method: "GET",
-      headers: { Authorization: `Bearer ${accessToken}` },
+      headers: { Authorization: `Bearer ${accessTokenRef.current}` },
     });
 
     const userData = await userRes.json();
@@ -49,11 +49,11 @@ export const useUserHook = () => {
     localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
     setIsLoggedIn(true);
-
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
+    accessTokenRef.current = null; 
+    localStorage.removeItem("refreshToken");
     localStorage.removeItem("user");
     setUser(guestUser);
     setCart(null);
@@ -62,28 +62,11 @@ export const useUserHook = () => {
 
   useEffect(() => {
     const cachedUser = localStorage.getItem("user");
-
     if (cachedUser) {
       setUser(JSON.parse(cachedUser));
       setIsLoggedIn(true);
     }
-    
-    const token = localStorage.getItem("accessToken");
-    if (!token) return;
-  
-    const fetchUser = async () => {
-      try {
-        const data = await userApi.getCurrentUser();
-        if (data) setUser(data);
-        setIsLoggedIn(true);
-      } catch (err) {
-        console.error(err);
-        handleLogout(); 
-      }
-    };
-  
-    fetchUser();
   }, []);
 
-    return { user, setUser, cart, setCart, isLoggedIn, handleLogin, handleLogout };
+  return { user, setUser, cart, setCart, isLoggedIn, accessTokenRef, handleLogin, handleLogout };
 };
