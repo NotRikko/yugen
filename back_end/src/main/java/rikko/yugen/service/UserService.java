@@ -1,5 +1,6 @@
 package rikko.yugen.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -12,7 +13,6 @@ import java.util.HashMap;
 
 import rikko.yugen.exception.MultipleFieldValidationException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -30,16 +30,12 @@ import rikko.yugen.exception.UserAlreadyExistsException;
 import rikko.yugen.exception.EmailAlreadyExistsException;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ArtistRepository artistRepository;
-
-    @Autowired
-    private CloudinaryService cloudinaryService;
+    private final UserRepository userRepository;
+    private final ArtistRepository artistRepository;
+    private final CloudinaryService cloudinaryService;
 
     public User getUserByDisplayName(String displayName) {
         return userRepository.findByDisplayName(displayName)
