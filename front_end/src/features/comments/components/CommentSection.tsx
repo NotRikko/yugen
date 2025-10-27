@@ -1,8 +1,6 @@
 import type { PartialComment } from "../types/commentTypes";
 import { useUser } from "@/features/user/useUserContext";
-import { useComment } from "../hooks/useComment";
 import Comment from "./Comment";
-
 interface CommentSectionProps {
   comments: PartialComment[];
   onDeleteComment?: (commentId: number) => void;
@@ -10,7 +8,6 @@ interface CommentSectionProps {
 
 export default function CommentSection({ comments }: CommentSectionProps) {
   const { user } = useUser();
-  const { deleteComment } = useComment();
 
   return (
     <div>
@@ -25,7 +22,6 @@ export default function CommentSection({ comments }: CommentSectionProps) {
               key={comment.id}
               comment={comment}
               currentUserId={user?.id}
-              onDelete={deleteComment}
             />
           ))}
         </ul>

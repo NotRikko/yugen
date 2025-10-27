@@ -1,33 +1,39 @@
-import { useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { followApi } from "../api/followApi";
 
-export const useFollow = () => {
-  const followArtist = useCallback(
-    (artistId: number) => followApi.followArtist(artistId),
-    []
-  );
+export const useFollow = (artistId: number) => {
+  const [isFollowing, setIsFollowing] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const unfollowArtist = useCallback(
-    (artistId: number) => followApi.unfollowArtist(artistId),
-    []
-  );
+  useEffect(() => {
+    const loadStatus = async () => {
+      try {
+        const status = await followApi.checkIfFollowing(artistId);
+        setIsFollowing(status);
+      } catch (e) {
+        console.error("Failed to check follow status", e);
+      }
+    };
+    loadStatus();
+  }, [artistId]);
 
-  const getFollowers = useCallback(
-    async (artistId: number) => {
-      return await followApi.getFollowers(artistId);
-    },
-    []
-  );
+   const toggleFollow = useCallback(async () => {
+    if (isFollowing === null) return;
+    setLoading(true);
 
-  const getFollowing = useCallback(
-    (userId: number) => followApi.getFollowing(userId),
-    []
-  );
+    try {
+      if (isFollowing) {
+        await followApi.unfollowArtist(artistId);
+      } else {
+        await followApi.followArtist(artistId);
+      }
+      setIsFollowing(!isFollowing);
+    } catch (e) {
+      console.error("Failed to toggle follow:", e);
+    } finally {
+      setLoading(false);
+    }
+  }, [artistId, isFollowing]);
 
-  const checkIfFollowing = useCallback(
-    (artistId: number) => followApi.checkIfFollowing(artistId),
-    []
-  );
-
-  return { followArtist, unfollowArtist, getFollowers, getFollowing, checkIfFollowing };
+  return { isFollowing, loading, toggleFollow };
 };

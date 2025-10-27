@@ -51,7 +51,7 @@ const ArtistProfilePage: React.FC = () => {
     }
   
     return (
-      <div className="min-h-screen bg-neutral-950 text-white flex flex-col items-center">
+      <div className="min-h-screen bg-white text-white flex flex-col items-center">
         <div className="w-full max-w-5xl">
           <ArtistProfileHeader artist={artist} />
         </div>

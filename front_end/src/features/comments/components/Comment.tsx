@@ -1,12 +1,12 @@
 import type { PartialComment } from "../types/commentTypes";
-
+import DeleteCommentButton from "./DeleteCommentButton";
 interface CommentItemProps {
   comment: PartialComment;
   currentUserId?: number;
   onDelete?: (commentId: number) => void;
 }
 
-export default function CommentItem({ comment, currentUserId, onDelete }: CommentItemProps) {
+export default function CommentItem({ comment, currentUserId, }: CommentItemProps) {
   const canDelete = currentUserId === comment.user.id;
 
   return (
@@ -22,12 +22,7 @@ export default function CommentItem({ comment, currentUserId, onDelete }: Commen
         </div>
 
         {canDelete && (
-          <button
-            onClick={() => onDelete?.(comment.id)}
-            className="text-sm text-red-500 hover:text-red-700 transition"
-          >
-            Delete
-          </button>
+          <DeleteCommentButton commentId={comment.id} />
         )}
       </div>
 

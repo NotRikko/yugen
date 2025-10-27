@@ -3,21 +3,21 @@ import type { Follow } from "../types/followTypes";
 import type { PartialUser } from "@/features/user/types/userTypes";
 export const followApi = {
   followArtist: async (artistId: number) => {
-    return fetchClient<Follow>(`/follow/artist/${artistId}`, {
+    return fetchClient<Follow>(`/artists/${artistId}/followers`, {
       method: "POST",
       auth: true,
     });
   },
 
   unfollowArtist: async (artistId: number) => {
-    return fetchClient<void>(`/follow/artist/${artistId}`, {
+    return fetchClient<void>(`/artists/${artistId}/followers`, {
       method: "DELETE",
       auth: true,
     });
   },
 
   checkIfFollowing: (artistId: number) => {
-    return fetchClient<boolean>(`/follow/artist/${artistId}/check`, {
+    return fetchClient<boolean>(`/artists/${artistId}/check`, {
       method: "GET",
       auth: true,
     });
