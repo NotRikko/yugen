@@ -4,6 +4,8 @@ import CommentCreate from "@/features/comments/components/CommentCreate";
 import { FollowButton } from "@/features/follow/components/FollowButton";
 import type { PostDTO } from "../types/postTypes";
 import { useNavigate } from "react-router-dom";
+import { useComment } from "@/features/comments/hooks/useComment";
+import { useEffect } from "react";
 
 interface PostDetailsProps {
   post: PostDTO;
@@ -11,6 +13,15 @@ interface PostDetailsProps {
 
 export default function PostModal({ post }: PostDetailsProps) {
   const navigate = useNavigate();
+  const { createComment, comments, setComments } = useComment();
+
+  useEffect(() => {
+    setComments(post.comments);
+  }, [post.comments, setComments]);
+
+  const handleCommentSubmit = async (content: string) => {
+    await createComment(post.id, content);
+  };
 
   const handleArtistClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -72,8 +83,8 @@ export default function PostModal({ post }: PostDetailsProps) {
       <PostFooter post={post} />
 
       <div className="mt-8">
-        <CommentCreate postId={post.id} />
-        <CommentSection comments={post.comments} />
+        <CommentCreate onSubmit={handleCommentSubmit} />
+        <CommentSection comments={comments} />
       </div>
     </div>
   );
