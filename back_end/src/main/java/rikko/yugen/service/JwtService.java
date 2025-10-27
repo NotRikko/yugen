@@ -11,10 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+@Getter
 @Service
 public class JwtService {
 
@@ -27,12 +29,10 @@ public class JwtService {
     @Value("${security.jwt.refresh-token-expiration}")
     private long refreshTokenExpiration;
 
-    // ✅ Extract username (subject)
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
-    // ✅ Generic claim extractor
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
@@ -63,7 +63,6 @@ public class JwtService {
                 .compact();
     }
 
-    // ✅ Validation logic
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
@@ -91,11 +90,4 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public long getAccessTokenExpiration() {
-        return accessTokenExpiration;
-    }
-
-    public long getRefreshTokenExpiration() {
-        return refreshTokenExpiration;
-    }
 }
