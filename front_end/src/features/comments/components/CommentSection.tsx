@@ -3,10 +3,10 @@ import { useUser } from "@/features/user/useUserContext";
 import Comment from "./Comment";
 interface CommentSectionProps {
   comments: PartialComment[];
-  onDeleteComment?: (commentId: number) => void;
+  onDelete?: (commentId: number) => void;
 }
 
-export default function CommentSection({ comments }: CommentSectionProps) {
+export default function CommentSection({ comments, onDelete }: CommentSectionProps) {
   const { user } = useUser();
 
   return (
@@ -22,6 +22,7 @@ export default function CommentSection({ comments }: CommentSectionProps) {
               key={comment.id}
               comment={comment}
               currentUserId={user?.id}
+              onDelete={onDelete}
             />
           ))}
         </ul>

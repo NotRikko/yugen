@@ -13,7 +13,7 @@ interface PostDetailsProps {
 
 export default function PostModal({ post }: PostDetailsProps) {
   const navigate = useNavigate();
-  const { createComment, comments, setComments } = useComment();
+  const { createComment, deleteComment, comments, setComments } = useComment();
 
   useEffect(() => {
     setComments(post.comments);
@@ -21,6 +21,10 @@ export default function PostModal({ post }: PostDetailsProps) {
 
   const handleCommentSubmit = async (content: string) => {
     await createComment(post.id, content);
+  };
+
+  const handleCommentDelete = async (commentId: number) => {
+      await deleteComment(commentId);
   };
 
   const handleArtistClick = (e: React.MouseEvent) => {
@@ -84,7 +88,7 @@ export default function PostModal({ post }: PostDetailsProps) {
 
       <div className="mt-8">
         <CommentCreate onSubmit={handleCommentSubmit} />
-        <CommentSection comments={comments} />
+        <CommentSection comments={comments} onDelete={handleCommentDelete} />
       </div>
     </div>
   );
