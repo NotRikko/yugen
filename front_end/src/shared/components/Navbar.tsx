@@ -5,10 +5,10 @@ import { NavLink } from 'react-router-dom';
 import { useUser } from '@/features/user/useUserContext';
 import MainNav from './MainNav';
 import CartSidebar from '@/features/cart/components/CartSidebar';
-import { Calendar, Inbox } from "lucide-react";
+import { Calendar, Inbox, LogOut } from "lucide-react";
 
 function Navbar() {
-  const { user, handleLogout } = useUser();
+  const { user } = useUser();
   const [activeSidebar, setActiveSidebar] = useState<"cart" | "account" | null>(null);
   const sidebarRef = useRef<HTMLDivElement | null>(null);
 
@@ -39,7 +39,7 @@ function Navbar() {
       ]
     : [
         { title: "Settings", url: "/settings", icon: Calendar },
-        { title: "Log Out", url: "/", icon: Calendar },
+        { title: "Logout", url: "/logout", icon: LogOut },
       ];
 
   return (
@@ -70,9 +70,7 @@ function Navbar() {
             <MainNav
               user={user}
               items={accountItems}
-              handleLogout={handleLogout}
               layout="sidebar"
-              type="user"
             />
           )}
         </div>
