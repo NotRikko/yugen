@@ -20,23 +20,18 @@ interface MainNavProps {
   user: User;
   items: NavItem[];
   cartItemCount?: number;
-  handleLogout?: () => void;
   layout?: "sidebar" | "topbar";
-  type?: "feed" | "user";
 }
 
 export default function MainNav({
   user,
   items,
-  handleLogout,
   layout = "sidebar",
-  type = "feed",
 }: MainNavProps) {
   const navigate = useNavigate();
   const location = useLocation();
 
   const isSidebar = layout === "sidebar";
-  const isFeed = type === "feed";
 
   return (
     <nav
@@ -63,26 +58,6 @@ export default function MainNav({
     />
     <h2 className="font-semibold">{user.displayName || "Guest"}</h2>
   </div>
-
-  {isSidebar && isFeed && (
-    <>
-      {user.isGuest ? (
-        <button
-          onClick={() => navigate("/login")}
-          className="mt-2 px-4 py-1 rounded bg-blue-500 text-white hover:bg-blue-600"
-        >
-          Login
-        </button>
-      ) : handleLogout ? (
-        <button
-          onClick={handleLogout}
-          className="mt-2 px-4 py-1 rounded bg-red-500 text-white hover:bg-red-600"
-        >
-          Log Out
-        </button>
-      ) : null}
-    </>
-  )}
 </div>
 
       <ul
@@ -116,15 +91,6 @@ export default function MainNav({
           );
         })}
       </ul>
-
-      {!isSidebar && !user.isGuest && handleLogout && (
-        <button
-          onClick={handleLogout}
-          className="ml-6 px-3 py-1 rounded bg-red-500 text-white hover:bg-red-600"
-        >
-          Logout
-        </button>
-      )}
     </nav>
   );
 }
