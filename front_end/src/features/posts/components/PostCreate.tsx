@@ -14,7 +14,6 @@ import { Input } from "@/shared/ui/input"
 import { Textarea } from "@/shared/ui/textarea"
 import { useUser } from "@/features/user/useUserContext"
 import { useState } from "react"
-import { postApi } from "../api/postApi";
 
 const formSchema = z.object({
     content: z.string().max(280, "Post content must be at most 280 characters"),
@@ -22,7 +21,11 @@ const formSchema = z.object({
     files: z.array(z.instanceof(File)).optional()
 });
 
-export default function PostCreate() {
+interface PostCreateProps {
+    onSubmit: (data: { content: string; files?: File[] }) => Promise<void>;
+}
+
+export default function PostCreate( { onSubmit } : PostCreateProps) {
     const {user} = useUser();
 
     const [previewImages, setPreviewImages] = useState<string[]>([]);
@@ -46,23 +49,18 @@ export default function PostCreate() {
         );
     }
 
-    async function onSubmit(values: z.infer<typeof formSchema>) {
-        try {
-          await postApi.createPost({
-            artistId: user.artistId,
-            content: values.content,
-            productId: values.productId ?? null,
-            files: values.files,
-          });
-      
-          console.log("Post created successfully");
-        } catch (error) {
-          console.error("Error creating post", error);
-        }
-    }
+    async function handleSubmit(values: z.infer<typeof formSchema>) {
+        await onSubmit({
+          content: values.content,
+          files: values.files,
+        });
+        form.reset();
+        setPreviewImages([]);
+      }
+    
     return (
         <Form {...form} >
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 py-8 w-5/6 mx-auto p-4 border rounded-lg shadow-md bg-white">
+            <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8 py-8 w-5/6 mx-auto p-4 border rounded-lg shadow-md bg-white">
                 <FormField
                     control={form.control}
                     name="content"
