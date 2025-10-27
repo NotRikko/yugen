@@ -14,8 +14,8 @@ import org.springframework.web.server.ResponseStatusException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import rikko.yugen.dto.follow.FollowWithUserDTO;
 import rikko.yugen.dto.user.*;
-import rikko.yugen.model.LoginResponse;
 import rikko.yugen.model.User;
 import rikko.yugen.service.*;
 
@@ -26,8 +26,7 @@ import rikko.yugen.service.*;
 public class UserController {
 
     private final UserService userService;
-    private final JwtService jwtService;
-    private final AuthenticationService authenticationService;
+    private final FollowService followService;
 
     @GetMapping("/user")
     public ResponseEntity<User> getUser(@RequestParam String username) {
@@ -44,6 +43,12 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
         }
         return ResponseEntity.ok(new UserDTO(user));
+    }
+
+    @GetMapping("/me/following")
+    public ResponseEntity<List<FollowWithUserDTO>> getFolloweesForCurrentUser() {
+        List<FollowWithUserDTO> following = followService.getFollowingForCurrentUser();
+        return ResponseEntity.ok(following);
     }
 
     @GetMapping("/all")
