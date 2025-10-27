@@ -1,6 +1,7 @@
 import { fetchClient } from "@/shared/api/fetchClient";
 import type { Follow } from "../types/followTypes";
 import type { PartialUser } from "@/features/user/types/userTypes";
+import type { PartialArtist } from "@/features/artists/types/artistTypes";
 export const followApi = {
   followArtist: async (artistId: number) => {
     return fetchClient<Follow>(`/artists/${artistId}/followers`, {
@@ -24,14 +25,19 @@ export const followApi = {
   },
 
   getFollowers: async (artistId: number) => {
-    return fetchClient<PartialUser[]>(`/follow/artist/${artistId}/followers`, {
+    return fetchClient<PartialUser[]>(`/artists/${artistId}/followers`, {
       method: "GET",
-      auth: true,
     });
   },
 
-  getFollowing: (userId: number) => {
-    return fetchClient<PartialUser[]>(`/follow/user/${userId}/following`, {
+  getFollowing: async(userId: number) => {
+    return fetchClient<PartialArtist[]>(`/users/${userId}/following`, {
+      method: "GET",
+    })
+  },
+
+  getFollowingForCurrentUser: () => {
+    return fetchClient<PartialArtist[]>(`/users/me/following`, {
       method: "GET",
       auth: true,
     });

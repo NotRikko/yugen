@@ -1,38 +1,21 @@
-import { useState, useEffect} from "react";
-import { useFollow } from "../hooks/useFollow";
+import { useState } from "react";
+import { useFollowers } from "../hooks/useFollowers";
+import { useFollowing } from "../hooks/useFollowing";
 import { useUser } from "@/features/user/useUserContext";
-import type { PartialUser } from "@/features/user/types/userTypes";
 
 type ViewMode = "followers" | "followees";
 
 function FollowMain(): JSX.Element {
-  const { getFollowers, getFollowing } = useFollow();
   const { user } = useUser();
   const [viewMode, setViewMode] = useState<ViewMode>("followers");
-  const [users, setUsers] = useState<PartialUser[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    const fetch = async () => {
-      if (!user) return;
-      setLoading(true);
-      try {
-        const result =
-          viewMode === "followers" && user.artistId
-            ? await getFollowers(user.artistId)
-            : viewMode === "followees"
-            ? await getFollowing(user.id)
-            : [];
-        setUsers(result || []);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    fetch();
-  }, [viewMode, user, getFollowers, getFollowing]);
+  const { followers, loading: loadingFollowers } = useFollowers(user?.artistId ?? undefined);
+  const { following, loading: loadingFollowing } = useFollowing(user?.id);
+
+  const usersToDisplay =
+    viewMode === "followers" ? followers : following;
+  const loading =
+    viewMode === "followers" ? loadingFollowers : loadingFollowing;
 
   return (
     <div className="p-12">
@@ -57,14 +40,14 @@ function FollowMain(): JSX.Element {
 
       {loading ? (
         <p>Loading...</p>
-      ) : users.length === 0 ? (
+      ) : usersToDisplay.length === 0 ? (
         <p>No {viewMode} yet.</p>
       ) : (
         <ul>
-          {users.map((u) => (
-            <li key={u.displayName} className="flex items-center gap-3 mb-2">
+          {usersToDisplay.map((u) => (
+            <li key={u.id} className="flex items-center gap-3 mb-2">
               <img
-                src={u.image || "/default-avatar.png"} 
+                src={u.image || "/default-avatar.png"}
                 alt={u.displayName}
                 className="w-10 h-10 rounded-full object-cover"
               />
@@ -72,7 +55,7 @@ function FollowMain(): JSX.Element {
             </li>
           ))}
         </ul>
-        )}
+      )}
     </div>
   );
 }
