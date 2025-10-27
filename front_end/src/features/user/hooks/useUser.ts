@@ -35,12 +35,12 @@ export const useUserHook = () => {
       throw new Error(data?.message || "Invalid username or password");
     }
 
-    if (data.token) localStorage.setItem("accessToken", data.token);
+    if (data.accessToken) localStorage.setItem("accessToken", data.accessToken);
 
-    const token = localStorage.getItem("accessToken");
+    const accessToken = localStorage.getItem("accessToken");
     const userRes = await fetch(`${API_URL}/users/me`, {
       method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: `Bearer ${accessToken}` },
     });
 
     const userData = await userRes.json();
