@@ -41,6 +41,19 @@ public class FollowService {
                 .toList();
     }
 
+    public List<FollowWithUserDTO> getFollowingForCurrentUser() {
+        User currentUser = currentUserHelper.getCurrentUser();
+        return followRepository.findByFollowerId(currentUser.getId()).stream()
+                .map(f -> new FollowWithUserDTO(
+                        f.getFollowee().getId(),
+                        f.getFollowee().getUser().getUsername(),
+                        f.getFollowee().getArtistName(),
+                        f.getFollowee().getProfilePictureUrl(),
+                        f.getFollowedAt()
+                ))
+                .toList();
+    }
+
     public List<FollowWithUserDTO> getFollowersForArtist(Long artistId) {
         return followRepository.findByFolloweeId(artistId).stream()
                 .map(f -> {
