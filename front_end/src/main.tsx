@@ -9,7 +9,7 @@ import ArtistProfilePage from "@/features/artists/pages/ArtistProfilePage";
 import SignupPage from './features/auth/pages/SignupPage.tsx';
 import LoginPage from './features/auth/pages/LoginPage.tsx';
 import MainPage from './pages/MainPage.tsx';
-import FollowMain from './features/follow/pages/FollowMain.tsx';
+import FollowDashBoard from './features/follow/pages/FollowDashBoard.tsx';
 import { UserProvider } from './features/user/UserProvider.tsx';
 import { SidebarProvider } from './shared/ui/sidebar.tsx';
 import SettingsForm from './features/user/components/SettingsForm.tsx';
@@ -33,7 +33,7 @@ const router = createBrowserRouter([
       { path: 'settings', element: <SettingsForm /> },
       { path: 'cart', element: <CartPage /> },
       {path: 'products', element: <ProductPage />},
-      { path: 'following', element: <FollowMain />},
+      { path: 'following', element: <FollowDashBoard />},
       {
         path: 'artist',
         element: <ArtistMain />,
