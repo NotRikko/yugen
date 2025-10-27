@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import rikko.yugen.model.LoginResponse;
 import rikko.yugen.model.User;
 import jakarta.validation.Valid;
 
@@ -25,14 +24,20 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> authenticate(@RequestBody UserLoginDTO userLoginDTO) {
         User authenticatedUser = authenticationService.authenticate(userLoginDTO);
-        String jwtToken = jwtService.generateToken(authenticatedUser);
 
-        LoginResponse loginResponse = new LoginResponse();
-        loginResponse.setToken(jwtToken);
-        loginResponse.setExpiresIn(jwtService.getExpirationTime());
+        String accessToken = jwtService.generateAccessToken(authenticatedUser);
+        String refreshToken = jwtService.generateRefreshToken(authenticatedUser);
 
-        return ResponseEntity.ok(new LoginResponseDTO(loginResponse));
+        LoginResponseDTO loginResponseDTO = new LoginResponseDTO(
+                accessToken,
+                refreshToken,
+                jwtService.getAccessTokenExpiration(),
+                jwtService.getRefreshTokenExpiration()
+        );
+
+        return ResponseEntity.ok(loginResponseDTO);
     }
+
 
     @PostMapping("/signup")
     public ResponseEntity<UserDTO> signup(@Valid @RequestBody UserCreateDTO dto) {
