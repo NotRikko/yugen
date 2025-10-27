@@ -1,32 +1,22 @@
 import PostFooter from "./PostFooter";
 import CustomDropdown from "@/shared/components/CustomDropDown";
-import { postApi } from "../api/postApi";
 import type { PostDTO } from "@/features/posts/types/postTypes";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/features/user/useUserContext";
 interface PostProps {
   post: PostDTO;
   onSelect?: () => void;
+  onDelete: () => void;
 }
 
-function Post({ post, onSelect }: PostProps) {
+function Post({ post, onSelect, onDelete }: PostProps) {
   const navigate = useNavigate();
   const { user } = useUser();
-
-  async function handleDelete() {
-    try {
-      await postApi.deletePost(post.id);
-
-      console.log("Post deleted succesffuly");
-    } catch (error) {
-      console.error("Error deleting post", error);
-    }
-  }
 
   const postMenuItems = [
     {
       label: "Delete",
-      onClick: handleDelete,
+      onClick: onDelete,
     },
   ];
 
