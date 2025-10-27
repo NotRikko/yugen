@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 
-
 import rikko.yugen.dto.artist.ArtistCreateDTO;
 import rikko.yugen.dto.artist.ArtistDTO;
 import rikko.yugen.dto.follow.FollowWithUserDTO;
@@ -103,7 +102,7 @@ public class ArtistController {
         return ResponseEntity.ok(followers);
     }
 
-    @GetMapping("/artist/{artistId}/check")
+    @GetMapping("/{artistId}/check")
     public ResponseEntity<Boolean> isFollowing(
             @PathVariable Long artistId
     ) {
