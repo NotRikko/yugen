@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import rikko.yugen.dto.user.LoginResponseDTO;
 import rikko.yugen.helpers.JwtCookieHelper;
 
+@Getter
 @Service
 @RequiredArgsConstructor
 public class JwtService {
@@ -29,11 +30,9 @@ public class JwtService {
     @Value("${security.jwt.secret-key}")
     private String secretKey;
 
-    @Getter
     @Value("${security.jwt.access-token-expiration}")
     private long accessTokenExpiration;
 
-    @Getter
     @Value("${security.jwt.refresh-token-expiration}")
     private long refreshTokenExpiration;
 
