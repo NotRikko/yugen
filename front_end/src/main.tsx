@@ -19,6 +19,7 @@ import ArtistDashBoard from './features/artists/pages/ArtistDashBoard.tsx';
 import { CartProvider } from './features/cart/CartProvider.tsx';
 import ProductPage from './features/products/pages/ProductPage.tsx';
 import { ProductProvider } from './features/products/ProductProvider.tsx';
+import Logout from './features/auth/components/Logout.tsx';
 
 const router = createBrowserRouter([
   {
@@ -53,6 +54,10 @@ const router = createBrowserRouter([
     path: '/login',
     element: <LoginPage />,
   },
+  {
+    path: '/logout',
+    element: <Logout />
+  }
 ]);
 
 createRoot(document.getElementById("root")!).render(
