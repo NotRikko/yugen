@@ -10,7 +10,7 @@ import type { PostDTO } from "@/features/posts/types/postTypes";
 function FeedMain(): JSX.Element {
   const [userFeed, setUserFeed] = useState(false);
 
-  const { posts, loading, createPostOptimistic, loadMore } = useFeed({ userFeed, size: 10 });
+  const { posts, loading, createPostOptimistic, deletePostOptimistic, loadMore } = useFeed({ userFeed, size: 10 });
 
   const [selectedPost, setSelectedPost] = useState<PostDTO | null>(null);
 
@@ -60,7 +60,7 @@ function FeedMain(): JSX.Element {
           <PostCreate onSubmit={createPostOptimistic} />
 
           {posts.map((post) => (
-            <Post key={post.id} post={post} onSelect={() => setSelectedPost(post)} />
+            <Post key={post.id} post={post} onSelect={() => setSelectedPost(post)} onDelete={() => deletePostOptimistic(post.id)} />
           ))}
 
           {loading && <div className="text-center py-8">Loading posts...</div>}
