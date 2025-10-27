@@ -75,7 +75,22 @@ export function useFeed({ userFeed = false, size = 10 }: UseFeedProps = {}) {
     }
   };
 
+  const deletePostOptimistic = async (postId: number) => {
+    const postToDelete = posts.find((p) => p.id === postId);
+    if (!postToDelete) return;
+  
+    setPosts((prev) => prev.filter((p) => p.id !== postId));
+  
+    try {
+      await postApi.deletePost(postId); 
+    } catch (error) {
+      console.error("Failed to delete post:", error);
+  
+      setPosts((prev) => [postToDelete, ...prev]);
+    }
+  };
+
   const loadMore = () => setPage((prev) => prev + 1);
 
-  return { posts, loading, createPostOptimistic, loadMore, page, setPage };
+  return { posts, loading, createPostOptimistic, deletePostOptimistic, loadMore, page, setPage };
 }
