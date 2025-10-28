@@ -46,15 +46,15 @@ public class ArtistController {
         return ResponseEntity.ok(artist);
     }
 
-    @GetMapping("/{artistName}")
+    @GetMapping("/name/{artistName}")
     public ResponseEntity<ArtistDTO> getArtistByArtistName(@PathVariable String artistName) {
         ArtistDTO artist = artistService.getArtistByArtistName(artistName);
         return ResponseEntity.ok(artist);
     }
 
-    @GetMapping("/{artistName}/posts")
-    public List<PostDTO> getPostsByArtistName(@PathVariable String artistName) {
-        return postService.getPostsByArtistName(artistName);
+    @GetMapping("/{artistId}/posts")
+    public List<PostDTO> getPostsByArtistId(@PathVariable Long artistId) {
+        return postService.getPostsByArtistId(artistId);
     }
 
     @GetMapping("/{artistId}/products")
