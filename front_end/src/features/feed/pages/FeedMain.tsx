@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import Post from "@/features/posts/components/Post";
 import PostCreate from "@/features/posts/components/PostCreate";
-import PostModal from "@/features/posts/components/PostModal";
 import TrendingArtistsBar from "@/features/feed/components/TrendingArtistsBar";
 import { useFeed } from "../hooks/useFeed";
 import { useArtist } from "@/features/artists/hooks/useArtist";
 
 import type { PostDTO } from "@/features/posts/types/postTypes";
+import PostModalWrapper from "@/features/posts/components/PostModalWrapper";
 function FeedMain(): JSX.Element {
   const [userFeed, setUserFeed] = useState(false);
 
@@ -33,10 +33,6 @@ function FeedMain(): JSX.Element {
 
     return () => observer.current?.disconnect();
   }, [loadMore, loading]);
-
-  const handleModalBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === e.currentTarget) setSelectedPost(null);
-  };
 
   return (
     <div className="grid grid-cols-[2fr_1fr] h-screen">
@@ -80,10 +76,9 @@ function FeedMain(): JSX.Element {
       {selectedPost && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-          onClick={handleModalBackgroundClick}
         >
           <div className="bg-white rounded-xl shadow-lg w-11/12 md:w-3/4 lg:w-1/2 relative max-h-[90vh] overflow-y-auto">
-            <PostModal post={selectedPost} />
+          <PostModalWrapper post={selectedPost} onClose={() => setSelectedPost(null)} />
           </div>
         </div>
       )}

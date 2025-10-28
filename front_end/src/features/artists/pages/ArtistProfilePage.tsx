@@ -4,10 +4,13 @@ import ArtistProfileHeader from "@/features/artists/components/ArtistProfileHead
 import Post from "@/features/posts/components/Post";
 import ProductCard from "@/features/products/components/ProductCard";
 import { useArtistProfile } from "../hooks/useArtistProfile";
+import { PostDTO } from "@/features/posts/types/postTypes";
+import PostModalWrapper from "@/features/posts/components/PostModalWrapper";
 
 const ArtistProfilePage: React.FC = () => {
   const { artistName } = useParams<{ artistName: string }>();
   const [activeTab, setActiveTab] = useState<"posts" | "products">("posts");
+  const [ selectedPost, setSelectedPost] = useState<PostDTO | null>(null);
 
   const {
     artist,
@@ -45,7 +48,7 @@ const ArtistProfilePage: React.FC = () => {
           posts.length ? (
             <div className="flex flex-col gap-6">
               {posts.map((post) => (
-                <Post key={post.id} post={post} onDelete={() => deletePostOptimistic(post.id)} />
+                <Post key={post.id} post={post} onSelect={() => setSelectedPost(post)} onDelete={() => deletePostOptimistic(post.id)} />
               ))}
             </div>
           ) : (
@@ -65,6 +68,15 @@ const ArtistProfilePage: React.FC = () => {
           <p className="text-gray-500 text-center mt-10">No products yet.</p>
         )}
       </div>
+      {selectedPost && (
+              <div
+                className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+              >
+                <div className="bg-white rounded-xl shadow-lg w-11/12 md:w-3/4 lg:w-1/2 relative max-h-[90vh] overflow-y-auto">
+                <PostModalWrapper post={selectedPost} onClose={() => setSelectedPost(null)} />
+                </div>
+              </div>
+            )}
     </div>
   );
 };
