@@ -15,7 +15,7 @@ import { Textarea } from "@/shared/ui/textarea";
 
 import { useUser } from "@/features/user/useUserContext";
 import { useState } from "react";
-import { productApi } from "../api/productApi";
+import type { ProductCreate } from "../types/productTypes";
 
 const formSchema = z.object({
   name: z.string().min(1, "Product name is required"),
@@ -27,7 +27,11 @@ const formSchema = z.object({
   files: z.array(z.instanceof(File)).optional(),
 });
 
-export default function ProductCreate() {
+export default function ProductCreate({
+  onCreate,
+}: {
+  onCreate: (product: ProductCreate) => Promise<void>;
+}) {
   const { user } = useUser();
   const [previewImages, setPreviewImages] = useState<string[]>([]);
 
@@ -55,23 +59,22 @@ export default function ProductCreate() {
   }
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      await productApi.createProduct({
-        artistId: user.artistId,
-        name: values.name,
-        description: values.description,
-        price: values.price,
-        quantityInStock: values.quantityInStock,
-        seriesIds: values.seriesIds ?? [],
-        collectionIds: values.collectionIds ?? [],
-        files: values.files,
-      });
-      console.log("Product created successfully");
-      form.reset();
-      setPreviewImages([]);
-    } catch (error) {
-      console.error("Error creating product", error);
-    }
+    if (!user.artistId) return;
+
+    const payload: ProductCreate = {
+      name: values.name,
+      description: values.description,
+      price: values.price,
+      quantityInStock: values.quantityInStock,
+      seriesIds: values.seriesIds ?? [],
+      collectionIds: values.collectionIds ?? [],
+      files: values.files ?? [],
+    };
+
+    await onCreate(payload);
+
+    form.reset();
+    setPreviewImages([]);
   }
 
   return (
@@ -158,13 +161,12 @@ export default function ProductCreate() {
                     const selectedFiles = e.target.files
                       ? Array.from(e.target.files)
                       : [];
-                    const updatedFiles = [...(field.value || []), ...selectedFiles];
-                    if (updatedFiles.length > 4) {
+                    if (selectedFiles.length > 4) {
                       alert("You can upload a maximum of 4 images.");
                       return;
                     }
-                    field.onChange(updatedFiles);
-                    setPreviewImages(updatedFiles.map((file) => URL.createObjectURL(file)));
+                    field.onChange(selectedFiles);
+                    setPreviewImages(selectedFiles.map((file) => URL.createObjectURL(file)));
                   }}
                 />
               </FormControl>
