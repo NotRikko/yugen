@@ -2,6 +2,7 @@ package rikko.yugen.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.http.HttpStatus;
@@ -51,6 +52,12 @@ public class AuthController {
     public ResponseEntity<UserDTO> signup(@Valid @RequestBody UserCreateDTO dto) {
         User createdUser = userService.createUser(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(new UserDTO(createdUser));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletResponse response) {
+        jwtCookieHelper.clearRefreshToken(response);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/refresh")
