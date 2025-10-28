@@ -52,6 +52,9 @@ export const productApi = {
         if (!products) throw new Error("Products not found");
         return products;
     },
+
+    getProductsByArtistId: (artistId: number) =>
+        fetchClient<Product[]>(`/artists/${artistId}/products`, { method: "GET" }),
     
     deleteProduct: async (productId: number) : Promise<void> => {
         await fetchClient<void>(`/products/${productId}`, {
