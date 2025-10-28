@@ -11,7 +11,7 @@ export const artistApi = {
     fetchClient<PartialArtist>(`/artists/${artistId}`, { method: "GET" }),
 
   getByArtistName: (artistName: string) =>
-    fetchClient<PartialArtist>(`/artists/${artistName}`, { method: "GET" }),
+    fetchClient<PartialArtist>(`/artists/name/${artistName}`, { method: "GET" }),
 
   getPostsById: (artistId: number) =>
     fetchClient<PostDTO[]>(`/artists/${artistId}/posts`, { method: "GET" }),
