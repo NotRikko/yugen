@@ -51,24 +51,22 @@ public class PostService {
     @Transactional(readOnly = true)
     public List<PostDTO> getAllPosts() {
         List<Post> posts = postRepository.findAll();
-        List<Long> postIds = posts.stream().map(Post::getId).toList();
-
-        List<Like> likes = likeRepository.findLikesForPosts(postIds);
-
-        Map<Long, Set<LikeDTO>> likesByPost = likes.stream()
-                .collect(Collectors.groupingBy(
-                        Like::getContentId,
-                        Collectors.mapping(LikeDTO::new, Collectors.toSet())
-                ));
-
-        return posts.stream()
-                .map(post -> PostDTO.fromPost(post, likesByPost.getOrDefault(post.getId(), new HashSet<>())))
-                .collect(Collectors.toList());
+        return getPostDTOS(posts);
     }
 
     @Transactional(readOnly = true)
     public List<PostDTO> getPostsByArtistName(String artistName) {
         List<Post> posts = postRepository.findByArtist_ArtistName(artistName);
+        return getPostDTOS(posts);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostDTO> getPostsByArtistId(Long artistId) {
+        List<Post> posts = postRepository.findByArtist_Id(artistId);
+        return getPostDTOS(posts);
+    }
+
+    private List<PostDTO> getPostDTOS(List<Post> posts) {
         List<Long> postIds = posts.stream().map(Post::getId).toList();
 
         List<Like> likes = likeRepository.findLikesForPosts(postIds);
