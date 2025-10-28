@@ -42,6 +42,13 @@ export const postApi = {
       auth: true,
   }),
 
+  getPostsByArtistName: (artistName: string) =>
+    fetchClient<PostDTO[]>(`/artists/${artistName}/posts`, { method: "GET" }),
+  
+  getPostsByArtistId: (artistId: number) =>
+    fetchClient<PostDTO[]>(`/artists/${artistId}/posts`, { method: "GET" }),
+
+
   deletePost: (postId: number) =>
     fetchClient<void>(`/posts/${postId}` , {
       method: "DELETE",
