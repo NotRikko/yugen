@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { User } from "../types/userTypes";
 import type { Cart } from "@/features/cart/types/cartTypes";
 import { tokenService } from "@/shared/services/tokenService";
@@ -12,18 +12,6 @@ export const guestUser: User = {
   artistId: null,
   isGuest: true,
 };
-
-function isTokenExpired(token: string | null): boolean {
-  if (!token) return true;
-  try {
-    const [, payloadBase64] = token.split(".");
-    const payload = JSON.parse(atob(payloadBase64));
-    const now = Math.floor(Date.now() / 1000);
-    return payload.exp < now;
-  } catch {
-    return true;
-  }
-}
 
 export const useUserHook = () => {
   const [user, setUser] = useState<User>(() => {
@@ -69,61 +57,12 @@ export const useUserHook = () => {
     setUser(guestUser);
     setCart(null);
     setIsLoggedIn(false);
+
+    fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+    }).catch(() => {});
   };
-
-  useEffect(() => {
-    const API_URL = import.meta.env.VITE_API_URL;
-
-    const refreshAccessToken = async () => {
-      try {
-        const res = await fetch(`${API_URL}/auth/refresh`, {
-          method: "POST",
-          credentials: "include",
-        });
-
-        if (!res.ok) throw new Error("No valid refresh token");
-
-        const data = await res.json();
-        tokenService.set(data.accessToken);
-        localStorage.setItem("accessToken", data.accessToken);
-        setIsLoggedIn(true);
-
-        if (!user || user.isGuest) {
-          const userRes = await fetch(`${API_URL}/users/me`, {
-            headers: { Authorization: `Bearer ${data.accessToken}` },
-          });
-          if (userRes.ok) {
-            const userData = await userRes.json();
-            setUser(userData);
-            localStorage.setItem("user", JSON.stringify(userData));
-          }
-        }
-      } catch {
-        console.debug("No valid refresh token; switching to guest mode");
-        handleLogout();
-      }
-    };
-
-  const checkToken = async () => {
-    const token = tokenService.get() || localStorage.getItem("accessToken");
-    if (!token || isTokenExpired(token)) {
-      await refreshAccessToken();
-    } else {
-      setIsLoggedIn(true);
-    }
-  };
-
-  checkToken();
-
-  const interval = setInterval(() => {
-    const token = tokenService.get() || localStorage.getItem("accessToken");
-    if (isTokenExpired(token)) {
-      refreshAccessToken();
-    }
-  }, 15 * 60 * 1000); 
-
-  return () => clearInterval(interval);
-}, [user]);; 
 
   return { user, setUser, cart, setCart, isLoggedIn, handleLogin, handleLogout };
 };
