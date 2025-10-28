@@ -1,4 +1,5 @@
-  import { Artist } from "@/features/artists/types/artistTypes";
+  import type { Artist } from "@/features/artists/types/artistTypes";
+  import type { ImageDTO } from "@/features/posts/types/postTypes";
 
   export interface Series {
     id: number;
@@ -13,7 +14,7 @@
     name: string;
     description?: string;
     price: number;
-    image?: string;
+    images?: ImageDTO[];
   }
 
   export interface Product extends PartialProduct {
@@ -21,4 +22,15 @@
     series: Series[];
     collections: Collection[];
     quantityInStock: number;
+  }
+
+  export interface ProductCreate {
+    name: string;
+    description?: string;
+    price: number;
+    quantityInStock: number;
+    seriesIds: number[];       
+    collectionIds: number[];  
+    files?: File[];
+    artistId?: number | null;
   }
