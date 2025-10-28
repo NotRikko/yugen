@@ -54,7 +54,7 @@ export const productApi = {
     },
     
     deleteProduct: async (productId: number) : Promise<void> => {
-        fetchClient<void>(`/products/${productId}`, {
+        await fetchClient<void>(`/products/${productId}`, {
             method: "DELETE",
             auth: true,
         });
