@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import ArtistCard from "@/features/artists/components/ArtistCard";
 import { PartialArtist } from "@/features/artists/types/artistTypes";
 
@@ -7,6 +8,12 @@ interface FeedTrendingBarProps {
 }
 
 const TrendingArtistsBar: React.FC<FeedTrendingBarProps> = ({ trendingArtists, loadingTrendingArtists }) => {
+  const navigate = useNavigate();
+
+  const handleArtistClick = (artistName: string) => {
+    navigate(`/artist/${artistName}`);
+  };
+
   return (
     <div className="sticky top-0 hidden lg:flex flex-col w-full border-l-2 bg-sidebar p-4 overflow-y-auto max-h-screen">
       <h2 className="mb-4 text-lg font-semibold">Trending Artists</h2>
@@ -19,7 +26,7 @@ const TrendingArtistsBar: React.FC<FeedTrendingBarProps> = ({ trendingArtists, l
             <ArtistCard
               key={artist.id}
               artist={artist}
-              onClick={() => console.log("Clicked", artist.artistName)}
+              onClick={() => handleArtistClick(artist.artistName)}
             />
           ))}
         </div>
