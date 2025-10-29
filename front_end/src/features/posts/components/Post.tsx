@@ -6,10 +6,11 @@ import { useUser } from "@/features/user/useUserContext";
 interface PostProps {
   post: PostDTO;
   onSelect?: () => void;
+  onUpdate: (postId: number, content: string) => void; 
   onDelete: () => void;
 }
 
-function Post({ post, onSelect, onDelete }: PostProps) {
+function Post({ post, onSelect, onUpdate, onDelete }: PostProps) {
   const navigate = useNavigate();
   const { user } = useUser();
 
@@ -18,6 +19,10 @@ function Post({ post, onSelect, onDelete }: PostProps) {
       label: "Delete",
       onClick: onDelete,
     },
+    {
+      label: "Edit",
+      onClick: () => onUpdate
+    }
   ];
 
   const handleArtistClick = (e: React.MouseEvent) => {

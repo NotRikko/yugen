@@ -5,15 +5,28 @@ import { FollowButton } from "@/features/follow/components/FollowButton";
 import type { PostDTO } from "../types/postTypes";
 import { useNavigate } from "react-router-dom";
 import { useComment } from "@/features/comments/hooks/useComment";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface PostDetailsProps {
   post: PostDTO;
+  updatePost: (postId: number, content: string) => void
+
 }
 
-export default function PostModal({ post }: PostDetailsProps) {
+export default function PostModal({ post, updatePost }: PostDetailsProps) {
   const navigate = useNavigate();
   const { createComment, deleteComment, comments, setComments } = useComment();
+  const [isEditing, setIsEditing] = useState(false);
+  const [content, setContent] = useState(post.content);
+
+  const handleEditClick = () => setIsEditing(true);
+
+  const handleSaveClick = () => {
+    if (content !== post.content) {
+      updatePost(post.id, content); 
+    }
+    setIsEditing(false);
+  };
 
   useEffect(() => {
     setComments(post.comments);
@@ -57,8 +70,29 @@ export default function PostModal({ post }: PostDetailsProps) {
 
         <FollowButton artistId={post.artist.id} />
       </div>
+      {!isEditing && (
+          <button onClick={handleEditClick} className="text-blue-500">Edit</button>
+        )}
+      {isEditing ? (
+        <div className="flex flex-col gap-2">
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="border p-2 rounded w-full min-h-[100px]"
+          />
+          <div className="flex gap-2">
+            <button onClick={handleSaveClick} className="bg-blue-500 text-white px-4 py-2 rounded">
+              Save
+            </button>
+            <button onClick={() => setIsEditing(false)} className="bg-gray-200 px-4 py-2 rounded">
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <p className="text-gray-800 text-base mb-6">{post.content}</p>
+      )}
 
-      <p className="text-gray-800 text-base mb-6">{post.content}</p>
 
       {post.images?.length > 0 && (
         <div

@@ -4,9 +4,10 @@ import PostModal from "@/features/posts/components/PostModal";
 interface PostModalWrapperProps {
   post: PostDTO | null;
   onClose: () => void;
+  updatePost: (postId: number, updatedContent: string) => Promise<void>;
 }
 
-const PostModalWrapper: React.FC<PostModalWrapperProps> = ({ post, onClose }) => {
+const PostModalWrapper: React.FC<PostModalWrapperProps> = ({ post, onClose, updatePost }) => {
   if (!post) return null;
 
   const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -19,7 +20,7 @@ const PostModalWrapper: React.FC<PostModalWrapperProps> = ({ post, onClose }) =>
       onClick={handleBackgroundClick}
     >
       <div className="bg-white rounded-xl shadow-lg w-11/12 md:w-3/4 lg:w-1/2 relative max-h-[90vh] overflow-y-auto">
-        <PostModal post={post} />
+        <PostModal post={post} updatePost={updatePost} />
       </div>
     </div>
   );
