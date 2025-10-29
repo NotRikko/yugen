@@ -1,7 +1,8 @@
 import { usePost } from "@/features/posts/hooks/usePost";
-import { artistApi } from "../api/artistApi";
+import { postApi } from "@/features/posts/api/postApi";
+import { productApi } from "@/features/products/api/productApi";
 import { useEffect, useState } from "react";
-import { Product } from "@/features/user/types/userTypes";
+import type { Product } from "@/features/products/types/productTypes";
 
 export default function useArtistDashboard(artistId: number) {
   const { posts, setPosts, createPostOptimistic, deletePostOptimistic } = usePost();
@@ -12,8 +13,8 @@ export default function useArtistDashboard(artistId: number) {
     const fetchPostsAndProducts = async () => {
       try {
         const [fetchedPosts, fetchedProducts] = await Promise.all([
-          artistApi.getPostsById(artistId),
-          artistApi.getProducts(artistId),
+          postApi.getPostsByArtistId(artistId),
+          productApi.getProductsByArtistId(artistId),
         ]);
 
         setPosts(fetchedPosts ?? []);

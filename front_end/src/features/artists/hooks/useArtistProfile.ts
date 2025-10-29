@@ -4,7 +4,7 @@ import { postApi } from "@/features/posts/api/postApi";
 import { productApi } from "@/features/products/api/productApi";
 import type { PartialArtist } from "../types/artistTypes";
 import type { PostDTO } from "@/features/posts/types/postTypes";
-import type { Product } from "@/features/user/types/userTypes";
+import type { Product } from "@/features/products/types/productTypes";
 
 export function useArtistProfile(artistName: string | undefined) {
   const [artist, setArtist] = useState<PartialArtist | null>(null);
