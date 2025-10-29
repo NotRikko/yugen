@@ -46,6 +46,27 @@ export function usePost(initialPosts: PostDTO[] = []) {
     }
   };
 
+  const updatePostOptimistic = async (postId: number, updatedContent: string) => {
+    const postToUpdate = posts.find((p) => p.id === postId);
+    if (!postToUpdate) return;
+  
+    const originalPost = { ...postToUpdate };
+  
+    setPosts((prev) =>
+      prev.map((p) => (p.id === postId ? { ...p, content: updatedContent } : p))
+    );
+  
+    try {
+      const updatedPost = await postApi.updatePost(postId, updatedContent);
+  
+      setPosts((prev) => prev.map((p) => (p.id === postId ? updatedPost : p)));
+    } catch (error) {
+      console.error("Failed to update post:", error);
+  
+      setPosts((prev) => prev.map((p) => (p.id === postId ? originalPost : p)));
+    }
+  };
+
   const deletePostOptimistic = async (postId: number) => {
     const postToDelete = posts.find((p) => p.id === postId);
     if (!postToDelete) return;
@@ -60,5 +81,5 @@ export function usePost(initialPosts: PostDTO[] = []) {
     }
   };
 
-  return { posts, setPosts, loading, setLoading, createPostOptimistic, deletePostOptimistic };
+  return { posts, setPosts, loading, setLoading, createPostOptimistic, updatePostOptimistic, deletePostOptimistic };
 }
