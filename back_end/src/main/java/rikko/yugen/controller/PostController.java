@@ -14,6 +14,7 @@ import rikko.yugen.dto.comment.CommentDTO;
 import rikko.yugen.dto.post.PostCreateDTO;
 import rikko.yugen.dto.post.PostDTO;
 
+import rikko.yugen.dto.post.PostUpdateDTO;
 import rikko.yugen.service.PostService;
 import rikko.yugen.service.LikeService;
 import rikko.yugen.service.CommentService;
@@ -51,6 +52,14 @@ public class PostController {
         int updatedLikes = likeService.toggleLike(postId);
         return ResponseEntity.ok(Map.of("likes", updatedLikes));
     }
+
+    @PutMapping("/{postId}")
+    public ResponseEntity<PostDTO> updatePost(
+            @PathVariable Long postId,
+            @RequestBody PostUpdateDTO postUpdateDTO) {
+        return ResponseEntity.ok(postService.updatePost(postId, postUpdateDTO));
+    }
+
 
     @DeleteMapping("/{postId}")
     public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
