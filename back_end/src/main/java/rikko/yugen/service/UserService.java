@@ -98,7 +98,6 @@ public class UserService {
         User existingUser = getUserById(id);
         boolean isUpdated = false;
 
-        // Update username
         if (userUpdateDTO.getUsername() != null && !userUpdateDTO.getUsername().equals(existingUser.getUsername())) {
             if (userRepository.existsByUsername(userUpdateDTO.getUsername())) {
                 throw new UserAlreadyExistsException("Username is already taken");
@@ -107,13 +106,11 @@ public class UserService {
             isUpdated = true;
         }
 
-        // Update displayName
         if (userUpdateDTO.getDisplayName() != null && !userUpdateDTO.getDisplayName().equals(existingUser.getDisplayName())) {
             existingUser.setDisplayName(userUpdateDTO.getDisplayName());
             isUpdated = true;
         }
 
-        // Update email
         if (userUpdateDTO.getEmail() != null && !userUpdateDTO.getEmail().equals(existingUser.getEmail())) {
             if (userRepository.existsByEmail(userUpdateDTO.getEmail())) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already taken");
@@ -122,7 +119,6 @@ public class UserService {
             isUpdated = true;
         }
 
-        // Handle profile picture
         if (profileImageFile != null && !profileImageFile.isEmpty()) {
             try {
                 String uploadedUrl = cloudinaryService.uploadImage(profileImageFile);
