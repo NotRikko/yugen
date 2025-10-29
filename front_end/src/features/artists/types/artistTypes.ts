@@ -1,8 +1,8 @@
 export interface PartialArtist {
   id: number;
-  artistName: string;
+  displayName: string;
   bio?: string;
-  profilePictureUrl?: string;
+  avatarUrl?: string;
   bannerPictureUrl?: string;
   postsCount?: number;
 }
