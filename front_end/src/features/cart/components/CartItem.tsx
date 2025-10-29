@@ -11,8 +11,8 @@ const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQuantity, onRemove })
 
   return (
     <div className="flex items-center justify-between border-b py-4">
-      {product.image && (
-        <img src={product.image} alt={product.name} className="w-16 h-16 object-cover rounded" />
+      {product.images && (
+        <img src={product.images[0].url} alt={product.name} className="w-16 h-16 object-cover rounded" />
       )}
       <div className="flex-1 ml-4">
         <h3 className="font-semibold">{product.name}</h3>
