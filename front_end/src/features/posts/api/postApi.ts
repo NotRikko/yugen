@@ -35,6 +35,14 @@ export const postApi = {
     return result;
   },
 
+  updatePost: async (postId: number, updatedContent: string) => {
+    return fetchClient<PostDTO>(`/posts/${postId}`, {
+      method: "PUT",
+      body: JSON.stringify({ content: updatedContent }),
+      auth: true,
+    });
+  },
+
   likePost: (postId: number, userId: number) =>
     fetchClient<{ likes: number; liked: boolean }>(`/posts/${postId}/like`, {
       method: "POST",
