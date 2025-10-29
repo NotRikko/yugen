@@ -7,7 +7,7 @@ interface UseFeedProps {
 }
 
 export function useFeed({ userFeed = false, size = 10 }: UseFeedProps = {}) {
-  const { posts, setPosts, createPostOptimistic, deletePostOptimistic } = usePost();
+  const { posts, setPosts, createPostOptimistic, updatePostOptimistic, deletePostOptimistic } = usePost();
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
 
@@ -32,5 +32,5 @@ export function useFeed({ userFeed = false, size = 10 }: UseFeedProps = {}) {
 
   const loadMore = () => setPage((prev) => prev + 1);
 
-  return { posts, loading, createPostOptimistic, deletePostOptimistic, loadMore, page, setPage };
+  return { posts, loading, createPostOptimistic, updatePostOptimistic, deletePostOptimistic, loadMore, page, setPage };
 }

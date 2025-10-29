@@ -10,7 +10,7 @@ import PostModalWrapper from "@/features/posts/components/PostModalWrapper";
 function FeedMain(): JSX.Element {
   const [userFeed, setUserFeed] = useState(false);
 
-  const { posts, loading, createPostOptimistic, deletePostOptimistic, loadMore } = useFeed({ userFeed, size: 10 });
+  const { posts, loading, createPostOptimistic, deletePostOptimistic, updatePostOptimistic, loadMore } = useFeed({ userFeed, size: 10 });
 
   const [selectedPost, setSelectedPost] = useState<PostDTO | null>(null);
 
@@ -56,7 +56,12 @@ function FeedMain(): JSX.Element {
           <PostCreate onSubmit={createPostOptimistic} />
 
           {posts.map((post) => (
-            <Post key={post.id} post={post} onSelect={() => setSelectedPost(post)} onDelete={() => deletePostOptimistic(post.id)} />
+            <Post 
+              key={post.id} 
+              post={post} 
+              onSelect={() => setSelectedPost(post)}  
+              onUpdate={() => setSelectedPost(post)} 
+              onDelete={() => deletePostOptimistic(post.id)} />
           ))}
 
           {loading && <div className="text-center py-8">Loading posts...</div>}
@@ -78,7 +83,7 @@ function FeedMain(): JSX.Element {
           className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
         >
           <div className="bg-white rounded-xl shadow-lg w-11/12 md:w-3/4 lg:w-1/2 relative max-h-[90vh] overflow-y-auto">
-          <PostModalWrapper post={selectedPost} onClose={() => setSelectedPost(null)} />
+          <PostModalWrapper post={selectedPost} onClose={() => setSelectedPost(null)} updatePost={updatePostOptimistic} />
           </div>
         </div>
       )}
