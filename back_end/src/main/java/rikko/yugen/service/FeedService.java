@@ -54,7 +54,7 @@ public class FeedService {
 
     private List<PostDTO> mapPostsWithLikes(List<Post> posts) {
         List<Long> postIds = posts.stream().map(Post::getId).toList();
-        List<Like> likes = likeRepository.findLikesForPosts(postIds);
+        List<Like> likes = likeRepository.findByContentTypeAndContentIdIn("POST",postIds);
 
         Map<Long, Set<LikeDTO>> likesByPost = likes.stream()
                 .collect(Collectors.groupingBy(
