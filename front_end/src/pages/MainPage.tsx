@@ -12,11 +12,11 @@ function MainPage(): JSX.Element {
     { title: "Home", url: "/", icon: House },
     { title: "Feed", url: "/feed", icon: Newspaper },
     { title: "Cart", url: "/cart", icon: ShoppingCart, badge: cartItemCount },
-    { title: "Notifications", url: "/notifications", icon: Bell },
+    /*{ title: "Notifications", url: "/notifications", icon: Bell },*/
     { title: "Following", url: "/following", icon: Users },
     ...(user.artistId ? [{ title: "Products", url: "/products", icon: Package}] : [] ),
-    { title: "Saved", url: "/saved", icon: Bookmark },
-    { title: "Messages", url: "/messages", icon: Mail },
+    /*{ title: "Saved", url: "/saved", icon: Bookmark },*/
+    /*{ title: "Messages", url: "/messages", icon: Mail },*/
     ...(user.isGuest ? [] : [{ title: "Settings", url: "/settings", icon: Settings }]),
     ...( !user.isGuest ? [{ title: "Logout", url: "/logout", icon: LogOut }] : [] ),
   ];
