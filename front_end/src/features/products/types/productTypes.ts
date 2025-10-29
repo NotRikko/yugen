@@ -12,16 +12,16 @@
   export interface PartialProduct {
     id: number;
     name: string;
-    description?: string;
+    artist: Artist;
     price: number;
     images?: ImageDTO[];
+    description?: string; 
   }
-
+  
   export interface Product extends PartialProduct {
-    artist: Artist;
-    series: Series[];
-    collections: Collection[];
-    quantityInStock: number;
+    series?: Series[];
+    collections?: Collection[];
+    quantityInStock?: number;
   }
 
   export interface ProductCreate {
