@@ -9,10 +9,13 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+import rikko.yugen.dto.post.PostUpdateDTO;
 import rikko.yugen.repository.PostRepository;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.ProductRepository;
@@ -51,25 +54,36 @@ public class PostService {
     @Transactional(readOnly = true)
     public List<PostDTO> getAllPosts() {
         List<Post> posts = postRepository.findAll();
-        return getPostDTOS(posts);
+        return getPostDTOs(posts);
     }
 
     @Transactional(readOnly = true)
     public List<PostDTO> getPostsByArtistName(String artistName) {
         List<Post> posts = postRepository.findByArtist_ArtistName(artistName);
-        return getPostDTOS(posts);
+        return getPostDTOs(posts);
     }
 
     @Transactional(readOnly = true)
     public List<PostDTO> getPostsByArtistId(Long artistId) {
         List<Post> posts = postRepository.findByArtist_Id(artistId);
-        return getPostDTOS(posts);
+        return getPostDTOs(posts);
     }
 
-    private List<PostDTO> getPostDTOS(List<Post> posts) {
+    @Transactional(readOnly = true)
+    public PostDTO getPostById(Long id) {
+        Post post = postRepository.findById(id).orElse(null);
+        List<Like> likes = likeRepository.findByContentTypeAndContentId("POST", post.getId());
+        Set<LikeDTO> likeDTOs = likes.stream()
+                .map(LikeDTO::new)
+                .collect(Collectors.toSet());
+
+        return PostDTO.fromPost(post, likeDTOs);
+    }
+
+    private List<PostDTO> getPostDTOs(List<Post> posts) {
         List<Long> postIds = posts.stream().map(Post::getId).toList();
 
-        List<Like> likes = likeRepository.findLikesForPosts(postIds);
+        List<Like> likes = likeRepository.findByContentTypeAndContentIdIn("POST", postIds);
 
         Map<Long, Set<LikeDTO>> likesByPost = likes.stream()
                 .collect(Collectors.groupingBy(
@@ -105,6 +119,25 @@ public class PostService {
         Set<ImageDTO> imageDTOs = uploadAndSaveFiles(files, savedPost.getId());
 
         return new PostDTO(savedPost, new HashSet<>(), imageDTOs, new ArrayList<>());
+    }
+
+    @Transactional
+    public PostDTO updatePost(Long id, PostUpdateDTO postUpdateDTO) {
+        Post post = postRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Post not found with id: " + id));
+
+        if (postUpdateDTO.getContent() != null) {
+            post.setContent(postUpdateDTO.getContent());
+            postRepository.save(post);
+        }
+
+        Set<LikeDTO> likeDTOs = likeRepository.findByContentTypeAndContentId("POST", post.getId())
+                .stream()
+                .map(LikeDTO::new)
+                .collect(Collectors.toSet());
+
+        return PostDTO.fromPost(post, likeDTOs);
     }
 
     private Set<ImageDTO> uploadAndSaveFiles(List<MultipartFile> files, Long postId) {
