@@ -21,7 +21,7 @@ export default function ProductModal({ product }: ProductDetailProps) {
     <div className="relative w-11/12 max-w-2xl mx-auto my-6 p-8 bg-white border rounded-2xl shadow-2xl overflow-y-auto">
       <div className="flex justify-center mb-6">
         <img
-          src={product.image}
+          src={product.images ? product.images[0].url : "https://images.emojiterra.com/google/noto-emoji/unicode-15/color/512px/2753.png"}
           alt={product.name}
           className="w-full max-h-96 object-cover rounded-xl shadow-md"
         />
