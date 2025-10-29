@@ -28,8 +28,8 @@ function FollowDashBoard(): JSX.Element {
       }))
     : following.map(f => ({
         id: f.id,
-        name: f.artistName,
-        avatarUrl: f.profilePictureUrl,
+        name: f.displayName,
+        avatarUrl: f.avatarUrl,
       }));
       
   const loading =
