@@ -15,7 +15,6 @@ import { SidebarProvider } from './shared/ui/sidebar.tsx';
 import SettingsForm from './features/user/components/SettingsForm.tsx';
 import FeedMain from './features/feed/pages/FeedMain.tsx';
 import CartPage from './features/cart/pages/CartPage.tsx';
-import ArtistDashBoard from './features/artists/pages/ArtistDashBoard.tsx';
 import { CartProvider } from './features/cart/CartProvider.tsx';
 import ProductPage from './features/products/pages/ProductPage.tsx';
 import Logout from './features/auth/components/Logout.tsx';
@@ -39,7 +38,6 @@ const router = createBrowserRouter([
         element: <ArtistMain />,
         children: [
           { path: 'artists', element: <ArtistsMain /> },
-          { path: 'dashboard', element: <ArtistDashBoard /> },
           { path: ':artistName', element: <ArtistProfilePage /> },
         ],
       },
