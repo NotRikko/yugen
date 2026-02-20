@@ -1,5 +1,6 @@
 package rikko.yugen.service;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.transaction.Transactional;
+import rikko.yugen.dto.product.ProductUpdateDTO;
+import rikko.yugen.model.*;
 import rikko.yugen.repository.ProductRepository;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.CollectionRepository;
@@ -17,13 +20,6 @@ import rikko.yugen.repository.SeriesRepository;
 import rikko.yugen.dto.product.ProductCreateDTO;
 import rikko.yugen.dto.product.ProductDTO;
 import rikko.yugen.dto.image.ImageDTO;
-
-import rikko.yugen.model.Image;
-import rikko.yugen.model.Product;
-import rikko.yugen.model.User;
-import rikko.yugen.model.Artist;
-import rikko.yugen.model.Collection;
-import rikko.yugen.model.Series;
 
 import rikko.yugen.helpers.CurrentUserHelper;
 
@@ -101,10 +97,58 @@ public class ProductService {
 
         Product savedProduct = productRepository.save(product);
 
-        Set<ImageDTO> imageDTOs = uploadAndSaveFiles(files, savedProduct.getId());
+        Set<ImageDTO> imageDTOs = uploadAndSaveFilesForProduct(files, savedProduct.getId());
 
         return new ProductDTO(savedProduct, imageDTOs);
 
+    }
+    @Transactional
+    public ProductDTO updateProduct(Long productId, ProductUpdateDTO productUpdateDTO, List<MultipartFile> newFiles) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        if (productUpdateDTO.getName() != null) product.setName(productUpdateDTO.getName());
+        if (productUpdateDTO.getDescription() != null) product.setDescription(productUpdateDTO.getDescription());
+        if (productUpdateDTO.getPrice() != null) product.setPrice(productUpdateDTO.getPrice());
+        if (productUpdateDTO.getQuantityInStock() != null) product.setQuantityInStock(productUpdateDTO.getQuantityInStock());
+
+        if (productUpdateDTO.getSeries() != null) {
+            Set<Series> seriesSet = productUpdateDTO.getSeries().stream()
+                    .map(dto -> seriesRepository.findById(dto.id())
+                            .orElseThrow(() -> new RuntimeException("Series not found")))
+                    .collect(Collectors.toSet());
+            product.setSeries(seriesSet);
+        }
+
+        if (productUpdateDTO.getCollections() != null) {
+            Set<Collection> collectionsSet = productUpdateDTO.getCollections().stream()
+                    .map(dto -> collectionRepository.findById(dto.id())
+                            .orElseThrow(() -> new RuntimeException("Collection not found")))
+                    .collect(Collectors.toSet());
+            product.setCollections(collectionsSet);
+        }
+
+        Set<Long> imagesToKeep = productUpdateDTO.getExistingImageIds() != null
+                ? new HashSet<>(productUpdateDTO.getExistingImageIds())
+                : Collections.emptySet();
+
+        List<Image> imagesToDelete = product.getImages().stream()
+                .filter(image -> !imagesToKeep.contains(image.getId()))
+                .toList();
+
+        for (Image image : imagesToDelete) {
+            imageService.deleteImage(image.getId());
+        }
+
+        Set<ImageDTO> newImageDTOs = uploadAndSaveFilesForProduct(newFiles, product.getId());
+
+        product = productRepository.save(product);
+
+        Set<ImageDTO> allImages = new HashSet<>();
+        allImages.addAll(product.getImages().stream().map(ImageDTO::new).collect(Collectors.toSet()));
+        allImages.addAll(newImageDTOs);
+
+        return ProductDTO.fromProduct(product, allImages);
     }
 
     @Transactional
@@ -115,7 +159,25 @@ public class ProductService {
         return "Product '" + product.getName() + "' bought!";
     }
 
-    private Set<ImageDTO> uploadAndSaveFiles(List<MultipartFile> files, Long productId) {
+    @Transactional
+    public void deleteProduct(Long productId) {
+        User currentUser = currentUserHelper.getCurrentUser();
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        if (!product.getArtist().getUser().equals(currentUser)) {
+            throw new RuntimeException("You are not allowed to delete this product.");
+        }
+
+        for (Image image : product.getImages()) {
+            imageService.deleteImage(image.getId());
+        }
+
+        productRepository.delete(product);
+    }
+
+    private Set<ImageDTO> uploadAndSaveFilesForProduct(List<MultipartFile> files, Long productId) {
         Set<ImageDTO> imageDTOs = new HashSet<>();
 
         Product product = productRepository.findById(productId)
@@ -125,8 +187,8 @@ public class ProductService {
             for (MultipartFile file : files) {
                 try {
                     String uploadedUrl = cloudinaryService.uploadImage(file);
-                    Image image = imageService.createImageForProduct(uploadedUrl, product);
-                    imageDTOs.add(new ImageDTO(image));
+                    ImageDTO imageDTO = imageService.createImageForProduct(uploadedUrl, product);
+                    imageDTOs.add(imageDTO);
                 } catch (Exception e) {
                     System.err.println("Failed to upload image: " + e.getMessage());
                 }
@@ -134,18 +196,5 @@ public class ProductService {
         }
 
         return imageDTOs;
-    }
-
-    @Transactional
-    public void deleteProduct(Long productId) {
-        User currentUser = currentUserHelper.getCurrentUser();
-
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
-
-        if (!product.getArtist().getUser().equals(currentUser)) {
-            throw new RuntimeException("You are not allowed to delete this product.");
-        }
-        productRepository.delete(product);
     }
 }
