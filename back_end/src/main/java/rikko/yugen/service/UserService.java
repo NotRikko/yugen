@@ -59,13 +59,7 @@ public class UserService implements UserDetailsService {
     // Mapping
 
     private UserDTO userToUserDTO(User user) {
-        return new UserDTO(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getDisplayName(),
-                user.getImage() != null ? user.getImage().getUrl() : null
-        );
+        return new UserDTO(user);
     }
 
     // Read
@@ -164,7 +158,7 @@ public class UserService implements UserDetailsService {
         if (profileImageFile != null && !profileImageFile.isEmpty()) {
             try {
                 String uploadedUrl = cloudinaryService.uploadImage(profileImageFile);
-                Image profileImage = existingUser.getImage();
+                Image profileImage = existingUser.getProfileImage();
 
                 if (profileImage != null) {
                     cloudinaryService.deleteImage(profileImage.getUrl());
@@ -173,7 +167,7 @@ public class UserService implements UserDetailsService {
                     profileImage = new Image();
                     profileImage.setUrl(uploadedUrl);
                     profileImage.setUser(existingUser);
-                    existingUser.setImage(profileImage);
+                    existingUser.setProfileImage(profileImage);
                 }
 
                 isUpdated = true;
