@@ -50,8 +50,8 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<UserDTO> signup(@Valid @RequestBody UserCreateDTO dto) {
-        User createdUser = userService.createUser(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserDTO(createdUser));
+        UserDTO createdUser = userService.createUser(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     @PostMapping("/logout")
