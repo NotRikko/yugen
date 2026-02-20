@@ -2,15 +2,12 @@ package rikko.yugen.service;
 
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
-import rikko.yugen.dto.user.UserDTO;
 import rikko.yugen.exception.ResourceAlreadyExistsException;
 import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.model.Image;
@@ -29,6 +26,7 @@ public class ArtistService {
     private final UserRepository userRepository;
 
     // Mapping
+
     private ArtistDTO artistToArtistDTO(Artist artist) {
         return new ArtistDTO(artist);
     }
