@@ -1,6 +1,5 @@
 package rikko.yugen.bootstrap;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import rikko.yugen.model.Artist;
 import rikko.yugen.model.Post;
@@ -42,7 +41,7 @@ public class PostBootstrap {
 
             List<Post> posts = List.of(
                     new Post("This is me if anyone even cares.", LocalDateTime.now().minusDays(1),
-                            artists.get(0), products.size() > 0 ? products.get(0) : null),
+                            artists.get(0), !products.isEmpty() ? products.get(0) : null),
                     new Post("Felt pretty.", LocalDateTime.now().minusDays(2),
                             artists.get(1), products.size() > 1 ? products.get(1) : null),
                     new Post("Character design drop 💥", LocalDateTime.now().minusDays(3),
