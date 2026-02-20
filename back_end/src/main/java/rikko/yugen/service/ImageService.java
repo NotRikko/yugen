@@ -4,11 +4,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import rikko.yugen.dto.image.ImageDTO;
+import rikko.yugen.exception.ImageDeletionException;
 import rikko.yugen.model.Image;
 import rikko.yugen.model.Post;
 import rikko.yugen.model.Product;
@@ -16,10 +17,11 @@ import rikko.yugen.model.User;
 import rikko.yugen.repository.ImageRepository;
 
 @Service
+@RequiredArgsConstructor
 public class ImageService {
     
-   @Autowired
-    private ImageRepository imageRepository;
+    private final  ImageRepository imageRepository;
+    private final  CloudinaryService cloudinaryService;
 
     public Set<ImageDTO> getImagesForPost(Post post) {
         List<Image> images = imageRepository.findByPost(post);
@@ -60,20 +62,32 @@ public class ImageService {
     }
 
 
-
     @Transactional
     public Image createImageForUser(String imageUrl, User user) {
         Image image = new Image();
         image.setUrl(imageUrl);
         image.setUser(user);
 
-        if (user.getImage() != null) {
-            imageRepository.delete(user.getImage());
+        if (user.getProfileImage() != null) {
+            imageRepository.delete(user.getProfileImage());
         }
 
-        user.setImage(image);
+        user.setProfileImage(image);
 
         return imageRepository.save(image);
+    }
+
+    @Transactional
+    public void deleteImage(Long imageId) {
+        Image image = imageRepository.findById(imageId)
+                .orElseThrow(() -> new ImageDeletionException("Image not found"));
+
+        boolean deletedFromCloud = cloudinaryService.deleteImage(image.getUrl());
+        if (deletedFromCloud) {
+            imageRepository.deleteById(imageId);
+        } else {
+            throw new ImageDeletionException("Failed to delete image from Cloudinary");
+        }
     }
 
 }
