@@ -14,8 +14,8 @@ public record ArtistDTO(
         this(
                 artist.getId(),
                 artist.getArtistName(),
-                artist.getProfilePictureUrl(),
-                artist.getBannerPictureUrl(),
+                artist.getProfileImage() != null ? artist.getProfileImage().getUrl() : null,
+                artist.getBannerImage() != null ? artist.getBannerImage().getUrl() : null,
                 artist.getUser() != null ? new UserDTO(artist.getUser()) : null
         );
     }
