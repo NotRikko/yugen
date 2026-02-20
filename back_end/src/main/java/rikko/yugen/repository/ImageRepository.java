@@ -6,15 +6,19 @@ import rikko.yugen.model.Post;
 import rikko.yugen.model.Product;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import javax.swing.text.html.Option;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {
     List<Image> findByPost(Post post);
 
-    List<Image> findByUser(User user);
+    Optional<Image> findByUser(User user);
 
-    List<Image> findByArtist(Artist artist);
+    Optional<Image> findByProfileForArtist(Artist artist);
+    Optional<Image> findByBannerForArtist(Artist artist);
 
     List<Image> findByProduct(Product product);
 }
