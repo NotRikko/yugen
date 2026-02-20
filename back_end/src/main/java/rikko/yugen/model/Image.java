@@ -18,19 +18,29 @@ public class Image {
     private String url;
 
     @OneToOne(mappedBy = "profileImage")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private User user;
 
     @OneToOne(mappedBy = "bannerImage")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Artist bannerForArtist;
 
     @OneToOne(mappedBy = "profileImage")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Artist profileForArtist;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Post post;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Product product;
 }
