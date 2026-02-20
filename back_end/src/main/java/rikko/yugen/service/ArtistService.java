@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import rikko.yugen.dto.user.UserDTO;
 import rikko.yugen.exception.ResourceAlreadyExistsException;
 import rikko.yugen.exception.ResourceNotFoundException;
+import rikko.yugen.model.Image;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.UserRepository;
 import rikko.yugen.dto.artist.ArtistCreateDTO;
@@ -29,22 +30,15 @@ public class ArtistService {
 
     // Mapping
     private ArtistDTO artistToArtistDTO(Artist artist) {
-        return new ArtistDTO(
-                artist.getId(),
-                artist.getArtistName(),
-                artist.getProfilePictureUrl(),
-                artist.getBannerPictureUrl(),
-                artist.getUser() != null ? new UserDTO(artist.getUser()) : null
-        );
+        return new ArtistDTO(artist);
     }
 
-    // Read Operations
+    // Read
 
     public ArtistDTO getArtistById(Long id) {
         Artist artist = artistRepository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Artist", "id", id));
-
         return artistToArtistDTO(artist);
     }
 
@@ -52,7 +46,6 @@ public class ArtistService {
         Artist artist = artistRepository.findByArtistName(artistName)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Artist", "artistName", artistName));
-
         return artistToArtistDTO(artist);
     }
 
@@ -78,8 +71,19 @@ public class ArtistService {
 
         Artist artist = new Artist();
         artist.setArtistName(normalizedName);
-        artist.setProfilePictureUrl(dto.getProfilePictureUrl());
-        artist.setBannerPictureUrl(dto.getBannerPictureUrl());
+        if (dto.getProfilePictureUrl() != null) {
+            Image profileImage = new Image();
+            profileImage.setUrl(dto.getProfilePictureUrl());
+            profileImage.setProfileForArtist(artist);  // bidirectional
+            artist.setProfileImage(profileImage);
+        }
+        if (dto.getBannerPictureUrl() != null) {
+            Image bannerImage = new Image();
+            bannerImage.setUrl(dto.getBannerPictureUrl());
+            bannerImage.setBannerForArtist(artist); // bidirectional
+            artist.setBannerImage(bannerImage);
+        }
+
         artist.setUser(user);
 
         try {
