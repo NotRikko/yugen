@@ -8,7 +8,6 @@ import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.UserRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 public class ArtistBootstrap {
