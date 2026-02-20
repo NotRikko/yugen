@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.function.Function;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -100,7 +99,7 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public LoginResponseDTO refreshAccessToken(HttpServletRequest request, HttpServletResponse response) {
+    public LoginResponseDTO refreshAccessToken(HttpServletRequest request) {
         String refreshToken = jwtCookieHelper.extractRefreshToken(request);
         if (refreshToken == null || refreshToken.isBlank()) {
             throw new JwtException("Missing refresh token");
