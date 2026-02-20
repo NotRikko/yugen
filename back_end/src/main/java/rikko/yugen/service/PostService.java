@@ -150,8 +150,8 @@ public class PostService {
             for (MultipartFile file : files) {
                 try {
                     String uploadedUrl = cloudinaryService.uploadImage(file);
-                    Image image = imageService.createImageForPost(uploadedUrl, post);
-                    imageDTOs.add(new ImageDTO(image));
+                    ImageDTO imageDTO = imageService.createImageForPost(uploadedUrl, post);
+                    imageDTOs.add(imageDTO);
                 } catch (Exception e) {
                     System.err.println("Failed to upload image: " + e.getMessage());
                 }
