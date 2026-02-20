@@ -78,7 +78,7 @@ public class ArtistService {
         if (dto.getBannerPictureUrl() != null) {
             Image bannerImage = new Image();
             bannerImage.setUrl(dto.getBannerPictureUrl());
-            bannerImage.setBannerForArtist(artist); // bidirectional
+            bannerImage.setBannerForArtist(artist);
             artist.setBannerImage(bannerImage);
         }
 
