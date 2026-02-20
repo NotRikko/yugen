@@ -2,7 +2,6 @@ package rikko.yugen.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.http.HttpStatus;
@@ -62,9 +61,8 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<LoginResponseDTO> refresh(
-            HttpServletRequest request,
-            HttpServletResponse response
+            HttpServletRequest request
     ) {
-        return ResponseEntity.ok(jwtService.refreshAccessToken(request, response));
+        return ResponseEntity.ok(jwtService.refreshAccessToken(request));
     }
 }
