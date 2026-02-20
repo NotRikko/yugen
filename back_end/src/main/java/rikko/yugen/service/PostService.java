@@ -27,7 +27,6 @@ import rikko.yugen.dto.post.PostDTO;
 import rikko.yugen.dto.like.LikeDTO;
 
 import rikko.yugen.model.Artist;
-import rikko.yugen.model.Image;
 import rikko.yugen.model.Like;
 import rikko.yugen.model.Post;
 import rikko.yugen.model.Product;
@@ -72,6 +71,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostDTO getPostById(Long id) {
         Post post = postRepository.findById(id).orElse(null);
+        assert post != null;
         List<Like> likes = likeRepository.findByContentTypeAndContentId("POST", post.getId());
         Set<LikeDTO> likeDTOs = likes.stream()
                 .map(LikeDTO::new)
