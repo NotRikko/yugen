@@ -107,13 +107,13 @@ public class JwtService {
         }
 
         String username = extractUsername(refreshToken);
-        UserDetails user = userService.getUserByUsername(username);
+        UserDetails userDetails = userService.loadUserByUsername(username);
 
-        if (!isTokenValid(refreshToken, user)) {
+        if (!isTokenValid(refreshToken, userDetails)) {
             throw new JwtException("Invalid refresh token");
         }
 
-        String newAccessToken = generateAccessToken(user);
+        String newAccessToken = generateAccessToken(userDetails);
 
         return new LoginResponseDTO(
                 newAccessToken,
