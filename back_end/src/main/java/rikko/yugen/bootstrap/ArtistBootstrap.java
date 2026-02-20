@@ -25,7 +25,7 @@ public class ArtistBootstrap {
         if (artistRepository.count() == 0) {
             List<User> artistUsers = userRepository.findAll().stream()
                     .filter(User::getIsArtist)
-                    .collect(Collectors.toList());
+                    .toList();
 
             if (artistUsers.isEmpty()) {
                 System.out.println("No artist users found. Cannot create artists.");
