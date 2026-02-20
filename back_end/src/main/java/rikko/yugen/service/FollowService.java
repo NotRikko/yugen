@@ -35,7 +35,7 @@ public class FollowService {
                         f.getFollowee().getId(),
                         f.getFollowee().getUser().getUsername(),
                         f.getFollowee().getArtistName(),
-                        f.getFollowee().getProfilePictureUrl(),
+                        f.getFollowee().getProfileImage().getUrl(),
                         f.getFollowedAt()
                 ))
                 .toList();
@@ -48,7 +48,7 @@ public class FollowService {
                         f.getFollowee().getId(),
                         f.getFollowee().getUser().getUsername(),
                         f.getFollowee().getArtistName(),
-                        f.getFollowee().getProfilePictureUrl(),
+                        f.getFollowee().getProfileImage().getUrl(),
                         f.getFollowedAt()
                 ))
                 .toList();
@@ -58,7 +58,7 @@ public class FollowService {
         return followRepository.findByFolloweeId(artistId).stream()
                 .map(f -> {
                     User follower = f.getFollower();
-                    String imageUrl = (follower.getImage() != null) ? follower.getImage().getUrl() : null;
+                    String imageUrl = (follower.getProfileImage() != null) ? follower.getProfileImage().getUrl() : null;
                     return new FollowWithUserDTO(
                             follower.getId(),
                             follower.getUsername(),
@@ -87,7 +87,7 @@ public class FollowService {
                     existing.getFollowee().getId(),
                     existing.getFollowee().getUser().getUsername(),
                     existing.getFollowee().getArtistName(),
-                    existing.getFollowee().getProfilePictureUrl(),
+                    existing.getFollowee().getProfileImage().getUrl(),
                     existing.getFollowedAt()
             );
         }
@@ -99,7 +99,7 @@ public class FollowService {
                 saved.getFollowee().getId(),
                 saved.getFollowee().getUser().getUsername(),
                 saved.getFollowee().getArtistName(),
-                saved.getFollowee().getProfilePictureUrl(),
+                saved.getFollowee().getProfileImage().getUrl(),
                 saved.getFollowedAt()
         );
     }
