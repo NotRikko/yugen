@@ -1,6 +1,11 @@
 package rikko.yugen.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -10,8 +15,10 @@ import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
-import rikko.yugen.exception.MultipleFieldValidationException;
+import rikko.yugen.dto.user.UserDTO;
+import rikko.yugen.exception.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,107 +33,140 @@ import rikko.yugen.model.Artist;
 import rikko.yugen.model.User;
 import rikko.yugen.model.Image;
 
-import rikko.yugen.exception.UserAlreadyExistsException;
-import rikko.yugen.exception.EmailAlreadyExistsException;
-
 @Service
 @RequiredArgsConstructor
-public class UserService {
-    
+public class UserService implements UserDetailsService {
+
     private final UserRepository userRepository;
     private final ArtistRepository artistRepository;
     private final CloudinaryService cloudinaryService;
+    private final PasswordEncoder passwordEncoder;
 
-    public User getUserByDisplayName(String displayName) {
-        return userRepository.findByDisplayName(displayName)
-            .orElseThrow(() -> new RuntimeException("User not found with name" + displayName));
+    // JWT
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getUsername(),
+                user.getPassword(),
+                List.of(new SimpleGrantedAuthority(user.getRole().name()))
+        );
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
+    // Mapping
+
+    private UserDTO userToUserDTO(User user) {
+        return new UserDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getDisplayName(),
+                user.getImage() != null ? user.getImage().getUrl() : null
+        );
     }
 
-    public User getUserByUsername(String username) {
-        return userRepository.findByUsername(username)
-            .orElseThrow(() -> new RuntimeException("User not found with username" + username));
+    // Read
+
+    public UserDTO getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+        return userToUserDTO(user);
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public UserDTO getUserByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+        return userToUserDTO(user);
     }
 
+    public UserDTO getUserByDisplayName(String displayName) {
+        User user = userRepository.findByDisplayName(displayName)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "displayName", displayName));
+        return userToUserDTO(user);
+    }
+
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(this::userToUserDTO)
+                .collect(Collectors.toList());
+    }
+
+    // Create
 
     @Transactional
-    public User createUser(UserCreateDTO userCreateDTO) {
-        Map<String, String> errors = new HashMap<>();
+    public UserDTO createUser(UserCreateDTO dto) {
 
-        userRepository.findByUsername(userCreateDTO.getUsername())
-                .ifPresent(u -> errors.put("username", "User with username '" + u.getUsername() + "' already exists."));
-
-        userRepository.findByEmail(userCreateDTO.getEmail())
-                .ifPresent(u -> errors.put("email", "User with email '" + u.getEmail() + "' already exists."));
-
-        if (!errors.isEmpty()) {
-            throw new MultipleFieldValidationException(errors);
+        if (userRepository.existsByUsername(dto.getUsername())) {
+            throw new ResourceAlreadyExistsException("User", "username", dto.getUsername());
         }
 
-        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        String hashedPassword = passwordEncoder.encode(userCreateDTO.getPassword());
+        if (userRepository.existsByEmail(dto.getEmail())) {
+            throw new ResourceAlreadyExistsException("User", "email", dto.getEmail());
+        }
 
         User user = new User();
-        user.setUsername(userCreateDTO.getUsername());
-        user.setDisplayName(userCreateDTO.getDisplayName());
-        user.setEmail(userCreateDTO.getEmail());
-        user.setPassword(hashedPassword);
-        user.setIsArtist(userCreateDTO.getIsArtist());
+        user.setUsername(dto.getUsername());
+        user.setDisplayName(dto.getDisplayName());
+        user.setEmail(dto.getEmail());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        user.setIsArtist(dto.getIsArtist());
 
         User savedUser = userRepository.save(user);
 
-        if (userCreateDTO.getIsArtist()) {
+        if (dto.getIsArtist()) {
             Artist artist = new Artist();
-            artist.setArtistName(userCreateDTO.getDisplayName());
+            artist.setArtistName(dto.getDisplayName());
             artist.setUser(savedUser);
             artistRepository.save(artist);
         }
 
-        return savedUser;
+        return userToUserDTO(savedUser);
     }
 
+    // Update
+
     @Transactional
-    public User updateUser(Long id, UserUpdateDTO userUpdateDTO, MultipartFile profileImageFile) {
-        User existingUser = getUserById(id);
+    public UserDTO updateUser(Long id, UserUpdateDTO dto, MultipartFile profileImageFile) {
+        User existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+
         boolean isUpdated = false;
 
-        if (userUpdateDTO.getUsername() != null && !userUpdateDTO.getUsername().equals(existingUser.getUsername())) {
-            if (userRepository.existsByUsername(userUpdateDTO.getUsername())) {
-                throw new UserAlreadyExistsException("Username is already taken");
+        if (dto.getUsername() != null && !dto.getUsername().equals(existingUser.getUsername())) {
+            if (userRepository.existsByUsername(dto.getUsername())) {
+                throw new ResourceAlreadyExistsException("User", "username", dto.getUsername());
             }
-            existingUser.setUsername(userUpdateDTO.getUsername());
+            existingUser.setUsername(dto.getUsername());
             isUpdated = true;
         }
 
-        if (userUpdateDTO.getDisplayName() != null && !userUpdateDTO.getDisplayName().equals(existingUser.getDisplayName())) {
-            existingUser.setDisplayName(userUpdateDTO.getDisplayName());
+        if (dto.getDisplayName() != null && !dto.getDisplayName().equals(existingUser.getDisplayName())) {
+            existingUser.setDisplayName(dto.getDisplayName());
             isUpdated = true;
         }
 
-        if (userUpdateDTO.getEmail() != null && !userUpdateDTO.getEmail().equals(existingUser.getEmail())) {
-            if (userRepository.existsByEmail(userUpdateDTO.getEmail())) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already taken");
+        if (dto.getEmail() != null && !dto.getEmail().equals(existingUser.getEmail())) {
+            if (userRepository.existsByEmail(dto.getEmail())) {
+                throw new ResourceAlreadyExistsException("User", "email", dto.getEmail());
             }
-            existingUser.setEmail(userUpdateDTO.getEmail());
+            existingUser.setEmail(dto.getEmail());
+            isUpdated = true;
+        }
+
+        if (dto.getPassword() != null) {
+            existingUser.setPassword(passwordEncoder.encode(dto.getPassword()));
             isUpdated = true;
         }
 
         if (profileImageFile != null && !profileImageFile.isEmpty()) {
             try {
                 String uploadedUrl = cloudinaryService.uploadImage(profileImageFile);
-
                 Image profileImage = existingUser.getImage();
 
                 if (profileImage != null) {
-                    // Delete old image from cloudinary
                     cloudinaryService.deleteImage(profileImage.getUrl());
                     profileImage.setUrl(uploadedUrl);
                 } else {
@@ -137,21 +177,25 @@ public class UserService {
                 }
 
                 isUpdated = true;
-
             } catch (Exception e) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to upload profile picture", e);
+                throw new RuntimeException("Failed to upload profile image", e);
             }
         }
 
         if (isUpdated) {
-            return userRepository.save(existingUser);
+            existingUser = userRepository.save(existingUser);
         }
 
-        return existingUser;
+        return userToUserDTO(existingUser);
     }
+
+    // Delete
 
     @Transactional
     public void deleteUser(Long userId) {
-        userRepository.deleteById(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+        userRepository.delete(user);
     }
+
 }

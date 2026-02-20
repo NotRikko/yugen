@@ -28,13 +28,24 @@ public class UserController {
     private final UserService userService;
     private final FollowService followService;
 
-    @GetMapping("/user")
-    public ResponseEntity<User> getUser(@RequestParam String username) {
-        User user = userService.getUserByUsername(username);
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found: " + username);
-        }
-        return ResponseEntity.ok(user);
+    // Users
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+        UserDTO userDTO = userService.getUserById(id);
+        return ResponseEntity.ok(userDTO);
+    }
+
+    @GetMapping("/by-username/{username}")
+    public ResponseEntity<UserDTO> getUserByUsername(@PathVariable String username) {
+        UserDTO userDTO = userService.getUserByUsername(username);
+        return ResponseEntity.ok(userDTO);
+    }
+
+    @GetMapping("/by-display-name/{displayName}")
+    public ResponseEntity<UserDTO> getUserByDisplayName(@PathVariable String displayName) {
+        UserDTO userDTO = userService.getUserByDisplayName(displayName);
+        return ResponseEntity.ok(userDTO);
     }
 
     @GetMapping("/me")
@@ -42,41 +53,33 @@ public class UserController {
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
         }
-        return ResponseEntity.ok(new UserDTO(user));
+        UserDTO userDTO = userService.getUserById(user.getId());
+        return ResponseEntity.ok(userDTO);
     }
 
-    @GetMapping("/me/following")
-    public ResponseEntity<List<FollowWithUserDTO>> getFolloweesForCurrentUser() {
-        List<FollowWithUserDTO> following = followService.getFollowingForCurrentUser();
-        return ResponseEntity.ok(following);
-    }
-
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<UserDTO>> getAllUsers() {
-        List<UserDTO> userDTOs = userService.getAllUsers()
-                .stream()
-                .map(UserDTO::new)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(userDTOs);
+        List<UserDTO> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
 
-    @PostMapping("/create")
-    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
-        User createdUser = userService.createUser(userCreateDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserDTO(createdUser));
+    @PostMapping
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserCreateDTO dto) {
+        UserDTO createdUser = userService.createUser(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
-    @PatchMapping(value = "update/{id}", consumes = {"multipart/form-data"})
+    @PatchMapping(value = "/{id}", consumes = {"multipart/form-data"})
     public ResponseEntity<UserDTO> updateUser(
-            @PathVariable long id,
-            @RequestPart("patch") UserUpdateDTO userUpdateDTO,
+            @PathVariable Long id,
+            @RequestPart("patch") UserUpdateDTO dto,
             @RequestPart(value = "file", required = false) MultipartFile file
     ) {
-        User updatedUser = userService.updateUser(id, userUpdateDTO, file);
-        return ResponseEntity.ok(new UserDTO(updatedUser));
+        UserDTO updatedUser = userService.updateUser(id, dto, file);
+        return ResponseEntity.ok(updatedUser);
     }
 
-    @DeleteMapping(value = "/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, String>> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.ok(Map.of("message", "Account deleted successfully"));
@@ -89,5 +92,13 @@ public class UserController {
         }
         userService.deleteUser(user.getId());
         return ResponseEntity.ok(Map.of("message", "Account deleted successfully"));
+    }
+
+    // Follows
+
+    @GetMapping("/me/following")
+    public ResponseEntity<List<FollowWithUserDTO>> getFolloweesForCurrentUser() {
+        List<FollowWithUserDTO> following = followService.getFollowingForCurrentUser();
+        return ResponseEntity.ok(following);
     }
 }
