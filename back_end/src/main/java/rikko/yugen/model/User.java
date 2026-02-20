@@ -25,6 +25,7 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.isArtist = isArtist;
+        this.role = role != null ? role : Role.USER;
 
         if (imageUrl != null) {
             Image profileImage = new Image();
@@ -44,6 +45,9 @@ public class User implements UserDetails {
     private String displayName;
     private String email;
     private String password;
+
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
