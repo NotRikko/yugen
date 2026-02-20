@@ -1,15 +1,16 @@
 package rikko.yugen.service;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import rikko.yugen.dto.image.ImageDTO;
 import rikko.yugen.exception.ImageDeletionException;
+import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.model.Image;
 import rikko.yugen.model.Post;
 import rikko.yugen.model.Product;
@@ -19,75 +20,101 @@ import rikko.yugen.repository.ImageRepository;
 @Service
 @RequiredArgsConstructor
 public class ImageService {
-    
-    private final  ImageRepository imageRepository;
-    private final  CloudinaryService cloudinaryService;
 
+    private final ImageRepository imageRepository;
+    private final CloudinaryService cloudinaryService;
+
+    // Get all images for a Post.
+
+    @Transactional(readOnly = true)
     public Set<ImageDTO> getImagesForPost(Post post) {
-        List<Image> images = imageRepository.findByPost(post);
-
-        return images.stream()
-                     .map(ImageDTO::new) 
-                     .collect(Collectors.toSet());
-    }
-
-    public Set<ImageDTO> getImagesForProduct(Product product) {
-        List<Image> images = imageRepository.findByProduct(product);
-
-        return images.stream()
+        return imageRepository.findByPost(post).stream()
                 .map(ImageDTO::new)
                 .collect(Collectors.toSet());
     }
 
+    // Get all images for a Product
+    @Transactional(readOnly = true)
+    public Set<ImageDTO> getImagesForProduct(Product product) {
+        return imageRepository.findByProduct(product).stream()
+                .map(ImageDTO::new)
+                .collect(Collectors.toSet());
+    }
+
+    // Create and save an image for a Post
+
     @Transactional
-    public Image createImageForPost(String imageUrl, Post post) {
+    public ImageDTO createImageForPost(String imageUrl, Post post) {
         Image image = new Image();
         image.setUrl(imageUrl);
         image.setPost(post);
 
         post.getImages().add(image);
 
-        return imageRepository.save(image);
+        return new ImageDTO(imageRepository.save(image));
     }
 
+    // Create and save an image for a Product
+
     @Transactional
-    public Image createImageForProduct(String imageUrl, Product product) {
+    public ImageDTO createImageForProduct(String imageUrl, Product product) {
         Image image = new Image();
         image.setUrl(imageUrl);
         image.setProduct(product);
 
         product.getImages().add(image);
 
-        return imageRepository.save(image);
+        return new ImageDTO(imageRepository.save(image));
     }
 
+    // Create or replace a User's profile image
 
     @Transactional
-    public Image createImageForUser(String imageUrl, User user) {
+    public ImageDTO createImageForUser(String imageUrl, User user) {
+        // Delete existing profile image if present
+        Optional.ofNullable(user.getProfileImage()).ifPresent(oldImage -> {
+            cloudinaryService.deleteImage(oldImage.getUrl());
+            user.setProfileImage(null);
+            imageRepository.delete(oldImage);
+        });
+
+        // Create new image
         Image image = new Image();
         image.setUrl(imageUrl);
         image.setUser(user);
-
-        if (user.getProfileImage() != null) {
-            imageRepository.delete(user.getProfileImage());
-        }
-
         user.setProfileImage(image);
 
-        return imageRepository.save(image);
+        return new ImageDTO(imageRepository.save(image));
     }
+
+    // Delete an image from Cloudinary and database
 
     @Transactional
     public void deleteImage(Long imageId) {
         Image image = imageRepository.findById(imageId)
-                .orElseThrow(() -> new ImageDeletionException("Image not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Image", "imageID", imageId));
 
         boolean deletedFromCloud = cloudinaryService.deleteImage(image.getUrl());
-        if (deletedFromCloud) {
-            imageRepository.deleteById(imageId);
-        } else {
+        if (!deletedFromCloud) {
             throw new ImageDeletionException("Failed to delete image from Cloudinary");
         }
-    }
 
+        if (image.getUser() != null) {
+            image.getUser().setProfileImage(null);
+        }
+        if (image.getPost() != null) {
+            image.getPost().getImages().remove(image);
+        }
+        if (image.getProduct() != null) {
+            image.getProduct().getImages().remove(image);
+        }
+        if (image.getProfileForArtist() != null) {
+            image.getProfileForArtist().setProfileImage(null);
+        }
+        if (image.getBannerForArtist() != null) {
+            image.getBannerForArtist().setBannerImage(null);
+        }
+
+        imageRepository.delete(image);
+    }
 }
