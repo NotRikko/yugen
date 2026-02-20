@@ -17,12 +17,20 @@ import lombok.*;
 @AllArgsConstructor
 public class Artist {
 
-    public Artist(String artistName, String bio, String profilePictureUrl, String bannerProfilePictureUrl, User user) {
+    public Artist(String artistName, String bio, User user, Image profileImage, Image bannerImage) {
         this.artistName = artistName;
         this.bio = bio;
-        this.profilePictureUrl = profilePictureUrl;
-        this.bannerPictureUrl = bannerProfilePictureUrl;
         this.user = user;
+
+        if (profileImage != null) {
+            this.setProfileImage(profileImage);
+            profileImage.setProfileForArtist(this);
+        }
+
+        if (bannerImage != null) {
+            this.setBannerImage(bannerImage);
+            bannerImage.setBannerForArtist(this);
+        }
     }
 
     @Id
@@ -33,8 +41,6 @@ public class Artist {
     private String artistName;
 
     private String bio;
-    private String profilePictureUrl;
-    private String bannerPictureUrl;
 
     @Column(updatable = false)
     @CreationTimestamp
@@ -42,7 +48,15 @@ public class Artist {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-    
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "profile_image_id", unique = true)
+    private Image profileImage;
+
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "banner_image_id", unique = true)
+    private Image bannerImage;
+
     @OneToMany(mappedBy = "artist", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

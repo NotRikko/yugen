@@ -19,20 +19,12 @@ import lombok.*;
 @AllArgsConstructor
 public class User implements UserDetails {
 
-    public User(String username, String displayName, String email, String password, String imageUrl, Boolean isArtist) {
+    public User(String username, String displayName, String email, String password, Boolean isArtist) {
         this.username = username;
         this.displayName = displayName;
         this.email = email;
         this.password = password;
         this.isArtist = isArtist;
-        this.role = role != null ? role : Role.USER;
-
-        if (imageUrl != null) {
-            Image profileImage = new Image();
-            profileImage.setUrl(imageUrl);
-            profileImage.setUser(this);
-            this.image = profileImage;
-        }
     }
 
     @Id
@@ -49,10 +41,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role = Role.USER;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private Image image;
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "profile_image_id", unique = true)
+    private Image profileImage;
     
     @Column(name = "is_artist")
     private Boolean isArtist;

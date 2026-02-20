@@ -17,20 +17,20 @@ public class Image {
     @Column(nullable = false)
     private String url;
 
+    @OneToOne(mappedBy = "profileImage")
+    private User user;
+
+    @OneToOne(mappedBy = "bannerImage")
+    private Artist bannerForArtist;
+
+    @OneToOne(mappedBy = "profileImage")
+    private Artist profileForArtist;
+
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", unique = true)
-    private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "artist_id")
-    private Artist artist;
-
     @ManyToOne
     @JoinColumn(name = "product_id")
     private Product product;
-
 }
