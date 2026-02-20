@@ -38,7 +38,7 @@ public class ArtistController {
 
     @GetMapping
     public ResponseEntity<Page<ArtistDTO>> getAllArtists(
-            @PageableDefault(size = 10) Pageable pageable
+            @PageableDefault Pageable pageable
     ) {
         Page<ArtistDTO> artists = artistService.getAllArtists(pageable);
         return ResponseEntity.ok(artists);
