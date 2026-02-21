@@ -6,6 +6,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import rikko.yugen.dto.user.UserCreateDTO;
 import rikko.yugen.dto.user.UserDTO;
@@ -161,23 +165,27 @@ class UserServiceTest {
     //get all users tests
     @Test
     void getAllUsers_shouldReturnListOfUserDTO_whenUsersExist() {
-        when(userRepository.findAll())
-                .thenReturn(List.of(mockUser, mockUser2));
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<User> userPage = new PageImpl<>(List.of(mockUser, mockUser2));
+        when(userRepository.findAll(pageable))
+                .thenReturn(userPage);
 
-        List<UserDTO> result = userService.getAllUsers();
+        Page<UserDTO> result = userService.getAllUsers(pageable);
 
         assertNotNull(result);
-        assertEquals(2, result.size());
+        assertEquals(2, result.getContent().size());
 
-        assertEquals("Rikko", result.get(0).username());
-        assertEquals("Rikko", result.get(0).displayName());
-        assertEquals("rikko@test.com", result.get(0).email());
+        UserDTO first = result.getContent().get(0);
+        assertEquals("Rikko", first.username());
+        assertEquals("Rikko", first.displayName());
+        assertEquals("rikko@test.com", first.email());
 
-        assertEquals("Rikko2", result.get(1).username());
-        assertEquals("Rikko2", result.get(1).displayName());
-        assertEquals("rikko2@test.com", result.get(1).email());
+        UserDTO second = result.getContent().get(1);
+        assertEquals("Rikko2", second.username());
+        assertEquals("Rikko2", second.displayName());
+        assertEquals("rikko2@test.com", second.email());
 
-        verify(userRepository).findAll();
+        verify(userRepository).findAll(pageable);
     }
 
     //create user tests
