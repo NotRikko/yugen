@@ -61,9 +61,13 @@ class UserServiceTest {
         UserDTO result = userService.getUserById(1L);
 
         assertNotNull(result);
-        assertEquals(1L, result.getId());
-        assertEquals("Rikko", result.getUsername());
-        assertEquals("Rikko", result.getDisplayName());
+        assertEquals(1L, result.id());
+        assertEquals("Rikko", result.username());
+        assertEquals("Rikko", result.displayName());
+        assertEquals("rikko@test.com", result.email());
+        assertNull(result.image());
+        assertEquals(false, result.isArtist());
+
         verify(userRepository).findById(1L);
     }
 
@@ -87,10 +91,12 @@ class UserServiceTest {
         UserDTO result = userService.getUserByUsername("Rikko");
 
         assertNotNull(result);
-        assertEquals(1L, result.getId());
-        assertEquals("Rikko", result.getUsername());
-        assertEquals("Rikko", result.getDisplayName());
-        verify(userRepository).findByUsername("Rikko");
+        assertEquals(1L, result.id());
+        assertEquals("Rikko", result.username());
+        assertEquals("Rikko", result.displayName());
+        assertEquals("rikko@test.com", result.email());
+        assertNull(result.image());
+        assertEquals(false, result.isArtist());
     }
 
     @Test
@@ -110,10 +116,12 @@ class UserServiceTest {
         UserDTO result = userService.getUserByDisplayName("Rikko");
 
         assertNotNull(result);
-        assertEquals(1L, result.getId());
-        assertEquals("Rikko", result.getUsername());
-        assertEquals("Rikko", result.getDisplayName());
-        verify(userRepository).findByDisplayName("Rikko");
+        assertEquals(1L, result.id());
+        assertEquals("Rikko", result.username());
+        assertEquals("Rikko", result.displayName());
+        assertEquals("rikko@test.com", result.email());
+        assertNull(result.image());
+        assertEquals(false, result.isArtist());
     }
 
     @Test
@@ -133,8 +141,12 @@ class UserServiceTest {
         UserDTO result = userService.getUserByEmail("rikko@test.com");
 
         assertNotNull(result);
-        assertEquals("Rikko", result.getUsername());
-        assertEquals("Rikko", result.getDisplayName());
+        assertEquals(1L, result.id());
+        assertEquals("Rikko", result.username());
+        assertEquals("Rikko", result.displayName());
+        assertEquals("rikko@test.com", result.email());
+        assertNull(result.image());
+        assertEquals(false, result.isArtist());
         verify(userRepository).findByEmail("rikko@test.com");
     }
 
@@ -157,13 +169,13 @@ class UserServiceTest {
         assertNotNull(result);
         assertEquals(2, result.size());
 
-        assertEquals("Rikko", result.get(0).getUsername());
-        assertEquals("Rikko", result.get(0).getDisplayName());
-        assertEquals("rikko@test.com", result.get(0).getEmail());
+        assertEquals("Rikko", result.get(0).username());
+        assertEquals("Rikko", result.get(0).displayName());
+        assertEquals("rikko@test.com", result.get(0).email());
 
-        assertEquals("Rikko2", result.get(1).getUsername());
-        assertEquals("Rikko2", result.get(1).getDisplayName());
-        assertEquals("rikko2@test.com", result.get(1).getEmail());
+        assertEquals("Rikko2", result.get(1).username());
+        assertEquals("Rikko2", result.get(1).displayName());
+        assertEquals("rikko2@test.com", result.get(1).email());
 
         verify(userRepository).findAll();
     }
@@ -196,10 +208,10 @@ class UserServiceTest {
         UserDTO result = userService.createUser(dto);
 
         assertNotNull(result);
-        assertEquals(3L, result.getId());
-        assertEquals("Rikko3", result.getUsername());
-        assertEquals("Rikko3", result.getDisplayName());
-        assertEquals("rikko3@test.com", result.getEmail());
+        assertEquals(3L, result.id());
+        assertEquals("Rikko3", result.username());
+        assertEquals("Rikko3", result.displayName());
+        assertEquals("rikko3@test.com", result.email());
 
         verify(userRepository).existsByUsername("Rikko3");
         verify(userRepository).existsByEmail("rikko3@test.com");
