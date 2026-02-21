@@ -37,22 +37,24 @@ public class CloudinaryService {
     }
 
     @SuppressWarnings("unchecked")
-    public String deleteImage(String imageUrl) throws IOException {
-        String publicId = extractPublicIdFromUrl(imageUrl);
-        Map<String, String> response = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
-
-        if ("ok".equals(response.get("result"))) {
-            return "Image deleted successfully";
-        } else {
-            return "Error deleting image";
+    public boolean deleteImage(String imageUrl) {
+        try {
+            String publicId = extractPublicIdFromUrl(imageUrl);
+            Map<String, String> response = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            return "ok".equals(response.get("result"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
     private String extractPublicIdFromUrl(String imageUrl) {
-        String[] urlParts = imageUrl.split("/");
-        String publicIdWithExtension = urlParts[urlParts.length - 1];  
-        String publicId = publicIdWithExtension.split("\\.")[0]; 
-        return publicId;
+        String[] parts = imageUrl.split("/upload/");
+        String pathAndFile = parts[1];
+        if (pathAndFile.startsWith("v")) {
+            pathAndFile = pathAndFile.substring(pathAndFile.indexOf("/") + 1);
+        }
+        return pathAndFile.replaceAll("\\.[^.]+$", "");
     }
    
 }
