@@ -59,7 +59,7 @@ public class Post {
     private Artist artist;
 
     @ManyToOne
-    @JoinColumn(name = "product_id", nullable = true)
+    @JoinColumn(name = "product_id")
     private Product product;
 
 }
