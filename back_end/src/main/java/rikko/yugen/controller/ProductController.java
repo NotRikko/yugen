@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import rikko.yugen.dto.product.ProductCreateDTO;
 import rikko.yugen.dto.product.ProductDTO;
 
+import rikko.yugen.dto.product.ProductUpdateDTO;
 import rikko.yugen.service.ProductService;
 
 @RestController
@@ -34,6 +35,16 @@ public class ProductController {
     ) {
         ProductDTO createdProduct = productService.createProduct(productCreateDTO, files);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
+    }
+
+    @PutMapping(value = "/{productId}", consumes = {"multipart/form-data"})
+    public ResponseEntity<ProductDTO> updateProduct(
+            @PathVariable Long productId,
+            @RequestPart("product")ProductUpdateDTO productUpdateDTO,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files
+            ) {
+        ProductDTO updatedProduct = productService.updateProduct(productId, productUpdateDTO, files);
+        return ResponseEntity.ok(updatedProduct);
     }
 
     @DeleteMapping("/{productId}")
