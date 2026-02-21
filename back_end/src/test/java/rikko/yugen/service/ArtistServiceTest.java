@@ -10,17 +10,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import rikko.yugen.dto.artist.ArtistCreateDTO;
 import rikko.yugen.dto.artist.ArtistDTO;
 import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.model.Artist;
 import rikko.yugen.model.User;
 import rikko.yugen.repository.ArtistRepository;
+import rikko.yugen.repository.UserRepository;
 
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -28,6 +31,9 @@ import static org.mockito.Mockito.when;
 class ArtistServiceTest {
     @Mock
     private ArtistRepository artistRepository;
+
+    @Mock
+    private UserRepository userRepository;
 
     @InjectMocks
     private ArtistService artistService;
@@ -74,8 +80,7 @@ class ArtistServiceTest {
 
     @Test
     void getArtistById_shouldReturnArtistDTO_whenArtistExists() {
-        when(artistRepository.findById(1L))
-                .thenReturn(Optional.of(mockArtist));
+        when(artistRepository.findById(1L)).thenReturn(Optional.of(mockArtist));
         ArtistDTO result = artistService.getArtistById(1L);
 
         assertNotNull(result);
@@ -88,8 +93,7 @@ class ArtistServiceTest {
 
     @Test
     void getArtistById_shouldThrowException_whenArtistDoesNotExist() {
-        when(artistRepository.findById(9999L))
-            .thenReturn(Optional.empty());
+        when(artistRepository.findById(9999L)).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> artistService.getArtistById(9999L));
         verify(artistRepository).findById(9999L);
     }
@@ -98,8 +102,7 @@ class ArtistServiceTest {
     //get by artist name tests
     @Test
     void getArtistByArtistName_shouldReturnArtistDTO_whenArtistExists() {
-        when(artistRepository.findByArtistName("Rikko")).
-                thenReturn(Optional.of(mockArtist));
+        when(artistRepository.findByArtistName("Rikko")).thenReturn(Optional.of(mockArtist));
 
         ArtistDTO result = artistService.getArtistByArtistName("Rikko");
 
@@ -112,8 +115,7 @@ class ArtistServiceTest {
 
     @Test
     void getArtistByArtistName_shouldThrowException_whenArtistDoesNotExist() {
-        when(artistRepository.findByArtistName("Rikko")).
-                thenReturn(Optional.empty());
+        when(artistRepository.findByArtistName("Rikko")).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> artistService.getArtistByArtistName("Rikko"));
         verify(artistRepository).findByArtistName("Rikko");
     }
@@ -124,8 +126,7 @@ class ArtistServiceTest {
     void getAllArtists_shouldReturnListOfArtistDTO_whenArtistsExists() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Artist> artistPage = new PageImpl<>(List.of(mockArtist, mockArtist2));
-        when(artistRepository.findAll(pageable))
-                    .thenReturn(artistPage);
+        when(artistRepository.findAll(pageable)).thenReturn(artistPage);
         Page<ArtistDTO> result = artistService.getAllArtists(pageable);
 
         assertNotNull(result);
@@ -142,6 +143,44 @@ class ArtistServiceTest {
         verify(artistRepository).findAll(pageable);
     }
 
+    //create artist tests
+
+    @Test
+    void createArtist_shouldReturnArtistDTO_whenArtistCreated() {
+        // Arrange
+        User mockUser = new User();
+        mockUser.setId(3L);
+        mockUser.setUsername("Rikko3");
+        mockUser.setDisplayName("Rikko3");
+        mockUser.setEmail("rikko3@test.com");
+
+        ArtistCreateDTO dto = new ArtistCreateDTO();
+        dto.setArtistName("Rikko3");
+        dto.setUserId(3L);
+        dto.setBio("I am a created test");
+
+        when(userRepository.findById(3L)).thenReturn(Optional.of(mockUser));
+        when(artistRepository.existsByArtistName("Rikko3")).thenReturn(false);
+
+        Artist savedArtist = new Artist();
+        savedArtist.setId(3L);
+        savedArtist.setArtistName("Rikko3");
+        savedArtist.setUser(mockUser);
+
+        when(artistRepository.save(any(Artist.class))).thenReturn(savedArtist);
+
+        ArtistDTO result = artistService.createArtist(dto);
+
+        assertNotNull(result);
+        assertEquals(3L, result.id());
+        assertEquals("Rikko3", result.artistName());
+        assertEquals("I am a created test", result.bio());
+        assertEquals(3L, result.user().id());
+
+        verify(userRepository).findById(3L);
+        verify(artistRepository).existsByArtistName("Rikko3");
+        verify(artistRepository).save(any(Artist.class));
+    }
 
 
 }
