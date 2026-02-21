@@ -18,7 +18,7 @@ public record UserDTO(
                 user.getDisplayName(),
                 user.getEmail(),
                 user.getProfileImage() != null ? user.getProfileImage().getUrl() : null,
-                user.getIsArtist(),
+                user.getIsArtist() != null ? user.getIsArtist() : false,
                 user.getArtist() != null ? user.getArtist().getId() : null
         );
     }
