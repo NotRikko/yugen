@@ -5,27 +5,21 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+
 @Setter
 @Getter
-public class UserUpdateDTO extends BaseUserDTO {
+public class UserUpdateDTO {
+
+    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
+    private String username;
+
+    private String displayName;
+
+    @Email(message = "Invalid email format")
+    private String email;
+
     @Size(min = 8, message = "Password must be at least 8 characters")
     private String password;
 
-    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
-    @Override
-    public String getUsername() {
-        return super.getUsername();
-    }
-
-    @Email(message = "Invalid email format")
-    @Override
-    public String getEmail() {
-        return super.getEmail();
-    }
-
-    @Override
-    public String getDisplayName() {
-        return super.getDisplayName();
-    }
-
+    private Boolean isArtist;
 }
