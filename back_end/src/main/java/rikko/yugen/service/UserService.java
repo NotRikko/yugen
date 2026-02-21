@@ -76,6 +76,12 @@ public class UserService implements UserDetailsService {
         return userToUserDTO(user);
     }
 
+    public UserDTO getUserByEmail (String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "email", email));
+        return userToUserDTO(user);
+    }
+
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(this::userToUserDTO)
