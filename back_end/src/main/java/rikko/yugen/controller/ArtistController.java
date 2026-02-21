@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,9 +66,14 @@ public class ArtistController {
     // Posts
 
     @GetMapping("/{artistId}/posts")
-    public ResponseEntity<List<PostDTO>> getPostsByArtistId(@PathVariable Long artistId) {
-        List<PostDTO> posts = postService.getPostsByArtistId(artistId);
-        return ResponseEntity.ok(posts);
+    public ResponseEntity<Page<PostDTO>> getPostsByArtistId(
+            @PathVariable Long artistId,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
+            Pageable pageable) {
+
+        return ResponseEntity.ok(
+                postService.getPostsByArtistId(artistId, pageable)
+        );
     }
 
     // Products

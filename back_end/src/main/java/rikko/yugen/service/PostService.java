@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -41,29 +43,25 @@ public class PostService {
 
     private final CurrentUserHelper currentUserHelper;
 
-    //mapping
-
-    private List<PostDTO> mapPosts(List<Post> posts) {
-        return posts.stream()
-                .map(PostDTO::new)
-                .collect(Collectors.toList());
-    }
-
     //read
 
     @Transactional(readOnly = true)
-    public List<PostDTO> getAllPosts() {
-        return mapPosts(postRepository.findAll());
+    public Page<PostDTO> getAllPosts(Pageable pageable) {
+        return postRepository.findAll(pageable)
+                .map(PostDTO::new);
+    }
+
+
+    @Transactional(readOnly = true)
+    public Page<PostDTO> getPostsByArtistName(String artistName, Pageable pageable) {
+        return postRepository.findByArtist_ArtistName(artistName, pageable)
+                .map(PostDTO::new);
     }
 
     @Transactional(readOnly = true)
-    public List<PostDTO> getPostsByArtistName(String artistName) {
-        return mapPosts(postRepository.findByArtist_ArtistName(artistName));
-    }
-
-    @Transactional(readOnly = true)
-    public List<PostDTO> getPostsByArtistId(Long artistId) {
-        return mapPosts(postRepository.findByArtist_Id(artistId));
+    public Page<PostDTO> getPostsByArtistId(Long artistId, Pageable pageable) {
+        return postRepository.findByArtist_Id(artistId, pageable)
+                .map(PostDTO::new);
     }
 
     @Transactional(readOnly = true)

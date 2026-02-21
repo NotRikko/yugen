@@ -123,7 +123,7 @@ class ArtistServiceTest {
     //get all artists tests
 
     @Test
-    void getAllArtists_shouldReturnListOfArtistDTO_whenArtistsExists() {
+    void getAllArtists_shouldReturnPageOfArtistDTO_whenArtistsExists() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Artist> artistPage = new PageImpl<>(List.of(mockArtist, mockArtist2));
         when(artistRepository.findAll(pageable)).thenReturn(artistPage);
@@ -165,6 +165,7 @@ class ArtistServiceTest {
         Artist savedArtist = new Artist();
         savedArtist.setId(3L);
         savedArtist.setArtistName("Rikko3");
+        savedArtist.setBio("I am a created test");
         savedArtist.setUser(mockUser);
 
         when(artistRepository.save(any(Artist.class))).thenReturn(savedArtist);

@@ -3,6 +3,10 @@ package rikko.yugen.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +33,23 @@ public class PostController {
     private final PostLikeService postLikeService;
     private final CommentService commentService;
 
-    @GetMapping("/")
-    public ResponseEntity<List<PostDTO>> getAllPosts() {
-        return ResponseEntity.ok(postService.getAllPosts());
+    @GetMapping
+    public ResponseEntity<Page<PostDTO>> getAllPosts(
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
+            Pageable pageable) {
+
+        return ResponseEntity.ok(postService.getAllPosts(pageable));
+    }
+
+    @GetMapping("/artist/{artistId}")
+    public ResponseEntity<Page<PostDTO>> getPostsByArtist(
+            @PathVariable Long artistId,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
+            Pageable pageable) {
+
+        return ResponseEntity.ok(
+                postService.getPostsByArtistId(artistId, pageable)
+        );
     }
 
     @GetMapping("/{postId}/comments")
