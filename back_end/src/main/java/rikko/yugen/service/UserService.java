@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import jakarta.transaction.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import rikko.yugen.dto.user.UserDTO;
 import rikko.yugen.exception.*;
