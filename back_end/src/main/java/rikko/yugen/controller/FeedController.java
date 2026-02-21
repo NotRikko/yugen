@@ -1,13 +1,13 @@
 package rikko.yugen.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 
-import java.util.List;
 
 import rikko.yugen.dto.post.PostDTO;
-import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.service.FeedService;
 
 @RestController
@@ -17,24 +17,20 @@ import rikko.yugen.service.FeedService;
 public class FeedController {
 
     private final FeedService feedService;
-    private final CurrentUserHelper currentUserHelper;
 
     @GetMapping("/global")
-    public ResponseEntity<List<PostDTO>> getGlobalFeed(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size
+    public ResponseEntity<FeedService.FeedResponse<PostDTO>> getGlobalFeed(
+            @PageableDefault(size = 20) Pageable pageable
     ) {
-        List<PostDTO> posts = feedService.getGlobalFeed(page, size);
-        return ResponseEntity.ok(posts);
+        FeedService.FeedResponse<PostDTO> response = feedService.getGlobalFeed(pageable);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/user")
-    public ResponseEntity<List<PostDTO>> getUserFeed(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size
+    public ResponseEntity<FeedService.FeedResponse<PostDTO>> getUserFeed(
+            @PageableDefault(size = 20) Pageable pageable
     ) {
-        Long currentUserId = currentUserHelper.getCurrentUser().getId();
-        List<PostDTO> posts = feedService.getUserFeed(currentUserId, page, size);
-        return ResponseEntity.ok(posts);
+        FeedService.FeedResponse<PostDTO> response = feedService.getUserFeed(pageable);
+        return ResponseEntity.ok(response);
     }
 }
