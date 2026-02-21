@@ -16,7 +16,7 @@ import rikko.yugen.dto.post.PostDTO;
 
 import rikko.yugen.dto.post.PostUpdateDTO;
 import rikko.yugen.service.PostService;
-import rikko.yugen.service.LikeService;
+import rikko.yugen.service.PostLikeService;
 import rikko.yugen.service.CommentService;
 
 @RestController
@@ -26,7 +26,7 @@ import rikko.yugen.service.CommentService;
 public class PostController {
 
     private final PostService postService;
-    private final LikeService likeService;
+    private final PostLikeService postLikeService;
     private final CommentService commentService;
 
     @GetMapping("/")
@@ -49,7 +49,7 @@ public class PostController {
 
     @PostMapping("/{postId}/like")
     public ResponseEntity<Map<String, Integer>> toggleLike(@PathVariable Long postId) {
-        int updatedLikes = likeService.toggleLike(postId);
+        int updatedLikes = postLikeService.toggleLike(postId);
         return ResponseEntity.ok(Map.of("likes", updatedLikes));
     }
 

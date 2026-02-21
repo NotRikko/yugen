@@ -37,6 +37,11 @@ public class Post {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Comment> comments = new HashSet<>();
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<PostLike> likes = new HashSet<>();
     
     @Column(nullable = false)
     private String content;
