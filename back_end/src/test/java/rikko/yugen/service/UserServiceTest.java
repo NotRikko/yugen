@@ -60,8 +60,7 @@ class UserServiceTest {
 
     @Test
     void getUserById_shouldReturnUserDTO_whenUserExists() {
-        when(userRepository.findById(1L))
-                .thenReturn(Optional.of(mockUser));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
         UserDTO result = userService.getUserById(1L);
 
         assertNotNull(result);
@@ -78,8 +77,7 @@ class UserServiceTest {
     @Test
     void getUserById_shouldThrowException_whenUserDoesNotExist() {
         Long userId = 99999L;
-        when(userRepository.findById(userId ))
-                .thenReturn(Optional.empty());
+        when(userRepository.findById(userId )).thenReturn(Optional.empty());
 
         assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(userId));
         verify(userRepository).findById(userId );
@@ -89,8 +87,7 @@ class UserServiceTest {
     //get by username tests
     @Test
     void getUserByUsername_shouldReturnUserDTO_whenUserExists() {
-        when(userRepository.findByUsername("Rikko"))
-                .thenReturn(Optional.of(mockUser));
+        when(userRepository.findByUsername("Rikko")).thenReturn(Optional.of(mockUser));
 
         UserDTO result = userService.getUserByUsername("Rikko");
 
@@ -105,8 +102,7 @@ class UserServiceTest {
 
     @Test
     void getUserByUsername_shouldThrowException_whenUserDoesNotExist() {
-        when(userRepository.findByUsername("NotExister"))
-                .thenReturn(Optional.empty());
+        when(userRepository.findByUsername("NotExister")).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> userService.getUserByUsername("NotExister"));
         verify(userRepository).findByUsername("NotExister");
     }
@@ -114,8 +110,7 @@ class UserServiceTest {
     //get by display name tests
     @Test
     void getUserByDisplayName_shouldReturnUserDTO_whenUserExists() {
-        when(userRepository.findByDisplayName("Rikko"))
-                .thenReturn(Optional.of(mockUser));
+        when(userRepository.findByDisplayName("Rikko")).thenReturn(Optional.of(mockUser));
 
         UserDTO result = userService.getUserByDisplayName("Rikko");
 
@@ -139,8 +134,7 @@ class UserServiceTest {
     //get by email tests
     @Test
     void getUserByEmail_shouldReturnUserDTO_whenUserExists() {
-        when(userRepository.findByEmail("rikko@test.com"))
-                .thenReturn(Optional.of(mockUser));
+        when(userRepository.findByEmail("rikko@test.com")).thenReturn(Optional.of(mockUser));
 
         UserDTO result = userService.getUserByEmail("rikko@test.com");
 
@@ -167,8 +161,7 @@ class UserServiceTest {
     void getAllUsers_shouldReturnListOfUserDTO_whenUsersExist() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<User> userPage = new PageImpl<>(List.of(mockUser, mockUser2));
-        when(userRepository.findAll(pageable))
-                .thenReturn(userPage);
+        when(userRepository.findAll(pageable)).thenReturn(userPage);
 
         Page<UserDTO> result = userService.getAllUsers(pageable);
 
