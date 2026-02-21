@@ -40,6 +40,10 @@ public record ProductDTO(
         );
     }
 
+    public static ProductDTO fromProduct(Product product, Set<ImageDTO> images) {
+        return new ProductDTO(product, images);
+    }
+
     public static ProductDTO fromProduct(Product product) {
         Set<ImageDTO> imageDTOs = product.getImages() != null
                 ? product.getImages().stream().map(ImageDTO::new).collect(Collectors.toSet())
