@@ -52,7 +52,7 @@ public class ArtistController {
 
     @GetMapping("/by-name/{artistName}")
     public ResponseEntity<ArtistDTO> getArtistByName(@PathVariable String artistName) {
-        ArtistDTO artist = artistService.getArtistByName(artistName);
+        ArtistDTO artist = artistService.getArtistByArtistName(artistName);
         return ResponseEntity.ok(artist);
     }
 

@@ -40,7 +40,7 @@ public class ArtistService {
         return artistToArtistDTO(artist);
     }
 
-    public ArtistDTO getArtistByName(String artistName) {
+    public ArtistDTO getArtistByArtistName(String artistName) {
         Artist artist = artistRepository.findByArtistName(artistName)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Artist", "artistName", artistName));
