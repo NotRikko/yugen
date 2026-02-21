@@ -68,7 +68,7 @@ public class ArtistController {
     @GetMapping("/{artistId}/posts")
     public ResponseEntity<Page<PostDTO>> getPostsByArtistId(
             @PathVariable Long artistId,
-            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable) {
 
         return ResponseEntity.ok(
