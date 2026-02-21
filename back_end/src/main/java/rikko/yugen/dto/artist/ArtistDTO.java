@@ -1,6 +1,5 @@
 package rikko.yugen.dto.artist;
 
-import lombok.Getter;
 import rikko.yugen.dto.user.UserDTO;
 import rikko.yugen.model.Artist;
 
