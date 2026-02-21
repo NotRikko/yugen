@@ -1,5 +1,6 @@
 package rikko.yugen.dto.artist;
 
+import lombok.Getter;
 import rikko.yugen.dto.user.UserDTO;
 import rikko.yugen.model.Artist;
 
@@ -8,6 +9,7 @@ public record ArtistDTO(
         String artistName,
         String profilePictureUrl,
         String bannerPictureUrl,
+        String bio,
         UserDTO user
 ) {
     public ArtistDTO(Artist artist) {
@@ -16,6 +18,7 @@ public record ArtistDTO(
                 artist.getArtistName(),
                 artist.getProfileImage() != null ? artist.getProfileImage().getUrl() : null,
                 artist.getBannerImage() != null ? artist.getBannerImage().getUrl() : null,
+                artist.getBio() != null ? artist.getBio() : null,
                 artist.getUser() != null ? new UserDTO(artist.getUser()) : null
         );
     }
