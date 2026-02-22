@@ -24,8 +24,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ArtistServiceTest {
@@ -181,6 +180,22 @@ class ArtistServiceTest {
         verify(userRepository).findById(3L);
         verify(artistRepository).existsByArtistName("Rikko3");
         verify(artistRepository).save(any(Artist.class));
+    }
+
+    // Delete artist tests
+
+    @Test
+    void deleteArtist_shouldReturnVoid_ifSuccess() {
+        when(artistRepository.findById(1L)).thenReturn(Optional.of(mockArtist));
+        artistService.deleteArtist(1L);
+        verify(artistRepository).delete(mockArtist);
+    }
+
+    @Test
+    void deleteArtist_shouldThrowException_whenArtistDoesNotExist() {
+        when(artistRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, () -> artistService.deleteArtist(1L));
+        verify(userRepository, never()).delete(any());
     }
 
 
