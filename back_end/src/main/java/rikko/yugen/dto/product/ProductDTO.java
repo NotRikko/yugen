@@ -22,14 +22,18 @@ public record ProductDTO(
         Set<SeriesDTO> series,
         Set<CollectionDTO> collections
 ) {
-    public ProductDTO(Product product, Set<ImageDTO> images) {
+    public ProductDTO(Product product) {
         this(
                 product.getId(),
                 product.getName(),
                 product.getDescription(),
                 product.getPrice(),
                 product.getQuantityInStock(),
-                images != null ? images : new HashSet<>(),
+                product.getImages() != null
+                        ? product.getImages().stream()
+                        .map(ImageDTO::new)
+                        .collect(Collectors.toSet())
+                        :new HashSet<>(),
                 product.getArtist() != null ? new ArtistDTO(product.getArtist()) : null,
                 product.getSeries() != null
                         ? product.getSeries().stream().map(SeriesDTO::new).collect(Collectors.toSet())
@@ -38,16 +42,5 @@ public record ProductDTO(
                         ? product.getCollections().stream().map(CollectionDTO::new).collect(Collectors.toSet())
                         : Collections.emptySet()
         );
-    }
-
-    public static ProductDTO fromProduct(Product product, Set<ImageDTO> images) {
-        return new ProductDTO(product, images);
-    }
-
-    public static ProductDTO fromProduct(Product product) {
-        Set<ImageDTO> imageDTOs = product.getImages() != null
-                ? product.getImages().stream().map(ImageDTO::new).collect(Collectors.toSet())
-                : new HashSet<>();
-        return new ProductDTO(product, imageDTOs);
     }
 }
