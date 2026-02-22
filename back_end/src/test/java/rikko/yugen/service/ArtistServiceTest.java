@@ -123,7 +123,7 @@ class ArtistServiceTest {
     //Get all artists tests
 
     @Test
-    void getAllArtists_shouldReturnPageOfArtistDTO_whenArtistsExists() {
+    void getAllArtists_shouldReturnPaginatedPosts() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Artist> artistPage = new PageImpl<>(List.of(mockArtist, mockArtist2));
         when(artistRepository.findAll(pageable)).thenReturn(artistPage);
