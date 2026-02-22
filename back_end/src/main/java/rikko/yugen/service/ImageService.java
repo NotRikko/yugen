@@ -34,6 +34,7 @@ public class ImageService {
     }
 
     // Get all images for a Product
+
     @Transactional(readOnly = true)
     public Set<ImageDTO> getImagesForProduct(Product product) {
         return imageRepository.findByProduct(product).stream()
