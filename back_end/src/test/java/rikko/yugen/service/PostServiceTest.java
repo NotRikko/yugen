@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.multipart.MultipartFile;
 import rikko.yugen.dto.post.PostCreateDTO;
 import rikko.yugen.dto.post.PostDTO;
 import rikko.yugen.dto.post.PostUpdateDTO;
@@ -23,6 +24,7 @@ import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.PostRepository;
 import rikko.yugen.repository.ProductRepository;
 
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 
@@ -329,5 +331,27 @@ class PostServiceTest {
 
         assertThrows(AccessDeniedException.class, () -> postService.deletePost(1L));
         verify(postRepository, never()).delete(any());
+    }
+
+    @Test
+    void uploadAndSaveFiles_shouldUploadAndCreateImages() throws Exception {
+        MultipartFile file1 = mock(MultipartFile.class);
+        MultipartFile file2 = mock(MultipartFile.class);
+        List<MultipartFile> files = List.of(file1, file2);
+
+        Post mockPost = new Post();
+
+        when(cloudinaryService.uploadImage(file1)).thenReturn("url1");
+        when(cloudinaryService.uploadImage(file2)).thenReturn("url2");
+
+        Method method = PostService.class.getDeclaredMethod("uploadAndSaveFiles", List.class, Post.class);
+        method.setAccessible(true);
+
+        method.invoke(postService, files, mockPost);
+
+        verify(cloudinaryService).uploadImage(file1);
+        verify(cloudinaryService).uploadImage(file2);
+        verify(imageService).createImageForPost("url1", mockPost);
+        verify(imageService).createImageForPost("url2", mockPost);
     }
 }
