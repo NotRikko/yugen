@@ -22,7 +22,6 @@ import rikko.yugen.model.Post;
 import rikko.yugen.model.User;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.PostRepository;
-import rikko.yugen.repository.ProductRepository;
 
 import java.lang.reflect.Method;
 import java.util.List;
