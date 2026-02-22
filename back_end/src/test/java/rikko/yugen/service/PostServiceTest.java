@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import rikko.yugen.dto.post.PostCreateDTO;
 import rikko.yugen.dto.post.PostDTO;
 import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.helpers.CurrentUserHelper;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -141,7 +143,7 @@ class PostServiceTest {
         verify(postRepository).findByArtist_Id(1L, pageable);
     }
 
-    //Get by artist name tests
+    // Get by artist name tests
 
     @Test
     void getPostsByArtistName_shouldReturnPaginatedPosts() {
@@ -170,4 +172,69 @@ class PostServiceTest {
 
         verify(postRepository).findByArtist_ArtistName("Rikko", pageable);
     }
+
+    //Get all posts tests
+
+    @Test
+    void getAllPosts_shouldReturnPaginatedPosts() {
+        Post post1 = new Post();
+        post1.setContent("Post 1");
+        post1.setArtist(mockArtist);
+        Post post2 = new Post();
+        post2.setContent("Post 2");
+        post2.setArtist(mockArtist);
+
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Post> postPage = new PageImpl<>(List.of(post1, post2));
+        when(postRepository.findAll(pageable)).thenReturn(postPage);
+        Page<PostDTO> result = postService.getAllPosts(pageable);
+
+        assertNotNull(result);
+        assertEquals(2, result.getContent().size());
+
+        PostDTO first = result.getContent().get(0);
+        assertEquals("Post 1", first.content());
+
+        PostDTO second = result.getContent().get(1);
+        assertEquals("Post 2", second.content());
+
+        verify(postRepository).findAll(pageable);
+    }
+
+    // Create post tests
+    @Test
+    void createPost_shouldReturnPostDTO_whenPostCreated() {
+        User mockUser = new User();
+        mockUser.setId(1L);
+
+        when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
+
+        Artist mockArtist = new Artist();
+        mockArtist.setId(10L);
+        mockArtist.setArtistName("Rikko");
+        mockArtist.setUser(mockUser);
+
+        when(artistRepository.findByUserId(1L))
+                .thenReturn(Optional.of(mockArtist));
+
+        PostCreateDTO dto = new PostCreateDTO();
+        dto.setContent("Test content");
+
+        Post savedPost = new Post();
+        savedPost.setContent("Test content");
+        savedPost.setArtist(mockArtist);
+
+        when(postRepository.save(any(Post.class)))
+                .thenReturn(savedPost);
+
+        PostDTO result = postService.createPost(dto, null);
+
+        assertNotNull(result);
+        assertEquals("Test content", result.content());
+
+        verify(currentUserHelper).getCurrentUser();
+        verify(artistRepository).findByUserId(1L);
+        verify(postRepository).save(any(Post.class));
+    }
+
 }
