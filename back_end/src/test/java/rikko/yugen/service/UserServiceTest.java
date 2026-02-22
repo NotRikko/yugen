@@ -36,7 +36,7 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    //Mock users
+    // Mock users
 
     private User mockUser;
     private User mockUser2;
@@ -57,7 +57,7 @@ class UserServiceTest {
         mockUser2.setEmail("rikko2@test.com");
     }
 
-    //Get by id tests
+    // Get by id tests
 
     @Test
     void getUserById_shouldReturnUserDTO_whenUserExists() {
@@ -85,7 +85,7 @@ class UserServiceTest {
 
     }
 
-    //Get by username tests
+    // Get by username tests
 
     @Test
     void getUserByUsername_shouldReturnUserDTO_whenUserExists() {
@@ -109,7 +109,7 @@ class UserServiceTest {
         verify(userRepository).findByUsername("NotExister");
     }
 
-    //Get by display name tests
+    // Get by display name tests
 
     @Test
     void getUserByDisplayName_shouldReturnUserDTO_whenUserExists() {
@@ -134,7 +134,7 @@ class UserServiceTest {
         verify(userRepository).findByDisplayName("NotExister");
     }
 
-    //Get by email tests
+    // Get by email tests
 
     @Test
     void getUserByEmail_shouldReturnUserDTO_whenUserExists() {
@@ -160,7 +160,7 @@ class UserServiceTest {
         verify(userRepository).findByEmail("NotExister@test.com");
     }
 
-    //Get all users tests
+    // Get all users tests
 
     @Test
     void getAllUsers_shouldReturnListOfUserDTO_whenUsersExist() {
@@ -186,7 +186,7 @@ class UserServiceTest {
         verify(userRepository).findAll(pageable);
     }
 
-    //create user tests
+    // Create user tests
 
     @Test
     void createUser_shouldReturnUserDTO_whenUserCreated() {
@@ -225,9 +225,25 @@ class UserServiceTest {
         verify(userRepository).save(any(User.class));
     }
 
-    //update user tests
+    // Update user tests
     void updateUser_shouldReturnUserDTO_whenUserUpdated() {
 
+    }
+
+    // Delete user tests
+
+    @Test
+    void deleteUser_shouldReturnVoid_ifSuccess() {
+        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
+        userService.deleteUser(1L);
+        verify(userRepository).deleteById(1L);
+    }
+
+    @Test
+    void deleteUser_shouldThrowException_whenUserDoesNotExist() {
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser(1L));
+        verify(userRepository).deleteById(1L);
     }
 
 
