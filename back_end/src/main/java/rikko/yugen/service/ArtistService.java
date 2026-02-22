@@ -91,4 +91,14 @@ public class ArtistService {
             throw new ResourceAlreadyExistsException("Artist", "artistName", normalizedName);
         }
     }
+
+    // Delete
+
+    @Transactional
+    public void deleteArtist(Long artistId) {
+        Artist artist = artistRepository.findById(artistId)
+                .orElseThrow(() -> new ResourceNotFoundException("Artist", "id", artistId));
+        artistRepository.delete(artist);
+    }
+
 }
