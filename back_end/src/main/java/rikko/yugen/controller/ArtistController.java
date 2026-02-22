@@ -79,17 +79,14 @@ public class ArtistController {
     // Products
 
     @GetMapping("/{artistId}/products")
-    public ResponseEntity<List<ProductDTO>> getProductsByArtistId(@PathVariable Long artistId) {
-        List<ProductDTO> products = productService.getProductsByArtistId(artistId)
-                .stream()
-                .map(ProductDTO::fromProduct)
-                .collect(Collectors.toList());
+    public ResponseEntity<Page<ProductDTO>> getProductsByArtistId(@PathVariable Long artistId, @PageableDefault Pageable pageable) {
+        Page<ProductDTO> products = productService.getProductsByArtistId(artistId, pageable);
         return ResponseEntity.ok(products);
     }
 
     @GetMapping("/me/products")
-    public ResponseEntity<List<ProductDTO>> getProductsOfLoggedInArtist() {
-        List<ProductDTO> products = productService.getProductsOfCurrentArtist();
+    public ResponseEntity<Page<ProductDTO>> getProductsOfLoggedInArtist(@PageableDefault Pageable pageable) {
+        Page<ProductDTO> products = productService.getProductsOfCurrentArtist(pageable);
         return ResponseEntity.ok(products);
     }
 
