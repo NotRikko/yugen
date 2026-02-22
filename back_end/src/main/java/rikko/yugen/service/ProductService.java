@@ -22,7 +22,6 @@ import rikko.yugen.repository.CollectionRepository;
 import rikko.yugen.repository.SeriesRepository;
 import rikko.yugen.dto.product.ProductCreateDTO;
 import rikko.yugen.dto.product.ProductDTO;
-import rikko.yugen.dto.image.ImageDTO;
 
 import rikko.yugen.helpers.CurrentUserHelper;
 
@@ -39,6 +38,9 @@ public class ProductService {
     private final ImageService imageService;
 
     private final CurrentUserHelper currentUserHelper;
+
+
+    // Read
 
     public Page<ProductDTO> getAllProducts(Pageable pageable) {
         return productRepository.findAll(pageable)
@@ -74,6 +76,9 @@ public class ProductService {
                 .map(ProductDTO::new);
     }
 
+
+    //Create
+
     @Transactional
     public ProductDTO createProduct(ProductCreateDTO productCreateDTO, List<MultipartFile> files) {
         User currentUser = currentUserHelper.getCurrentUser();
@@ -108,6 +113,9 @@ public class ProductService {
         return new ProductDTO(savedProduct);
 
     }
+
+    // Update
+
     @Transactional
     public ProductDTO updateProduct(Long productId, ProductUpdateDTO productUpdateDTO, List<MultipartFile> newFiles) {
         Product product = productRepository.findById(productId)
@@ -153,6 +161,8 @@ public class ProductService {
         return new ProductDTO(product);
     }
 
+    // Purchase test function
+
     @Transactional
     public String purchaseProduct(Long productId) {
         Product product = productRepository.findById(productId)
@@ -160,6 +170,8 @@ public class ProductService {
 
         return "Product '" + product.getName() + "' bought!";
     }
+
+    // Delete
 
     @Transactional
     public void deleteProduct(Long productId) {
@@ -178,6 +190,8 @@ public class ProductService {
 
         productRepository.delete(product);
     }
+
+    // Helpers
 
     private void uploadAndSaveFilesForProduct(List<MultipartFile> files, Long productId) {
         Product product = productRepository.findById(productId)
