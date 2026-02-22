@@ -22,7 +22,7 @@ public record CollectionDTO(
                 collection.getImage(),
                 collection.getProducts() != null
                         ? collection.getProducts().stream()
-                        .map(ProductDTO::fromProduct)
+                        .map(ProductDTO::new)
                         .collect(Collectors.toSet())
                         : Collections.emptySet()
         );

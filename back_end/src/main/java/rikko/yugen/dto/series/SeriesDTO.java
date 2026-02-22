@@ -22,7 +22,7 @@ public record SeriesDTO(
                 series.getImage(),
                 series.getDescription(),
                 series.getProducts() != null
-                        ? series.getProducts().stream().map(ProductDTO::fromProduct).collect(Collectors.toSet())
+                        ? series.getProducts().stream().map(ProductDTO::new).collect(Collectors.toSet())
                         : Collections.emptySet()
         );
     }

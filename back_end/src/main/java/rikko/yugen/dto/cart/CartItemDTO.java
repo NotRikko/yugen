@@ -13,7 +13,7 @@ public record CartItemDTO(
         this(
                 cartItem.getId(),
                 cartItem.getProduct().getId(),
-                ProductDTO.fromProduct(cartItem.getProduct()),
+                new ProductDTO(cartItem.getProduct()),
                 cartItem.getQuantity()
         );
     }
