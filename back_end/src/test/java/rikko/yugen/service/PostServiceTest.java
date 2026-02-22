@@ -50,7 +50,8 @@ class PostServiceTest {
     @InjectMocks
     private PostService postService;
 
-    //mock artist
+    //Mock artist
+
     private Artist mockArtist;
 
     @BeforeEach
@@ -71,9 +72,10 @@ class PostServiceTest {
         mockUser.setArtist(mockArtist);
     }
 
-    ;
 
-    //get by id tests
+
+    //Get by id tests
+
     @Test
     void getPostById_shouldReturnPostDTO_whenPostExists() {
         Post post = new Post();
@@ -98,7 +100,7 @@ class PostServiceTest {
         verify(postRepository).findById(9999L);
     }
 
-    // get by artistId tests
+    // Get by artistId tests
 
     @Test
     void getPostsByArtistId_shouldReturnPageOfPostDTO_whenPostsExist() {

@@ -37,7 +37,8 @@ class ArtistServiceTest {
     @InjectMocks
     private ArtistService artistService;
 
-    //mock artist
+    //Mock artist
+
     private Artist mockArtist ;
     private Artist mockArtist2;
 
@@ -75,7 +76,7 @@ class ArtistServiceTest {
         mockUser2.setArtist(mockArtist2);
     }
 
-    //get by id tests
+    //Get by id tests
 
     @Test
     void getArtistById_shouldReturnArtistDTO_whenArtistExists() {
@@ -98,7 +99,7 @@ class ArtistServiceTest {
     }
 
 
-    //get by artist name tests
+    //Get by artist name tests
     @Test
     void getArtistByArtistName_shouldReturnArtistDTO_whenArtistExists() {
         when(artistRepository.findByArtistName("Rikko")).thenReturn(Optional.of(mockArtist));
@@ -119,7 +120,7 @@ class ArtistServiceTest {
         verify(artistRepository).findByArtistName("Rikko");
     }
 
-    //get all artists tests
+    //Get all artists tests
 
     @Test
     void getAllArtists_shouldReturnPageOfArtistDTO_whenArtistsExists() {
@@ -142,11 +143,10 @@ class ArtistServiceTest {
         verify(artistRepository).findAll(pageable);
     }
 
-    //create artist tests
+    //Create artist tests
 
     @Test
     void createArtist_shouldReturnArtistDTO_whenArtistCreated() {
-        // Arrange
         User mockUser = new User();
         mockUser.setId(3L);
         mockUser.setUsername("Rikko3");

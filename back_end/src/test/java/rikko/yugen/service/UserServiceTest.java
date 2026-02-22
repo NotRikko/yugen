@@ -36,7 +36,8 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    //mock users
+    //Mock users
+
     private User mockUser;
     private User mockUser2;
 
@@ -56,7 +57,7 @@ class UserServiceTest {
         mockUser2.setEmail("rikko2@test.com");
     }
 
-    //get by id tests
+    //Get by id tests
 
     @Test
     void getUserById_shouldReturnUserDTO_whenUserExists() {
@@ -84,7 +85,8 @@ class UserServiceTest {
 
     }
 
-    //get by username tests
+    //Get by username tests
+
     @Test
     void getUserByUsername_shouldReturnUserDTO_whenUserExists() {
         when(userRepository.findByUsername("Rikko")).thenReturn(Optional.of(mockUser));
@@ -107,7 +109,8 @@ class UserServiceTest {
         verify(userRepository).findByUsername("NotExister");
     }
 
-    //get by display name tests
+    //Get by display name tests
+
     @Test
     void getUserByDisplayName_shouldReturnUserDTO_whenUserExists() {
         when(userRepository.findByDisplayName("Rikko")).thenReturn(Optional.of(mockUser));
@@ -131,7 +134,8 @@ class UserServiceTest {
         verify(userRepository).findByDisplayName("NotExister");
     }
 
-    //get by email tests
+    //Get by email tests
+
     @Test
     void getUserByEmail_shouldReturnUserDTO_whenUserExists() {
         when(userRepository.findByEmail("rikko@test.com")).thenReturn(Optional.of(mockUser));
@@ -156,7 +160,8 @@ class UserServiceTest {
         verify(userRepository).findByEmail("NotExister@test.com");
     }
 
-    //get all users tests
+    //Get all users tests
+
     @Test
     void getAllUsers_shouldReturnListOfUserDTO_whenUsersExist() {
         Pageable pageable = PageRequest.of(0, 10);
