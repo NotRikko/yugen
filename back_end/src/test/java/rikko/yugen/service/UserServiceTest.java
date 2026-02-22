@@ -22,8 +22,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -236,14 +235,14 @@ class UserServiceTest {
     void deleteUser_shouldReturnVoid_ifSuccess() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
         userService.deleteUser(1L);
-        verify(userRepository).deleteById(1L);
+        verify(userRepository).delete(mockUser);
     }
 
     @Test
     void deleteUser_shouldThrowException_whenUserDoesNotExist() {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser(1L));
-        verify(userRepository).delete(mockUser);
+        verify(userRepository, never()).delete(any());
     }
 
 
