@@ -42,7 +42,7 @@ public class PostService {
 
     private final CurrentUserHelper currentUserHelper;
 
-    //read
+    // Read
 
     @Transactional(readOnly = true)
     public Page<PostDTO> getAllPosts(Pageable pageable) {
@@ -70,7 +70,7 @@ public class PostService {
         return new PostDTO(post);
     }
 
-    // create
+    // Create
     @Transactional
     public PostDTO createPost(PostCreateDTO dto, List<MultipartFile> files) {
         User currentUser = currentUserHelper.getCurrentUser();
@@ -92,14 +92,13 @@ public class PostService {
 
         Post savedPost = postRepository.save(post);
 
-        // Upload images
         uploadAndSaveFiles(files, savedPost);
 
         return new PostDTO(savedPost);
     }
 
 
-    //update
+    // Update
 
     @Transactional
     public PostDTO updatePost(Long id, PostUpdateDTO dto) {
@@ -114,7 +113,7 @@ public class PostService {
         return new PostDTO(post);
     }
 
-    //delete
+    // Delete
 
     @Transactional
     public void deletePost(Long postId) {
@@ -130,7 +129,7 @@ public class PostService {
         postRepository.delete(post);
     }
 
-    //helper
+    // Helper
 
     private void uploadAndSaveFiles(List<MultipartFile> files, Post post) {
         if (files == null || files.isEmpty()) return;
