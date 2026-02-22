@@ -13,7 +13,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import rikko.yugen.dto.product.ProductUpdateDTO;
 import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.model.*;
@@ -43,11 +43,20 @@ public class ProductService {
 
     // Read
 
+    @Transactional(readOnly = true)
     public Page<ProductDTO> getAllProducts(Pageable pageable) {
         return productRepository.findAll(pageable)
                 .map(ProductDTO::new);
     }
 
+    @Transactional(readOnly = true)
+    public ProductDTO getProductById(Long  id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", id));
+        return new ProductDTO(product);
+    }
+
+    @Transactional(readOnly = true)
     public Page<ProductDTO> getProductsOfCurrentArtist(Pageable pageable) {
         User currentUser = currentUserHelper.getCurrentUser();
         Artist artist = currentUser.getArtist();
@@ -61,17 +70,19 @@ public class ProductService {
 
     }
 
+    @Transactional(readOnly = true)
     public Page<ProductDTO> getProductsByArtistName(String artistName, Pageable pageable) {
         return productRepository.findByArtist_ArtistName(artistName, pageable)
                 .map(ProductDTO::new);
     }
 
+    @Transactional(readOnly = true)
     public Page<ProductDTO> getProductsByArtistId(Long artistId, Pageable pageable) {
         return productRepository.findByArtistId(artistId, pageable)
                 .map(ProductDTO::new);
     }
 
-
+    @Transactional(readOnly = true)
     public Page<ProductDTO> getProductsByCollectionName(String collectionName, Pageable pageable) {
         return productRepository.findByCollections_Name(collectionName, pageable)
                 .map(ProductDTO::new);
