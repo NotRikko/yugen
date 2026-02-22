@@ -75,7 +75,7 @@ class PostServiceTest {
 
 
 
-    //Get by id tests
+    // Get by id tests
 
     @Test
     void getPostById_shouldReturnPostDTO_whenPostExists() {
