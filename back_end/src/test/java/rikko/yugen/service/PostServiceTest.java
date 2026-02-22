@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import rikko.yugen.dto.post.PostCreateDTO;
 import rikko.yugen.dto.post.PostDTO;
 import rikko.yugen.dto.post.PostUpdateDTO;
@@ -291,4 +292,42 @@ class PostServiceTest {
         verify(postRepository, never()).save(any());
     }
 
+    @Test
+    void deletePost_shouldCallRepositoryDelete_whenUserOwnsPost() {
+        User mockUser = new User();
+        mockUser.setId(1L);
+        when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
+
+        Artist mockArtist = new Artist();
+        mockArtist.setUser(mockUser);
+
+        Post mockPost = new Post();
+        mockPost.setArtist(mockArtist);
+
+        when(postRepository.findById(1L)).thenReturn(Optional.of(mockPost));
+
+        postService.deletePost(1L);
+        verify(postRepository).delete(mockPost);
+    }
+
+    @Test
+    void deletePost_shouldThrowAccessDeniedException_whenUserDoesNotOwnPost() {
+        User mockUser = new User();
+        mockUser.setId(1L);
+        when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
+
+        User otherUser = new User();
+        otherUser.setId(2L);
+
+        Artist mockArtist = new Artist();
+        mockArtist.setUser(otherUser);
+
+        Post mockPost = new Post();
+        mockPost.setArtist(mockArtist);
+
+        when(postRepository.findById(1L)).thenReturn(Optional.of(mockPost));
+
+        assertThrows(AccessDeniedException.class, () -> postService.deletePost(1L));
+        verify(postRepository, never()).delete(any());
+    }
 }
