@@ -103,7 +103,7 @@ class PostServiceTest {
     // Get by artistId tests
 
     @Test
-    void getPostsByArtistId_shouldReturnPageOfPostDTO_whenPostsExist() {
+    void getPostsByArtistId_shouldReturnPaginatedPosts() {
         Post post1 = new Post();
         post1.setId(1L);
         post1.setContent("Test content");
@@ -139,5 +139,35 @@ class PostServiceTest {
         assertEquals("Test content2", result.getContent().get(1).content());
 
         verify(postRepository).findByArtist_Id(1L, pageable);
+    }
+
+    //Get by artist name tests
+
+    @Test
+    void getPostsByArtistName_shouldReturnPaginatedPosts() {
+        Pageable pageable = PageRequest.of(0, 2);
+
+        Post post1 = new Post();
+        post1.setContent("Post 1");
+        post1.setArtist(mockArtist);
+        Post post2 = new Post();
+        post2.setContent("Post 2");
+        post2.setArtist(mockArtist);
+
+        Page<Post> postPage = new PageImpl<>(List.of(post1, post2), pageable, 2);
+        when(postRepository.findByArtist_ArtistName("Rikko", pageable)).thenReturn(postPage);
+
+        Page<PostDTO> result = postService.getPostsByArtistName("Rikko", pageable);
+
+        assertNotNull(result);
+        assertEquals(2, result.getContent().size());
+
+        PostDTO first = result.getContent().get(0);
+        assertEquals("Post 1", first.content());
+
+        PostDTO second = result.getContent().get(1);
+        assertEquals("Post 2", second.content());
+
+        verify(postRepository).findByArtist_ArtistName("Rikko", pageable);
     }
 }
