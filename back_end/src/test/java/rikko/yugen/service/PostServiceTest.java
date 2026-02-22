@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import rikko.yugen.dto.post.PostCreateDTO;
 import rikko.yugen.dto.post.PostDTO;
+import rikko.yugen.dto.post.PostUpdateDTO;
 import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Artist;
@@ -26,8 +27,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PostServiceTest {
@@ -173,7 +173,7 @@ class PostServiceTest {
         verify(postRepository).findByArtist_ArtistName("Rikko", pageable);
     }
 
-    //Get all posts tests
+    // Get all posts tests
 
     @Test
     void getAllPosts_shouldReturnPaginatedPosts() {
@@ -202,6 +202,7 @@ class PostServiceTest {
     }
 
     // Create post tests
+
     @Test
     void createPost_shouldReturnPostDTO_whenPostCreated() {
         User mockUser = new User();
@@ -235,6 +236,59 @@ class PostServiceTest {
         verify(currentUserHelper).getCurrentUser();
         verify(artistRepository).findByUserId(1L);
         verify(postRepository).save(any(Post.class));
+    }
+
+    // Update post tests
+
+    @Test
+    void updatePost_shouldUpdateContent_whenContentProvided() {
+        Post existingPost = new Post();
+        existingPost.setId(1L);
+        existingPost.setContent("Old content");
+
+        PostUpdateDTO dto = new PostUpdateDTO();
+        dto.setContent("New content");
+
+        when(postRepository.findById(1L)).thenReturn(Optional.of(existingPost));
+
+        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        PostDTO result = postService.updatePost(1L, dto);
+
+        assertEquals("New content", existingPost.getContent());
+        assertEquals("New content", result.content());
+
+        verify(postRepository).findById(1L);
+        verify(postRepository).save(existingPost);
+    }
+
+    @Test
+    void updatePost_shouldThrowException_whenPostNotFound() {
+        when(postRepository.findById(1L)).thenReturn(Optional.empty());
+
+        PostUpdateDTO dto = new PostUpdateDTO();
+        dto.setContent("New content");
+
+        assertThrows(ResourceNotFoundException.class, () -> postService.updatePost(1L, dto));
+
+        verify(postRepository).findById(1L);
+        verify(postRepository, never()).save(any());
+    }
+
+    @Test
+    void updatePost_shouldNotSave_whenContentIsNull() {
+        Post existingPost = new Post();
+        existingPost.setId(1L);
+        existingPost.setContent("Old content");
+
+        PostUpdateDTO dto = new PostUpdateDTO();
+
+        when(postRepository.findById(1L)).thenReturn(Optional.of(existingPost));
+
+        PostDTO result = postService.updatePost(1L, dto);
+
+        assertEquals("Old content", result.content());
+        verify(postRepository, never()).save(any());
     }
 
 }
