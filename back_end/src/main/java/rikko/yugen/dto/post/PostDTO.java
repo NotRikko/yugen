@@ -44,7 +44,7 @@ public record PostDTO(
                         : new ArrayList<>(),
                 post.getContent(),
                 post.getArtist() != null ? new ArtistDTO(post.getArtist()) : null,
-                post.getProduct() != null ? ProductDTO.fromProduct(post.getProduct()) : null
+                post.getProduct() != null ? new ProductDTO(post.getProduct()) : null
         );
     }
 }
