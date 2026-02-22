@@ -7,11 +7,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.transaction.Transactional;
 import rikko.yugen.dto.product.ProductUpdateDTO;
+import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.model.*;
 import rikko.yugen.repository.ProductRepository;
 import rikko.yugen.repository.ArtistRepository;
@@ -37,11 +40,12 @@ public class ProductService {
 
     private final CurrentUserHelper currentUserHelper;
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public Page<ProductDTO> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable)
+                .map(ProductDTO::new);
     }
 
-    public List<ProductDTO> getProductsOfCurrentArtist() {
+    public Page<ProductDTO> getProductsOfCurrentArtist(Pageable pageable) {
         User currentUser = currentUserHelper.getCurrentUser();
         Artist artist = currentUser.getArtist();
 
@@ -49,24 +53,25 @@ public class ProductService {
             throw new RuntimeException("Artist not found for current user");
         }
 
-        List<Product> products = productRepository.findByArtistId(artist.getId());
+        return productRepository.findByArtistId(artist.getId(), pageable)
+                .map(ProductDTO::new);
 
-        return products.stream()
-                .map(ProductDTO::fromProduct)
-                .collect(Collectors.toList());
     }
 
-    public List<Product> getProductsByArtistName(String artistName) {
-        return productRepository.findByArtist_ArtistName(artistName);
+    public Page<ProductDTO> getProductsByArtistName(String artistName, Pageable pageable) {
+        return productRepository.findByArtist_ArtistName(artistName, pageable)
+                .map(ProductDTO::new);
     }
 
-    public List<Product> getProductsByArtistId(Long artistId) {
-        return productRepository.findByArtistId(artistId);
+    public Page<ProductDTO> getProductsByArtistId(Long artistId, Pageable pageable) {
+        return productRepository.findByArtistId(artistId, pageable)
+                .map(ProductDTO::new);
     }
 
 
-    public List<Product> getProductsByCollectionName(String collectionName) {
-        return productRepository.findByCollections_Name(collectionName);
+    public Page<ProductDTO> getProductsByCollectionName(String collectionName, Pageable pageable) {
+        return productRepository.findByCollections_Name(collectionName, pageable)
+                .map(ProductDTO::new);
     }
 
     @Transactional
@@ -97,9 +102,10 @@ public class ProductService {
 
         Product savedProduct = productRepository.save(product);
 
-        Set<ImageDTO> imageDTOs = uploadAndSaveFilesForProduct(files, savedProduct.getId());
+        uploadAndSaveFilesForProduct(files, savedProduct.getId());
 
-        return new ProductDTO(savedProduct, imageDTOs);
+
+        return new ProductDTO(savedProduct);
 
     }
     @Transactional
@@ -140,21 +146,17 @@ public class ProductService {
             imageService.deleteImage(image.getId());
         }
 
-        Set<ImageDTO> newImageDTOs = uploadAndSaveFilesForProduct(newFiles, product.getId());
+        uploadAndSaveFilesForProduct(newFiles, product.getId());
 
         product = productRepository.save(product);
 
-        Set<ImageDTO> allImages = new HashSet<>();
-        allImages.addAll(product.getImages().stream().map(ImageDTO::new).collect(Collectors.toSet()));
-        allImages.addAll(newImageDTOs);
-
-        return ProductDTO.fromProduct(product, allImages);
+        return new ProductDTO(product);
     }
 
     @Transactional
     public String purchaseProduct(Long productId) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
+                .orElseThrow(() -> new ResourceNotFoundException("Product",  "id", productId));
 
         return "Product '" + product.getName() + "' bought!";
     }
@@ -164,7 +166,7 @@ public class ProductService {
         User currentUser = currentUserHelper.getCurrentUser();
 
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product",  "id", productId));
 
         if (!product.getArtist().getUser().equals(currentUser)) {
             throw new RuntimeException("You are not allowed to delete this product.");
@@ -177,24 +179,19 @@ public class ProductService {
         productRepository.delete(product);
     }
 
-    private Set<ImageDTO> uploadAndSaveFilesForProduct(List<MultipartFile> files, Long productId) {
-        Set<ImageDTO> imageDTOs = new HashSet<>();
-
+    private void uploadAndSaveFilesForProduct(List<MultipartFile> files, Long productId) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found with id " + productId));
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
 
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
                 try {
                     String uploadedUrl = cloudinaryService.uploadImage(file);
-                    ImageDTO imageDTO = imageService.createImageForProduct(uploadedUrl, product);
-                    imageDTOs.add(imageDTO);
+                    imageService.createImageForProduct(uploadedUrl, product);
                 } catch (Exception e) {
                     System.err.println("Failed to upload image: " + e.getMessage());
                 }
             }
         }
-
-        return imageDTOs;
     }
 }
