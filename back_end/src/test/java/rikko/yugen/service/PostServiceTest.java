@@ -41,9 +41,6 @@ class PostServiceTest {
     private ArtistRepository artistRepository;
 
     @Mock
-    private ProductRepository productRepository;
-
-    @Mock
     private CloudinaryService cloudinaryService;
 
     @Mock
