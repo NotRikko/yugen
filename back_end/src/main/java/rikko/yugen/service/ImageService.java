@@ -1,7 +1,7 @@
 package rikko.yugen.service;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
@@ -24,62 +24,68 @@ public class ImageService {
     private final ImageRepository imageRepository;
     private final CloudinaryService cloudinaryService;
 
-    // Get all images for a Post.
+    // Get all images for a post
 
     @Transactional(readOnly = true)
-    public Set<ImageDTO> getImagesForPost(Post post) {
-        return imageRepository.findByPost(post).stream()
+    public List<ImageDTO> getImagesForPost(Post post) {
+        return post.getImages().stream()
                 .map(ImageDTO::new)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
-    // Get all images for a Product
+    // Get all images for a product
 
     @Transactional(readOnly = true)
-    public Set<ImageDTO> getImagesForProduct(Product product) {
-        return imageRepository.findByProduct(product).stream()
+    public List<ImageDTO> getImagesForProduct(Product product) {
+        return product.getImages().stream()
                 .map(ImageDTO::new)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
-    // Create and save an image for a Post
+    // Create and save an image for a post
 
     @Transactional
-    public ImageDTO createImageForPost(String imageUrl, Post post) {
+    public void createImageForPost(String imageUrl, Post post) {
+        if (post.getImages().stream().anyMatch(img -> img.getUrl().equals(imageUrl))) {
+            throw new IllegalArgumentException("Image already exists for this post");
+        }
+
         Image image = new Image();
         image.setUrl(imageUrl);
         image.setPost(post);
 
         post.getImages().add(image);
 
-        return new ImageDTO(imageRepository.save(image));
+        new ImageDTO(imageRepository.save(image));
     }
 
-    // Create and save an image for a Product
+    // Create and save an image for a product
 
     @Transactional
-    public ImageDTO createImageForProduct(String imageUrl, Product product) {
+    public void createImageForProduct(String imageUrl, Product product) {
+        if (product.getImages().stream().anyMatch(img -> img.getUrl().equals(imageUrl))) {
+            throw new IllegalArgumentException("Image already exists for this product");
+        }
+
         Image image = new Image();
         image.setUrl(imageUrl);
         image.setProduct(product);
 
         product.getImages().add(image);
 
-        return new ImageDTO(imageRepository.save(image));
+        new ImageDTO(imageRepository.save(image));
     }
 
     // Create or replace a User's profile image
 
     @Transactional
     public ImageDTO createImageForUser(String imageUrl, User user) {
-        // Delete existing profile image if present
         Optional.ofNullable(user.getProfileImage()).ifPresent(oldImage -> {
             cloudinaryService.deleteImage(oldImage.getUrl());
             user.setProfileImage(null);
             imageRepository.delete(oldImage);
         });
 
-        // Create new image
         Image image = new Image();
         image.setUrl(imageUrl);
         image.setUser(user);
@@ -100,21 +106,11 @@ public class ImageService {
             throw new ImageDeletionException("Failed to delete image from Cloudinary");
         }
 
-        if (image.getUser() != null) {
-            image.getUser().setProfileImage(null);
-        }
-        if (image.getPost() != null) {
-            image.getPost().getImages().remove(image);
-        }
-        if (image.getProduct() != null) {
-            image.getProduct().getImages().remove(image);
-        }
-        if (image.getProfileForArtist() != null) {
-            image.getProfileForArtist().setProfileImage(null);
-        }
-        if (image.getBannerForArtist() != null) {
-            image.getBannerForArtist().setBannerImage(null);
-        }
+        if (image.getUser() != null) image.getUser().setProfileImage(null);
+        if (image.getPost() != null) image.getPost().getImages().remove(image);
+        if (image.getProduct() != null) image.getProduct().getImages().remove(image);
+        if (image.getProfileForArtist() != null) image.getProfileForArtist().setProfileImage(null);
+        if (image.getBannerForArtist() != null) image.getBannerForArtist().setBannerImage(null);
 
         imageRepository.delete(image);
     }
