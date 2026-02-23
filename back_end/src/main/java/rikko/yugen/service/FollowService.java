@@ -2,10 +2,12 @@ package rikko.yugen.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional;
+
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
+import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.model.Follow;
 import rikko.yugen.model.FollowId;
 import rikko.yugen.model.User;
@@ -16,7 +18,6 @@ import rikko.yugen.repository.FollowRepository;
 import rikko.yugen.repository.ArtistRepository;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import rikko.yugen.helpers.CurrentUserHelper;
 
@@ -28,83 +29,101 @@ public class FollowService {
     private final ArtistRepository artistRepository;
     private final CurrentUserHelper currentUserHelper;
 
+    // Helpers
+
+    private User getCurrentUser() {
+        return currentUserHelper.getCurrentUser();
+    }
+
+    private FollowWithUserDTO mapFollowToDTO(Follow follow, boolean followerView) {
+        if (followerView) {
+            User follower = follow.getFollower();
+            return new FollowWithUserDTO(
+                    follower.getId(),
+                    follower.getUsername(),
+                    follower.getDisplayName(),
+                    follower.getProfileImage() != null ? follower.getProfileImage().getUrl() : null,
+                    follow.getFollowedAt()
+            );
+        } else {
+            Artist followee = follow.getFollowee();
+            return new FollowWithUserDTO(
+                    followee.getId(),
+                    followee.getUser().getUsername(),
+                    followee.getArtistName(),
+                    followee.getProfileImage() != null ? followee.getProfileImage().getUrl() : null,
+                    follow.getFollowedAt()
+            );
+        }
+    }
+
+    private void validateNotSelfFollow(User user, Artist artist) {
+        if (user.getId().equals(artist.getUser().getId())) {
+            throw new IllegalStateException("User cannot follow themselves.");
+        }
+    }
+
+    // Read
+
+    @Transactional(readOnly = true)
     public List<FollowWithUserDTO> getAllFolloweesForUser(Long userId) {
-        return followRepository.findByFollowerId(userId).stream()
-                .map(this::mapFollowToDTO)
+        return followRepository.findByFollowerId(userId)
+                .stream()
+                .map(f -> mapFollowToDTO(f, false)) // false = followee view
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<FollowWithUserDTO> getFollowingForCurrentUser() {
-        User currentUser = currentUserHelper.getCurrentUser();
-        return followRepository.findByFollowerId(currentUser.getId()).stream()
-                .map(this::mapFollowToDTO)
+        Long currentUserId = getCurrentUser().getId();
+        return followRepository.findByFollowerId(currentUserId)
+                .stream()
+                .map(f -> mapFollowToDTO(f, false))
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<FollowWithUserDTO> getFollowersForArtist(Long artistId) {
-        return followRepository.findByFolloweeId(artistId).stream()
-                .map(f -> {
-                    User follower = f.getFollower();
-                    String imageUrl = (follower.getProfileImage() != null) ? follower.getProfileImage().getUrl() : null;
-                    return new FollowWithUserDTO(
-                            follower.getId(),
-                            follower.getUsername(),
-                            follower.getDisplayName(),
-                            imageUrl,
-                            f.getFollowedAt()
-                    );
-                })
+        return followRepository.findByFolloweeId(artistId)
+                .stream()
+                .map(f -> mapFollowToDTO(f, true)) // true = follower view
                 .toList();
     }
 
+    // Write
     @Transactional
     public FollowWithUserDTO followArtist(Long artistId) {
-        User currentUser = currentUserHelper.getCurrentUser();
+        User user = getCurrentUser();
+        Artist artist = artistRepository.findById(artistId)
+                .orElseThrow(() -> new ResourceNotFoundException("Artist", "id", artistId));
 
-        Artist followee = artistRepository.findById(artistId)
-                .orElseThrow(() -> new RuntimeException("Artist not found: " + artistId));
+        validateNotSelfFollow(user, artist);
 
-        if (currentUser.getId().equals(followee.getUser().getId())) {
-            throw new IllegalArgumentException("User cannot follow themselves.");
-        }
-
-        FollowId followId = new FollowId(currentUser.getId(), followee.getId());
-
-        Optional<Follow> existingOpt = followRepository.findById(followId);
-        if (existingOpt.isPresent()) {
-            return mapFollowToDTO(existingOpt.get());
-        }
-
-        Follow follow = new Follow(followId, currentUser, followee, LocalDateTime.now());
-        Follow saved = followRepository.save(follow);
-
-        return mapFollowToDTO(saved);
+        FollowId followId = new FollowId(user.getId(), artist.getId());
+        return followRepository.findById(followId)
+                .map(f -> mapFollowToDTO(f, false))
+                .orElseGet(() -> {
+                    Follow saved = followRepository.save(new Follow(followId, user, artist, LocalDateTime.now()));
+                    return mapFollowToDTO(saved, false);
+                });
     }
 
     @Transactional
     public void unfollowArtist(Long artistId) {
-        User currentUser = currentUserHelper.getCurrentUser();
-        FollowId followId = new FollowId(currentUser.getId(), artistId);
-        if (followRepository.existsById(followId)) {
-            followRepository.deleteById(followId);
+        User user = getCurrentUser();
+        FollowId followId = new FollowId(user.getId(), artistId);
+
+        if (!followRepository.existsById(followId)) {
+            throw new ResourceNotFoundException("Follow", "id", followId);
         }
+
+        followRepository.deleteById(followId);
     }
 
+    @Transactional(readOnly = true)
     public boolean isFollowing(Long artistId) {
-        User currentUser = currentUserHelper.getCurrentUser();
-        return followRepository.existsById(new FollowId(currentUser.getId(), artistId));
-    }
-
-    // Helper method
-    private FollowWithUserDTO mapFollowToDTO(Follow follow) {
-        return new FollowWithUserDTO(
-                follow.getFollowee().getId(),
-                follow.getFollowee().getUser().getUsername(),
-                follow.getFollowee().getArtistName(),
-                follow.getFollowee().getProfileImage() != null
-                        ? follow.getFollowee().getProfileImage().getUrl()
-                        : null,
-                follow.getFollowedAt()
-        );
+        User user = getCurrentUser();
+        FollowId followId = new FollowId(user.getId(), artistId);
+        return followRepository.existsById(followId);
     }
 }
