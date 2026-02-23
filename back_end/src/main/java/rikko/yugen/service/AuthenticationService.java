@@ -1,5 +1,6 @@
 package rikko.yugen.service;
 
+import lombok.RequiredArgsConstructor;
 import rikko.yugen.dto.user.UserLoginDTO;
 import rikko.yugen.model.User;
 import rikko.yugen.repository.UserRepository;
@@ -10,20 +11,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class AuthenticationService {
     private final UserRepository userRepository;
-
-    public AuthenticationService(
-        UserRepository userRepository,
-        AuthenticationManager authenticationManager
-    ) {
-        this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
-    }
-        
     private final AuthenticationManager authenticationManager;
 
     public User authenticate(UserLoginDTO input) {
+        if (input.getUsername() == null || input.getPassword() == null) {
+            throw new IllegalArgumentException("Username and password must be provided");
+        }
+
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
