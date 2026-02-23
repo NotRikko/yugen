@@ -120,13 +120,6 @@ class ProductServiceTest {
         return dto;
     }
 
-    private ProductUpdateDTO createUpdateDTO(String name) {
-        ProductUpdateDTO dto = new ProductUpdateDTO();
-        dto.setName(name);
-        dto.setPrice(20F);
-        return dto;
-    }
-
     // Get product tests
 
     @Nested
@@ -233,7 +226,6 @@ class ProductServiceTest {
 
         @Test
         void updateProduct_shouldUpdateFieldsAndImages() {
-            // Setup existing product
             product1.setDescription("Old Desc");
             product1.setPrice(10F);
             product1.setQuantityInStock(5);
