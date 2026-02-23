@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -161,6 +162,15 @@ public class JwtService {
                 newAccessToken,
                 accessTokenExpiration
         );
+    }
+
+    public LoginResponseDTO generateLoginResponseWithRefreshToken(HttpServletResponse response, UserDetails userDetails) {
+        String accessToken = generateAccessToken(userDetails);
+        String refreshToken = generateRefreshToken(userDetails);
+
+        jwtCookieHelper.setRefreshToken(response, refreshToken, refreshTokenExpiration);
+
+        return new LoginResponseDTO(accessToken, accessTokenExpiration);
     }
 
 }
