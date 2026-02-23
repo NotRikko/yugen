@@ -25,7 +25,8 @@ public class PostLikeService {
     private final PostRepository postRepository;
     private final CurrentUserHelper currentUserHelper;
 
-    // read
+    // Read
+
     public Set<PostLikeDTO> getLikesForPost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
@@ -43,7 +44,7 @@ public class PostLikeService {
         return postLikeRepository.countByPost(post);
     }
 
-    // write
+    // Write
 
     @Transactional
     public int toggleLike(Long postId) {
