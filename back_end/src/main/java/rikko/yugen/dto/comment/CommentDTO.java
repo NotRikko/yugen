@@ -1,10 +1,7 @@
 package rikko.yugen.dto.comment;
 
-import rikko.yugen.dto.artist.ArtistDTO;
-import rikko.yugen.dto.post.PostDTO;
 import rikko.yugen.dto.user.UserDTO;
 import rikko.yugen.model.Comment;
-import rikko.yugen.model.Post;
 
 import java.time.LocalDateTime;
 
