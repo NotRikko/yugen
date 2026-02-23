@@ -32,18 +32,7 @@ public class AuthController {
             HttpServletResponse response
     ) {
         User authenticatedUser = authenticationService.authenticate(userLoginDTO);
-
-        String accessToken = jwtService.generateAccessToken(authenticatedUser);
-        String refreshToken = jwtService.generateRefreshToken(authenticatedUser);
-
-        jwtCookieHelper.setRefreshToken(response, refreshToken, jwtService.getRefreshTokenExpiration());
-
-        LoginResponseDTO loginResponseDTO = new LoginResponseDTO(
-                accessToken,
-                jwtService.getAccessTokenExpiration()
-        );
-
-        return ResponseEntity.ok(loginResponseDTO);
+        return ResponseEntity.ok(jwtService.generateLoginResponseWithRefreshToken(response, authenticatedUser));
     }
 
 
