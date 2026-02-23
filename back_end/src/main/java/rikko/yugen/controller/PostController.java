@@ -44,7 +44,7 @@ public class PostController {
     @GetMapping("/artist/{artistId}")
     public ResponseEntity<Page<PostDTO>> getPostsByArtist(
             @PathVariable Long artistId,
-            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC)
             Pageable pageable) {
 
         return ResponseEntity.ok(
@@ -54,7 +54,7 @@ public class PostController {
 
     @GetMapping("/{postId}/comments")
     public ResponseEntity<Page<CommentDTO>> getComments(@PathVariable Long postId
-    , @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)Pageable pageable) {
+    , @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC)Pageable pageable) {
         return ResponseEntity.ok(commentService.getCommentsByPostId(postId, pageable));
     }
 
