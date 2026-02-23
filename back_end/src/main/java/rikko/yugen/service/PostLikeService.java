@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import rikko.yugen.dto.like.PostLikeDTO;
+import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Post;
 import rikko.yugen.model.PostLike;
@@ -28,8 +29,7 @@ public class PostLikeService {
     // Read
 
     public Set<PostLikeDTO> getLikesForPost(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+        Post post = getPostOrThrow(postId);
 
         return postLikeRepository.findByPost(post)
                 .stream()
@@ -38,22 +38,19 @@ public class PostLikeService {
     }
 
     public int getLikeCountForPost(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-
+        Post post = getPostOrThrow(postId);
         return postLikeRepository.countByPost(post);
     }
+
 
     // Write
 
     @Transactional
     public int toggleLike(Long postId) {
         User currentUser = currentUserHelper.getCurrentUser();
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+        Post post = getPostOrThrow(postId);
 
-        Optional<PostLike> existingLike = postLikeRepository
-                .findByUserAndPost(currentUser, post);
+        Optional<PostLike> existingLike = postLikeRepository.findByUserAndPost(currentUser, post);
 
         if (existingLike.isPresent()) {
             postLikeRepository.delete(existingLike.get());
@@ -65,5 +62,12 @@ public class PostLikeService {
         }
 
         return getLikeCountForPost(postId);
+    }
+
+    // Helpers
+
+    private Post getPostOrThrow(Long postId) {
+        return postRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
     }
 }
