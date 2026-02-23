@@ -346,7 +346,7 @@ class ProductServiceTest {
         savedProduct.setArtist(mockArtist);
 
         when(productRepository.save(any(Product.class)))
-                .thenReturn(savedProduct);;
+                .thenReturn(savedProduct);
 
         ProductDTO result = productService.createProduct(dto, null);
 
@@ -359,7 +359,7 @@ class ProductServiceTest {
 
     // Update product tests
     @Test
-    void updateProduct_shouldUpdateFieldsSeriesCollectionsAndImages() throws Exception {
+    void updateProduct_shouldUpdateFieldsSeriesCollectionsAndImages() {
         Product existingProduct = new Product();
         existingProduct.setId(1L);
         existingProduct.setName("Old Name");
