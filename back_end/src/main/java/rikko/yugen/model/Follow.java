@@ -13,6 +13,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Follow {
+
+    public Follow(User user, Artist followedArtist) {
+        this.follower = user;
+        this.followee = followedArtist;
+        this.id = new FollowId(user.getId(), followedArtist.getId());
+    }
+
     @EmbeddedId
     private FollowId id;
 
@@ -27,4 +34,6 @@ public class Follow {
     private Artist followee;
 
     private LocalDateTime followedAt = LocalDateTime.now();
+
+
 }
