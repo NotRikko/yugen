@@ -62,7 +62,7 @@ public class ProductService {
         Artist artist = currentUser.getArtist();
 
         if (artist == null) {
-            throw new RuntimeException("Artist not found for current user");
+            throw new ResourceNotFoundException("Artist", "userId", currentUser.getId());
         }
 
         return productRepository.findByArtistId(artist.getId(), pageable)
@@ -119,8 +119,9 @@ public class ProductService {
 
         Product savedProduct = productRepository.save(product);
 
-        uploadAndSaveFilesForProduct(files, savedProduct.getId());
-
+        if(files != null && !files.isEmpty()) {
+            uploadAndSaveFilesForProduct(files, savedProduct.getId());
+        }
 
         return new ProductDTO(savedProduct);
 
@@ -166,7 +167,9 @@ public class ProductService {
             imageService.deleteImage(image.getId());
         }
 
-        uploadAndSaveFilesForProduct(newFiles, product.getId());
+        if(newFiles != null & !newFiles.isEmpty()) {
+            uploadAndSaveFilesForProduct(newFiles, product.getId());
+        }
 
         product = productRepository.save(product);
 
