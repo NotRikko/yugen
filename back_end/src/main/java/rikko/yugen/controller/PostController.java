@@ -53,8 +53,9 @@ public class PostController {
     }
 
     @GetMapping("/{postId}/comments")
-    public ResponseEntity<List<CommentDTO>> getComments(@PathVariable Long postId) {
-        return ResponseEntity.ok(commentService.getCommentsByPostId(postId));
+    public ResponseEntity<Page<CommentDTO>> getComments(@PathVariable Long postId
+    , @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC)Pageable pageable) {
+        return ResponseEntity.ok(commentService.getCommentsByPostId(postId, pageable));
     }
 
     @PostMapping(value = "/create", consumes = {"multipart/form-data"})
