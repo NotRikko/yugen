@@ -1,20 +1,24 @@
 package rikko.yugen.service;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import rikko.yugen.dto.comment.CommentDTO;
 import rikko.yugen.dto.comment.CommentCreateDTO;
+import rikko.yugen.dto.comment.CommentUpdateDTO;
+import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Comment;
 import rikko.yugen.model.User;
 import rikko.yugen.model.Post;
 import rikko.yugen.repository.CommentRepository;
 import rikko.yugen.repository.PostRepository;
+import rikko.yugen.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -22,30 +26,39 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
     private final CurrentUserHelper currentUserHelper;
 
-    public List<CommentDTO> getCommentsByPostId(Long postId) {
-        List<Comment> comments = commentRepository.findByPostId(postId);
-        return comments.stream()
-                .map(CommentDTO::new)
-                .toList();
+    // Get methods
+
+    @Transactional(readOnly = true)
+    public Page<CommentDTO> getCommentsByPostId(Long postId, Pageable pageable) {
+        Page<Comment> comments = commentRepository.findByPostId(postId, pageable);
+        if (comments.isEmpty() && !postRepository.existsById(postId)) {
+            throw new ResourceNotFoundException("Post", "id", postId);
+        }
+
+        return comments.map(CommentDTO::new);
     }
 
-    public List<CommentDTO> getCommentsByUserId(Long userId) {
-        List<Comment> comments = commentRepository.findByUserId(userId);
-        return comments.stream()
-                .map(CommentDTO::new)
-                .toList();
+    @Transactional(readOnly = true)
+    public Page<CommentDTO> getCommentsByUserId(Long userId, Pageable pageable) {
+      if (!userRepository.existsById(userId)) {
+          throw new ResourceNotFoundException("User", "id", userId);
+      }
+      return commentRepository.findByUserId(userId, pageable)
+              .map(CommentDTO::new);
     }
 
+    // Create methods
 
     @Transactional
     public CommentDTO createComment(CommentCreateDTO dto) {
         User currentUser = currentUserHelper.getCurrentUser();
 
         Post post = postRepository.findById(dto.getPostId())
-                .orElseThrow(() -> new IllegalArgumentException("Post not found with ID " + dto.getPostId()));
+                .orElseThrow(() -> new ResourceNotFoundException("Post", "id", dto.getPostId()));
 
         Comment comment = new Comment();
         comment.setUser(currentUser);
@@ -57,17 +70,39 @@ public class CommentService {
         return new CommentDTO(saved);
     }
 
+    // Update methods
+
+    @Transactional
+    public CommentDTO updateComment(Long commentId, CommentUpdateDTO dto) {
+        User currentUser = currentUserHelper.getCurrentUser();
+        Comment comment = getCommentOrThrow(commentId);
+
+        checkCommentOwnership(comment, currentUser);
+
+        comment.setContent(dto.getContent());
+        return new CommentDTO(commentRepository.save(comment));
+    }
+    // Delete methods
+
     @Transactional
     public void deleteComment(Long commentId) {
         User currentUser = currentUserHelper.getCurrentUser();
+        Comment comment = getCommentOrThrow(commentId);
 
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new RuntimeException("Comment not found"));
-
-        if (!comment.getUser().getId().equals(currentUser.getId())) {
-            throw new RuntimeException("You are not allowed to delete this comment");
-        }
+        checkCommentOwnership(comment, currentUser);
 
         commentRepository.delete(comment);
+    }
+
+    // Helpers
+    private Comment getCommentOrThrow(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
+    }
+
+    private void checkCommentOwnership(Comment comment, User user) {
+        if (!comment.getUser().getId().equals(user.getId())) {
+            throw new AccessDeniedException("You are not allowed to modify this comment");
+        }
     }
 }
