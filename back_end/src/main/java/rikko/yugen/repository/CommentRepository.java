@@ -1,12 +1,13 @@
 package rikko.yugen.repository;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import rikko.yugen.model.Comment;
+import rikko.yugen.model.Post;
+import rikko.yugen.model.User;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    List<Comment> findByPostId(Long postId);
-    List<Comment> findByUserId(Long userId);
-    List<Comment> findByUserUsername(String userName);
+    Page<Comment> findByPostId(Long postId, Pageable pageable);
+    Page<Comment> findByUserId(Long userId, Pageable pageable);
 }
