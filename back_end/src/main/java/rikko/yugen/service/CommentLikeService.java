@@ -22,10 +22,10 @@ public class CommentLikeService {
     private final CommentRepository commentRepository;
     private final CurrentUserHelper currentUserHelper;
 
-    // read
+    // Read
+
     public Set<CommentLikeDTO> getLikesForComment(Long commentId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
+        Comment comment = getCommentOrThrow(commentId);
 
         return commentLikeRepository.findByComment(comment)
                 .stream()
@@ -34,19 +34,17 @@ public class CommentLikeService {
     }
 
     public int getLikeCountForComment(Long commentId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
+        Comment comment = getCommentOrThrow(commentId);
 
         return commentLikeRepository.countByComment(comment);
     }
 
-    // write
+    // Write
 
     @Transactional
     public int toggleLike(Long commentId) {
         User currentUser = currentUserHelper.getCurrentUser();
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
+        Comment comment = getCommentOrThrow(commentId);
 
         Optional<CommentLike> existingLike = commentLikeRepository
                 .findByUserAndComment(currentUser, comment);
@@ -62,4 +60,12 @@ public class CommentLikeService {
 
         return getLikeCountForComment(commentId);
     }
+
+    // Helpers
+
+    private Comment getCommentOrThrow(Long commentId) {
+        return commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Comment", "id", commentId));
+    }
+
 }
