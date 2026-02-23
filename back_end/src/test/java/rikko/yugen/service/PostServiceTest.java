@@ -290,6 +290,8 @@ class PostServiceTest {
         verify(postRepository, never()).save(any());
     }
 
+    // Delete tests
+
     @Test
     void deletePost_shouldCallRepositoryDelete_whenUserOwnsPost() {
         User mockUser = new User();
