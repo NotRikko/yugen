@@ -23,41 +23,42 @@ public class FeedService {
     private final FollowRepository followRepository;
     private final CurrentUserHelper currentUserHelper;
 
-    // global feed
-    @Transactional(readOnly = true)
-    public FeedResponse<PostDTO> getGlobalFeed(Pageable pageable) {
-        Page<Post> postPage = postRepository.findAll(pageable);
+    // Helpers
 
-        List<PostDTO> postDTOs = postPage.getContent()
-                .stream()
+    private List<PostDTO> mapToDTOs(Page<Post> postPage) {
+        return postPage.getContent().stream()
                 .map(PostDTO::new)
                 .toList();
-
-        return new FeedResponse<>(postDTOs, postPage.hasNext());
     }
 
-    // user feed
-    @Transactional(readOnly = true)
-    public FeedResponse<PostDTO> getUserFeed(Pageable pageable) {
-        User currentUser = currentUserHelper.getCurrentUser();
-
-        List<Long> followedArtistIds = followRepository.findByFollowerId(currentUser.getId())
+    private List<Long> getFollowedArtistIds(User user) {
+        return followRepository.findByFollowerId(user.getId())
                 .stream()
                 .map(f -> f.getFollowee().getId())
                 .toList();
+    }
+
+    // Global feed
+
+    @Transactional(readOnly = true)
+    public FeedResponse<PostDTO> getGlobalFeed(Pageable pageable) {
+        Page<Post> postPage = postRepository.findAll(pageable);
+        return new FeedResponse<>(mapToDTOs(postPage), postPage.hasNext());
+    }
+
+    // User feed
+
+    @Transactional(readOnly = true)
+    public FeedResponse<PostDTO> getUserFeed(Pageable pageable) {
+        User currentUser = currentUserHelper.getCurrentUser();
+        List<Long> followedArtistIds = getFollowedArtistIds(currentUser);
 
         if (followedArtistIds.isEmpty()) {
             return new FeedResponse<>(Collections.emptyList(), false);
         }
 
         Page<Post> postPage = postRepository.findByArtist_IdIn(followedArtistIds, pageable);
-
-        List<PostDTO> postDTOs = postPage.getContent()
-                .stream()
-                .map(PostDTO::new)
-                .toList();
-
-        return new FeedResponse<>(postDTOs, postPage.hasNext());
+        return new FeedResponse<>(mapToDTOs(postPage), postPage.hasNext());
     }
 
     public record FeedResponse<T>(List<T> posts, boolean hasNext) {}
