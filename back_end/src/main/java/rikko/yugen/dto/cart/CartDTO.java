@@ -2,16 +2,20 @@ package rikko.yugen.dto.cart;
 
 import rikko.yugen.model.Cart;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public record CartDTO(Long id, List<CartItemDTO> items) {
+public record CartDTO(
+        Long id,
+        Long userId,
+        List<CartItemDTO> items
+) {
     public CartDTO(Cart cart) {
         this(
                 cart.getId(),
+                cart.getUser() != null ? cart.getUser().getId() : null,
                 cart.getItems() != null
                         ? cart.getItems().stream()
                         .map(CartItemDTO::new)
-                        .collect(Collectors.toList())
+                        .toList()
                         : List.of()
         );
     }
