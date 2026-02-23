@@ -31,7 +31,7 @@ class ImageServiceTest {
     private ImageRepository imageRepository;
 
     @Mock
-    CloudinaryService cloudinaryService;
+    private CloudinaryService cloudinaryService;
 
 
     @InjectMocks
