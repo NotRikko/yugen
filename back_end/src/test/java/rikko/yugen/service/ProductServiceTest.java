@@ -239,7 +239,7 @@ class ProductServiceTest {
             product1.setQuantityInStock(5);
             product1.setSeries(Set.of(series1));
             product1.setCollections(Set.of(collection1));
-            product1.setImages(Set.of(image1, image2));
+            product1.setImages(List.of(image1, image2));
 
             when(productRepository.findById(1L)).thenReturn(Optional.of(product1));
             when(seriesRepository.findById(2L)).thenReturn(Optional.of(series2));
@@ -276,7 +276,7 @@ class ProductServiceTest {
 
             Product product = new Product();
             product.setArtist(artist);
-            product.setImages(Set.of(image1, image2));
+            product.setImages(List.of(image1, image2));
 
             when(productRepository.findById(1L)).thenReturn(Optional.of(product));
             doNothing().when(imageService).deleteImage(anyLong());
