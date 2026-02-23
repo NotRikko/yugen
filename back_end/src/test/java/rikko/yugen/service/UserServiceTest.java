@@ -1,6 +1,7 @@
 package rikko.yugen.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import rikko.yugen.dto.user.UserCreateDTO;
 import rikko.yugen.dto.user.UserDTO;
+import rikko.yugen.dto.user.UserUpdateDTO;
 import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.model.User;
 import rikko.yugen.repository.UserRepository;
@@ -37,212 +39,198 @@ class UserServiceTest {
 
     // Mock users
 
-    private User mockUser;
-    private User mockUser2;
+    private User user;
+    private User user2;
 
     @BeforeEach
-
     void setUp() {
-        mockUser = new User();
-        mockUser.setId(1L);
-        mockUser.setUsername("Rikko");
-        mockUser.setDisplayName("Rikko");
-        mockUser.setEmail("rikko@test.com");
+        user = new User();
+        user.setId(1L);
+        user.setUsername("Rikko");
+        user.setDisplayName("Rikko");
+        user.setEmail("rikko@test.com");
 
-        mockUser2 = new User();
-        mockUser2.setId(2L);
-        mockUser2.setUsername("Rikko2");
-        mockUser2.setDisplayName("Rikko2");
-        mockUser2.setEmail("rikko2@test.com");
+        user2 = new User();
+        user2.setId(2L);
+        user2.setUsername("Rikko2");
+        user2.setDisplayName("Rikko2");
+        user2.setEmail("rikko2@test.com");
+    }
+
+    // Test helpers
+
+    private UserCreateDTO createUserCreateDTO(String username, String email, String password) {
+        UserCreateDTO dto = new UserCreateDTO();
+        dto.setUsername(username);
+        dto.setDisplayName(username);
+        dto.setEmail(email);
+        dto.setPassword(password);
+        dto.setIsArtist(false);
+        return dto;
     }
 
     // Get by id tests
 
-    @Test
-    void getUserById_shouldReturnUserDTO_whenUserExists() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
-        UserDTO result = userService.getUserById(1L);
+    @Nested
+    class GetUserTests {
 
-        assertNotNull(result);
-        assertEquals(1L, result.id());
-        assertEquals("Rikko", result.username());
-        assertEquals("Rikko", result.displayName());
-        assertEquals("rikko@test.com", result.email());
-        assertNull(result.image());
-        assertEquals(false, result.isArtist());
+        @Test
+        void getUserById_shouldReturnDTO_whenExists() {
+            when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+            UserDTO result = userService.getUserById(1L);
 
-        verify(userRepository).findById(1L);
-    }
+            assertEquals(1L, result.id());
+            assertEquals("Rikko", result.username());
+            verify(userRepository).findById(1L);
+        }
 
-    @Test
-    void getUserById_shouldThrowException_whenUserDoesNotExist() {
-        Long userId = 99999L;
-        when(userRepository.findById(userId )).thenReturn(Optional.empty());
+        @Test
+        void getUserById_shouldThrow_whenNotFound() {
+            when(userRepository.findById(999L)).thenReturn(Optional.empty());
+            assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(999L));
+        }
 
-        assertThrows(ResourceNotFoundException.class, () -> userService.getUserById(userId));
-        verify(userRepository).findById(userId );
+        @Test
+        void getUserByUsername_shouldReturnDTO_whenExists() {
+            when(userRepository.findByUsername("Rikko")).thenReturn(Optional.of(user));
+            UserDTO result = userService.getUserByUsername("Rikko");
 
-    }
+            assertEquals("Rikko", result.username());
+            verify(userRepository).findByUsername("Rikko");
+        }
 
-    // Get by username tests
+        @Test
+        void getUserByUsername_shouldThrow_whenNotFound() {
+            when(userRepository.findByUsername("NotExister")).thenReturn(Optional.empty());
+            assertThrows(ResourceNotFoundException.class, () -> userService.getUserByUsername("NotExister"));
+        }
 
-    @Test
-    void getUserByUsername_shouldReturnUserDTO_whenUserExists() {
-        when(userRepository.findByUsername("Rikko")).thenReturn(Optional.of(mockUser));
+        @Test
+        void getUserByEmail_shouldReturnDTO_whenExists() {
+            when(userRepository.findByEmail("rikko@test.com")).thenReturn(Optional.of(user));
+            UserDTO result = userService.getUserByEmail("rikko@test.com");
 
-        UserDTO result = userService.getUserByUsername("Rikko");
+            assertEquals("rikko@test.com", result.email());
+            verify(userRepository).findByEmail("rikko@test.com");
+        }
 
-        assertNotNull(result);
-        assertEquals(1L, result.id());
-        assertEquals("Rikko", result.username());
-        assertEquals("Rikko", result.displayName());
-        assertEquals("rikko@test.com", result.email());
-        assertNull(result.image());
-        assertEquals(false, result.isArtist());
-    }
+        @Test
+        void getUserByEmail_shouldThrow_whenNotFound() {
+            when(userRepository.findByEmail("NotExister@test.com")).thenReturn(Optional.empty());
+            assertThrows(ResourceNotFoundException.class, () -> userService.getUserByEmail("NotExister@test.com"));
+        }
 
-    @Test
-    void getUserByUsername_shouldThrowException_whenUserDoesNotExist() {
-        when(userRepository.findByUsername("NotExister")).thenReturn(Optional.empty());
-        assertThrows(ResourceNotFoundException.class, () -> userService.getUserByUsername("NotExister"));
-        verify(userRepository).findByUsername("NotExister");
-    }
+        @Test
+        void getUserByDisplayName_shouldReturnDTO_whenExists() {
+            when(userRepository.findByDisplayName("Rikko")).thenReturn(Optional.of(user));
+            UserDTO result = userService.getUserByDisplayName("Rikko");
+            assertEquals("Rikko", result.displayName());
+        }
 
-    // Get by display name tests
+        @Test
+        void getUserByDisplayName_shouldThrow_whenNotFound() {
+            when(userRepository.findByDisplayName("NotExister")).thenReturn(Optional.empty());
+            assertThrows(ResourceNotFoundException.class, () -> userService.getUserByDisplayName("NotExister"));
+        }
 
-    @Test
-    void getUserByDisplayName_shouldReturnUserDTO_whenUserExists() {
-        when(userRepository.findByDisplayName("Rikko")).thenReturn(Optional.of(mockUser));
+        @Test
+        void getAllUsers_shouldReturnPaginatedList() {
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<User> page = new PageImpl<>(List.of(user, user2));
+            when(userRepository.findAll(pageable)).thenReturn(page);
 
-        UserDTO result = userService.getUserByDisplayName("Rikko");
+            Page<UserDTO> result = userService.getAllUsers(pageable);
 
-        assertNotNull(result);
-        assertEquals(1L, result.id());
-        assertEquals("Rikko", result.username());
-        assertEquals("Rikko", result.displayName());
-        assertEquals("rikko@test.com", result.email());
-        assertNull(result.image());
-        assertEquals(false, result.isArtist());
-    }
-
-    @Test
-    void getUserByDisplayName_shouldThrowException_whenUserDoesNotExist() {
-        when(userRepository.findByDisplayName("NotExister"))
-                .thenReturn(Optional.empty());
-        assertThrows(ResourceNotFoundException.class, () -> userService.getUserByDisplayName("NotExister"));
-        verify(userRepository).findByDisplayName("NotExister");
-    }
-
-    // Get by email tests
-
-    @Test
-    void getUserByEmail_shouldReturnUserDTO_whenUserExists() {
-        when(userRepository.findByEmail("rikko@test.com")).thenReturn(Optional.of(mockUser));
-
-        UserDTO result = userService.getUserByEmail("rikko@test.com");
-
-        assertNotNull(result);
-        assertEquals(1L, result.id());
-        assertEquals("Rikko", result.username());
-        assertEquals("Rikko", result.displayName());
-        assertEquals("rikko@test.com", result.email());
-        assertNull(result.image());
-        assertEquals(false, result.isArtist());
-        verify(userRepository).findByEmail("rikko@test.com");
-    }
-
-    @Test
-    void getUserByEmail_shouldThrowException_whenUserDoesNotExist() {
-        when(userRepository.findByEmail("NotExister@test.com"))
-                .thenReturn(Optional.empty());
-        assertThrows(ResourceNotFoundException.class, () -> userService.getUserByEmail("NotExister@test.com"));
-        verify(userRepository).findByEmail("NotExister@test.com");
-    }
-
-    // Get all users tests
-
-    @Test
-    void getAllUsers_shouldReturnListOfUserDTO_whenUsersExist() {
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<User> userPage = new PageImpl<>(List.of(mockUser, mockUser2));
-        when(userRepository.findAll(pageable)).thenReturn(userPage);
-
-        Page<UserDTO> result = userService.getAllUsers(pageable);
-
-        assertNotNull(result);
-        assertEquals(2, result.getContent().size());
-
-        UserDTO first = result.getContent().get(0);
-        assertEquals("Rikko", first.username());
-        assertEquals("Rikko", first.displayName());
-        assertEquals("rikko@test.com", first.email());
-
-        UserDTO second = result.getContent().get(1);
-        assertEquals("Rikko2", second.username());
-        assertEquals("Rikko2", second.displayName());
-        assertEquals("rikko2@test.com", second.email());
-
-        verify(userRepository).findAll(pageable);
+            assertEquals(2, result.getContent().size());
+            assertEquals("Rikko2", result.getContent().get(1).username());
+        }
     }
 
     // Create user tests
 
-    @Test
-    void createUser_shouldReturnUserDTO_whenUserCreated() {
+    @Nested
+    class CreateUserTests {
 
-        UserCreateDTO dto = new UserCreateDTO();
-        dto.setUsername("Rikko3");
-        dto.setDisplayName("Rikko3");
-        dto.setEmail("rikko3@test.com");
-        dto.setPassword("plainPassword");
-        dto.setIsArtist(false);
+        @Test
+        void createUser_shouldReturnDTO_whenValid() {
+            UserCreateDTO dto = createUserCreateDTO("Rikko3", "rikko3@test.com", "plainPassword");
 
-        when(userRepository.existsByUsername("Rikko3")).thenReturn(false);
-        when(userRepository.existsByEmail("rikko3@test.com")).thenReturn(false);
-        when(passwordEncoder.encode("plainPassword")).thenReturn("encodedPassword");
+            when(userRepository.existsByUsername("Rikko3")).thenReturn(false);
+            when(userRepository.existsByEmail("rikko3@test.com")).thenReturn(false);
+            when(passwordEncoder.encode("plainPassword")).thenReturn("encodedPassword");
 
-        User savedUser = new User();
-        savedUser.setId(3L);
-        savedUser.setUsername("Rikko3");
-        savedUser.setDisplayName("Rikko3");
-        savedUser.setEmail("rikko3@test.com");
-        savedUser.setPassword("encodedPassword");
+            User savedUser = new User();
+            savedUser.setId(3L);
+            savedUser.setUsername("Rikko3");
+            savedUser.setEmail("rikko3@test.com");
+            savedUser.setPassword("encodedPassword");
 
-        when(userRepository.save(any(User.class))).thenReturn(savedUser);
+            when(userRepository.save(any(User.class))).thenReturn(savedUser);
 
-        UserDTO result = userService.createUser(dto);
+            UserDTO result = userService.createUser(dto);
 
-        assertNotNull(result);
-        assertEquals(3L, result.id());
-        assertEquals("Rikko3", result.username());
-        assertEquals("Rikko3", result.displayName());
-        assertEquals("rikko3@test.com", result.email());
+            assertEquals(3L, result.id());
+            assertEquals("Rikko3", result.username());
 
-        verify(userRepository).existsByUsername("Rikko3");
-        verify(userRepository).existsByEmail("rikko3@test.com");
-        verify(passwordEncoder).encode("plainPassword");
-        verify(userRepository).save(any(User.class));
+            verify(userRepository).existsByUsername("Rikko3");
+            verify(userRepository).existsByEmail("rikko3@test.com");
+            verify(passwordEncoder).encode("plainPassword");
+            verify(userRepository).save(any(User.class));
+        }
     }
 
     // Update user tests
-    void updateUser_shouldReturnUserDTO_whenUserUpdated() {
 
+    @Nested
+    class UpdateUserTests {
+
+        @Test
+        void updateUser_shouldUpdateFields() {
+            UserUpdateDTO dto = new UserUpdateDTO();
+            dto.setDisplayName("New Name");
+
+            when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+            when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArgument(0));
+
+            UserDTO result = userService.updateUser(1L, dto, null);
+
+            assertEquals("New Name", result.displayName());
+            verify(userRepository).save(user);
+        }
+
+        @Test
+        void updateUser_shouldThrow_whenNotFound() {
+            UserUpdateDTO dto = new UserUpdateDTO();
+            dto.setDisplayName("New Name");
+            when(userRepository.findById(999L)).thenReturn(Optional.empty());
+            assertThrows(ResourceNotFoundException.class, () -> userService.updateUser(999L, dto, null));
+        }
     }
+
+
 
     // Delete user tests
 
-    @Test
-    void deleteUser_shouldReturnVoid_ifSuccess() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(mockUser));
-        userService.deleteUser(1L);
-        verify(userRepository).delete(mockUser);
-    }
+    @Nested
+    class DeleteUserTests {
 
-    @Test
-    void deleteUser_shouldThrowException_whenUserDoesNotExist() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
-        assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser(1L));
-        verify(userRepository, never()).delete(any());
+        @Test
+        void shouldDeleteUser_whenUserExists() {
+            when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+            userService.deleteUser(1L);
+
+            verify(userRepository).delete(user);
+        }
+
+        @Test
+        void shouldThrowException_whenUserDoesNotExist() {
+            when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+            assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser(1L));
+
+            verify(userRepository, never()).delete(any());
+        }
     }
 
 

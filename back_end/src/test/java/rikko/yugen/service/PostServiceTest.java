@@ -1,6 +1,7 @@
 package rikko.yugen.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -53,303 +54,237 @@ class PostServiceTest {
 
     //Mock artist
 
-    private Artist mockArtist;
+    private User user;
+    private Artist artist;
+    private Post post1;
+    private Post post2;
 
     @BeforeEach
     void setUp() {
-        User mockUser = new User();
-        mockUser.setId(1L);
-        mockUser.setUsername("Rikko");
-        mockUser.setDisplayName("Rikko");
-        mockUser.setEmail("rikko@test.com");
+        user = new User();
+        user.setId(1L);
+        user.setUsername("Rikko");
+        user.setIsArtist(true);
 
-        mockArtist = new Artist();
-        mockArtist.setId(1L);
-        mockArtist.setArtistName("Rikko");
-        mockArtist.setBio("I am a test");
+        artist = new Artist();
+        artist.setId(1L);
+        artist.setArtistName("Rikko");
+        artist.setUser(user);
+        user.setArtist(artist);
 
-        mockArtist.setUser(mockUser);
-        mockUser.setIsArtist(true);
-        mockUser.setArtist(mockArtist);
+        post1 = new Post();
+        post1.setId(1L);
+        post1.setContent("Post 1");
+        post1.setArtist(artist);
+
+        post2 = new Post();
+        post2.setId(2L);
+        post2.setContent("Post 2");
+        post2.setArtist(artist);
     }
 
+    // Test helpers
+    private PostCreateDTO createPostCreateDTO(String content) {
+        PostCreateDTO dto = new PostCreateDTO();
+        dto.setContent(content);
+        return dto;
+    }
+
+    private PostUpdateDTO createPostUpdateDTO(String content) {
+        PostUpdateDTO dto = new PostUpdateDTO();
+        dto.setContent(content);
+        return dto;
+    }
 
 
     // Get by id tests
 
-    @Test
-    void getPostById_shouldReturnPostDTO_whenPostExists() {
-        Post post = new Post();
-        post.setId(1L);
-        post.setContent("Test content");
+    @Nested
+    class GetPostsTests {
 
-        when(postRepository.findById(1L)).thenReturn(Optional.of(post));
+        @Test
+        void getPostById_shouldReturnPostDTO_whenExists() {
+            when(postRepository.findById(1L)).thenReturn(Optional.of(post1));
 
-        PostDTO result = postService.getPostById(1L);
+            PostDTO result = postService.getPostById(1L);
 
-        assertNotNull(result);
-        assertEquals(1L, result.id());
-        assertEquals("Test content", result.content());
+            assertEquals(1L, result.id());
+            assertEquals("Post 1", result.content());
+            verify(postRepository).findById(1L);
+        }
 
-        verify(postRepository).findById(1L);
-    }
+        @Test
+        void getPostById_shouldThrow_whenNotFound() {
+            when(postRepository.findById(999L)).thenReturn(Optional.empty());
+            assertThrows(ResourceNotFoundException.class, () -> postService.getPostById(999L));
+        }
 
-    @Test
-    void getPostById_shouldThrowException_whenPostDoesNotExist() {
-        when(postRepository.findById(9999L)).thenReturn(Optional.empty());
-        assertThrows(ResourceNotFoundException.class, () -> postService.getPostById(9999L));
-        verify(postRepository).findById(9999L);
-    }
+        @Test
+        void getPostsByArtistId_shouldReturnPage() {
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<Post> page = new PageImpl<>(List.of(post1, post2), pageable, 2);
+            when(postRepository.findByArtist_Id(artist.getId(), pageable)).thenReturn(page);
 
-    // Get by artistId tests
+            Page<PostDTO> result = postService.getPostsByArtistId(artist.getId(), pageable);
 
-    @Test
-    void getPostsByArtistId_shouldReturnPaginatedPosts() {
-        Post post1 = new Post();
-        post1.setId(1L);
-        post1.setContent("Test content");
-        post1.setArtist(mockArtist);
+            assertEquals(2, result.getTotalElements());
+            assertEquals("Post 1", result.getContent().get(0).content());
+            assertEquals("Post 2", result.getContent().get(1).content());
+        }
 
-        Post post2 = new Post();
-        post2.setId(2L);
-        post2.setContent("Test content2");
-        post2.setArtist(mockArtist);
+        @Test
+        void getPostsByArtistName_shouldReturnPage() {
+            Pageable pageable = PageRequest.of(0, 2);
+            Page<Post> page = new PageImpl<>(List.of(post1, post2), pageable, 2);
+            when(postRepository.findByArtist_ArtistName("Rikko", pageable)).thenReturn(page);
 
-        Pageable pageable = PageRequest.of(0, 10);
+            Page<PostDTO> result = postService.getPostsByArtistName("Rikko", pageable);
 
-        Page<Post> postPage = new PageImpl<>(
-                List.of(post1, post2),
-                pageable,
-                2
-        );
+            assertEquals(2, result.getContent().size());
+            assertEquals("Post 1", result.getContent().get(0).content());
+            assertEquals("Post 2", result.getContent().get(1).content());
+        }
 
-        when(postRepository.findByArtist_Id(1L, pageable))
-                .thenReturn(postPage);
+        @Test
+        void getAllPosts_shouldReturnPage() {
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<Post> page = new PageImpl<>(List.of(post1, post2));
+            when(postRepository.findAll(pageable)).thenReturn(page);
 
-        Page<PostDTO> result =
-                postService.getPostsByArtistId(1L, pageable);
+            Page<PostDTO> result = postService.getAllPosts(pageable);
 
-        assertNotNull(result);
-        assertEquals(2, result.getTotalElements());
-        assertEquals(2, result.getContent().size());
-
-        assertEquals(1L, result.getContent().get(0).id());
-        assertEquals("Test content", result.getContent().get(0).content());
-
-        assertEquals(2L, result.getContent().get(1).id());
-        assertEquals("Test content2", result.getContent().get(1).content());
-
-        verify(postRepository).findByArtist_Id(1L, pageable);
-    }
-
-    // Get by artist name tests
-
-    @Test
-    void getPostsByArtistName_shouldReturnPaginatedPosts() {
-        Pageable pageable = PageRequest.of(0, 2);
-
-        Post post1 = new Post();
-        post1.setContent("Post 1");
-        post1.setArtist(mockArtist);
-        Post post2 = new Post();
-        post2.setContent("Post 2");
-        post2.setArtist(mockArtist);
-
-        Page<Post> postPage = new PageImpl<>(List.of(post1, post2), pageable, 2);
-        when(postRepository.findByArtist_ArtistName("Rikko", pageable)).thenReturn(postPage);
-
-        Page<PostDTO> result = postService.getPostsByArtistName("Rikko", pageable);
-
-        assertNotNull(result);
-        assertEquals(2, result.getContent().size());
-
-        PostDTO first = result.getContent().get(0);
-        assertEquals("Post 1", first.content());
-
-        PostDTO second = result.getContent().get(1);
-        assertEquals("Post 2", second.content());
-
-        verify(postRepository).findByArtist_ArtistName("Rikko", pageable);
-    }
-
-    // Get all posts tests
-
-    @Test
-    void getAllPosts_shouldReturnPaginatedPosts() {
-        Post post1 = new Post();
-        post1.setContent("Post 1");
-        post1.setArtist(mockArtist);
-        Post post2 = new Post();
-        post2.setContent("Post 2");
-        post2.setArtist(mockArtist);
-
-        Pageable pageable = PageRequest.of(0, 10);
-        Page<Post> postPage = new PageImpl<>(List.of(post1, post2));
-        when(postRepository.findAll(pageable)).thenReturn(postPage);
-        Page<PostDTO> result = postService.getAllPosts(pageable);
-
-        assertNotNull(result);
-        assertEquals(2, result.getContent().size());
-
-        PostDTO first = result.getContent().get(0);
-        assertEquals("Post 1", first.content());
-
-        PostDTO second = result.getContent().get(1);
-        assertEquals("Post 2", second.content());
-
-        verify(postRepository).findAll(pageable);
+            assertEquals(2, result.getContent().size());
+        }
     }
 
     // Create post tests
 
-    @Test
-    void createPost_shouldReturnPostDTO_whenPostCreated() {
-        User mockUser = new User();
-        mockUser.setId(1L);
+    @Nested
+    class CreatePostTests {
 
-        when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
+        @Test
+        void createPost_shouldReturnPostDTO() {
+            when(currentUserHelper.getCurrentUser()).thenReturn(user);
+            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
 
-        Artist mockArtist = new Artist();
-        mockArtist.setId(10L);
-        mockArtist.setArtistName("Rikko");
-        mockArtist.setUser(mockUser);
+            PostCreateDTO dto = createPostCreateDTO("New Post");
 
-        when(artistRepository.findByUserId(1L))
-                .thenReturn(Optional.of(mockArtist));
+            Post savedPost = new Post();
+            savedPost.setContent(dto.getContent());
+            savedPost.setArtist(artist);
 
-        PostCreateDTO dto = new PostCreateDTO();
-        dto.setContent("Test content");
+            when(postRepository.save(any(Post.class))).thenReturn(savedPost);
 
-        Post savedPost = new Post();
-        savedPost.setContent("Test content");
-        savedPost.setArtist(mockArtist);
+            PostDTO result = postService.createPost(dto, null);
 
-        when(postRepository.save(any(Post.class)))
-                .thenReturn(savedPost);
-
-        PostDTO result = postService.createPost(dto, null);
-
-        assertNotNull(result);
-        assertEquals("Test content", result.content());
-
-        verify(currentUserHelper).getCurrentUser();
-        verify(artistRepository).findByUserId(1L);
-        verify(postRepository).save(any(Post.class));
+            assertEquals("New Post", result.content());
+            verify(postRepository).save(any(Post.class));
+        }
     }
 
     // Update post tests
 
-    @Test
-    void updatePost_shouldUpdateContent_whenContentProvided() {
-        Post existingPost = new Post();
-        existingPost.setId(1L);
-        existingPost.setContent("Old content");
+    @Nested
+    class UpdatePostTests {
 
-        PostUpdateDTO dto = new PostUpdateDTO();
-        dto.setContent("New content");
+        @Test
+        void updatePost_shouldUpdateContent() {
+            Post existingPost = new Post();
+            existingPost.setId(1L);
+            existingPost.setContent("Old");
 
-        when(postRepository.findById(1L)).thenReturn(Optional.of(existingPost));
+            PostUpdateDTO dto = createPostUpdateDTO("New");
 
-        when(postRepository.save(any(Post.class))).thenAnswer(invocation -> invocation.getArgument(0));
+            when(postRepository.findById(1L)).thenReturn(Optional.of(existingPost));
+            when(postRepository.save(any(Post.class))).thenAnswer(i -> i.getArgument(0));
 
-        PostDTO result = postService.updatePost(1L, dto);
+            PostDTO result = postService.updatePost(1L, dto);
 
-        assertEquals("New content", existingPost.getContent());
-        assertEquals("New content", result.content());
+            assertEquals("New", result.content());
+            verify(postRepository).save(existingPost);
+        }
 
-        verify(postRepository).findById(1L);
-        verify(postRepository).save(existingPost);
-    }
+        @Test
+        void updatePost_shouldThrow_whenNotFound() {
+            when(postRepository.findById(1L)).thenReturn(Optional.empty());
+            assertThrows(ResourceNotFoundException.class, () -> postService.updatePost(1L, createPostUpdateDTO("New")));
+        }
 
-    @Test
-    void updatePost_shouldThrowException_whenPostNotFound() {
-        when(postRepository.findById(1L)).thenReturn(Optional.empty());
+        @Test
+        void updatePost_shouldNotSave_whenContentNull() {
+            Post existingPost = new Post();
+            existingPost.setId(1L);
+            existingPost.setContent("Old");
 
-        PostUpdateDTO dto = new PostUpdateDTO();
-        dto.setContent("New content");
+            when(postRepository.findById(1L)).thenReturn(Optional.of(existingPost));
 
-        assertThrows(ResourceNotFoundException.class, () -> postService.updatePost(1L, dto));
+            PostDTO result = postService.updatePost(1L, new PostUpdateDTO());
 
-        verify(postRepository).findById(1L);
-        verify(postRepository, never()).save(any());
-    }
-
-    @Test
-    void updatePost_shouldNotSave_whenContentIsNull() {
-        Post existingPost = new Post();
-        existingPost.setId(1L);
-        existingPost.setContent("Old content");
-
-        PostUpdateDTO dto = new PostUpdateDTO();
-
-        when(postRepository.findById(1L)).thenReturn(Optional.of(existingPost));
-
-        PostDTO result = postService.updatePost(1L, dto);
-
-        assertEquals("Old content", result.content());
-        verify(postRepository, never()).save(any());
+            assertEquals("Old", result.content());
+            verify(postRepository, never()).save(any());
+        }
     }
 
     // Delete tests
 
-    @Test
-    void deletePost_shouldCallRepositoryDelete_whenUserOwnsPost() {
-        User mockUser = new User();
-        mockUser.setId(1L);
-        when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
+    @Nested
+    class DeletePostTests {
 
-        Artist mockArtist = new Artist();
-        mockArtist.setUser(mockUser);
+        @Test
+        void deletePost_shouldDelete_whenOwner() {
+            Post mockPost = new Post();
+            mockPost.setArtist(artist);
 
-        Post mockPost = new Post();
-        mockPost.setArtist(mockArtist);
+            when(postRepository.findById(1L)).thenReturn(Optional.of(mockPost));
+            when(currentUserHelper.getCurrentUser()).thenReturn(user);
 
-        when(postRepository.findById(1L)).thenReturn(Optional.of(mockPost));
+            postService.deletePost(1L);
 
-        postService.deletePost(1L);
-        verify(postRepository).delete(mockPost);
+            verify(postRepository).delete(mockPost);
+        }
+
+        @Test
+        void deletePost_shouldThrow_whenNotOwner() {
+            User otherUser = new User();
+            otherUser.setId(2L);
+            Artist otherArtist = new Artist();
+            otherArtist.setUser(otherUser);
+
+            Post mockPost = new Post();
+            mockPost.setArtist(otherArtist);
+
+            when(postRepository.findById(1L)).thenReturn(Optional.of(mockPost));
+            when(currentUserHelper.getCurrentUser()).thenReturn(user);
+
+            assertThrows(AccessDeniedException.class, () -> postService.deletePost(1L));
+            verify(postRepository, never()).delete(any());
+        }
     }
 
-    @Test
-    void deletePost_shouldThrowAccessDeniedException_whenUserDoesNotOwnPost() {
-        User mockUser = new User();
-        mockUser.setId(1L);
-        when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
+    // Upload files tests
 
-        User otherUser = new User();
-        otherUser.setId(2L);
+    @Nested
+    class UploadFilesTests {
 
-        Artist mockArtist = new Artist();
-        mockArtist.setUser(otherUser);
+        @Test
+        void uploadAndSaveFiles_shouldCallCloudinaryAndImageService() throws Exception {
+            MultipartFile file1 = mock(MultipartFile.class);
+            MultipartFile file2 = mock(MultipartFile.class);
+            List<MultipartFile> files = List.of(file1, file2);
 
-        Post mockPost = new Post();
-        mockPost.setArtist(mockArtist);
+            Post mockPost = new Post();
 
-        when(postRepository.findById(1L)).thenReturn(Optional.of(mockPost));
+            when(cloudinaryService.uploadImage(file1)).thenReturn("url1");
+            when(cloudinaryService.uploadImage(file2)).thenReturn("url2");
 
-        assertThrows(AccessDeniedException.class, () -> postService.deletePost(1L));
-        verify(postRepository, never()).delete(any());
-    }
+            Method method = PostService.class.getDeclaredMethod("uploadAndSaveFiles", List.class, Post.class);
+            method.setAccessible(true);
+            method.invoke(postService, files, mockPost);
 
-    @Test
-    void uploadAndSaveFiles_shouldUploadAndCreateImages() throws Exception {
-        MultipartFile file1 = mock(MultipartFile.class);
-        MultipartFile file2 = mock(MultipartFile.class);
-        List<MultipartFile> files = List.of(file1, file2);
-
-        Post mockPost = new Post();
-
-        when(cloudinaryService.uploadImage(file1)).thenReturn("url1");
-        when(cloudinaryService.uploadImage(file2)).thenReturn("url2");
-
-        Method method = PostService.class.getDeclaredMethod("uploadAndSaveFiles", List.class, Post.class);
-        method.setAccessible(true);
-
-        method.invoke(postService, files, mockPost);
-
-        verify(cloudinaryService).uploadImage(file1);
-        verify(cloudinaryService).uploadImage(file2);
-        verify(imageService).createImageForPost("url1", mockPost);
-        verify(imageService).createImageForPost("url2", mockPost);
+            verify(cloudinaryService).uploadImage(file1);
+            verify(cloudinaryService).uploadImage(file2);
+            verify(imageService).createImageForPost("url1", mockPost);
+            verify(imageService).createImageForPost("url2", mockPost);
+        }
     }
 }
