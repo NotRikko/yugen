@@ -1,0 +1,120 @@
+package rikko.yugen.integration;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import rikko.yugen.dto.user.LoginResponseDTO;
+import rikko.yugen.dto.user.UserLoginDTO;
+import rikko.yugen.model.User;
+import rikko.yugen.repository.UserRepository;
+
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
+@Testcontainers
+class LoginIntegrationTest {
+
+    @Autowired
+    private TestRestTemplate restTemplate;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Container
+    static PostgreSQLContainer<?> postgres =
+            new PostgreSQLContainer<>("postgres:16.2")
+                    .withDatabaseName("testdb")
+                    .withUsername("test")
+                    .withPassword("test");
+
+
+    @DynamicPropertySource
+    static void overrideProps(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
+    }
+
+    @BeforeEach
+    void setUp() {
+        userRepository.deleteAll();
+        User user = new User();
+        user.setUsername("rikko3");
+        user.setPassword(passwordEncoder.encode("test12345!"));
+        userRepository.save(user);
+    }
+
+    private static UserLoginDTO validDto() {
+        UserLoginDTO dto = new UserLoginDTO();
+        dto.setUsername("rikko3");
+        dto.setPassword("test12345!");
+        return dto;
+    }
+
+    @Test
+    void login_returnsLoginResponse_whenUserSuccessfullyAuthenticated() {
+        UserLoginDTO dto = validDto();
+        ResponseEntity<LoginResponseDTO> response =
+                restTemplate.postForEntity("/auth/login", dto, LoginResponseDTO.class);
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        LoginResponseDTO body = response.getBody();
+
+        Assertions.assertNotNull(body);
+        Assertions.assertNotNull(body.accessToken());
+        Assertions.assertFalse(body.accessToken().isBlank());
+
+        Assertions.assertNotNull(body.accessTokenExpiresIn());
+        Assertions.assertTrue(body.accessTokenExpiresIn() > 0);
+
+    }
+
+    @Test
+    void login_returns401_whenInvalidPassword() {
+        UserLoginDTO dto = validDto();
+        dto.setPassword("wrongPassword");
+
+        ResponseEntity<String> response =
+                restTemplate.postForEntity("/auth/login", dto, String.class);
+
+        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        Assertions.assertNotNull(response.getBody());
+        Assertions.assertTrue(response.getBody().contains("Invalid username or password"));
+    }
+
+    @Test
+    void login_returns401_whenInvalidUsername() {
+        UserLoginDTO dto = validDto();
+        dto.setUsername("nonexistentUser");
+
+        ResponseEntity<String> response =
+                restTemplate.postForEntity("/auth/login", dto, String.class);
+
+        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        Assertions.assertNotNull(response.getBody());
+        Assertions.assertTrue(response.getBody().contains("Invalid username or password"));
+    }
+
+    @Test
+    void login_returns400_whenUsernameMissing() {
+        UserLoginDTO dto = new UserLoginDTO();
+        dto.setPassword("test12345!");
+        ResponseEntity<String> response = restTemplate.postForEntity("/auth/login", dto, String.class);
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+}
