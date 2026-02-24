@@ -6,14 +6,16 @@ import rikko.yugen.dto.product.ProductDTO;
 public record CartItemDTO(
         Long id,
         Long productId,
-        ProductDTO product,
+        String productName,
+        Float productPrice,
         int quantity
 ) {
     public CartItemDTO(CartItem cartItem) {
         this(
                 cartItem.getId(),
-                cartItem.getProduct().getId(),
-                new ProductDTO(cartItem.getProduct()),
+                cartItem.getProduct() != null ? cartItem.getProduct().getId() : null,
+                cartItem.getProduct() != null ? cartItem.getProduct().getName() : null,
+                cartItem.getProduct() != null ? cartItem.getProduct().getPrice() : null,
                 cartItem.getQuantity()
         );
     }

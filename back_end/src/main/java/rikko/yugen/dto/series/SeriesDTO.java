@@ -12,18 +12,14 @@ public record SeriesDTO(
         Long id,
         String name,
         String image,
-        String description,
-        Set<ProductDTO> products
+        String description
 ) {
     public SeriesDTO(Series series) {
         this(
                 series.getId(),
                 series.getName(),
                 series.getImage(),
-                series.getDescription(),
-                series.getProducts() != null
-                        ? series.getProducts().stream().map(ProductDTO::new).collect(Collectors.toSet())
-                        : Collections.emptySet()
+                series.getDescription()
         );
     }
 }

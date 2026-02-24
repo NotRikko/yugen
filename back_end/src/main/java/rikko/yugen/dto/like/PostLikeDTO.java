@@ -13,7 +13,7 @@ public record PostLikeDTO(
     public PostLikeDTO(PostLike postLike) {
         this(
                 postLike.getId(),
-                postLike.getUser() != null ? new UserDTO(postLike.getUser()) : null,
+                postLike.getUser() != null ? new UserDTO(postLike.getUser(), null) : null,
                 postLike.getCreatedAt()
         );
     }

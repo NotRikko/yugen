@@ -15,11 +15,10 @@ public record CommentDTO(
     public CommentDTO(Comment comment) {
         this(
                 comment.getId(),
-                comment.getUser() != null ? new UserDTO(comment.getUser()) : null,
+                comment.getUser() != null ? new UserDTO(comment.getUser(), null) : null,
                 comment.getContent(),
                 comment.getPost() != null ? comment.getPost().getId() : null,
                 comment.getCreatedAt()
         );
     }
 }
-

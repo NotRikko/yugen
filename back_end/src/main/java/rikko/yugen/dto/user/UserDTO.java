@@ -11,7 +11,8 @@ public record UserDTO(
         Boolean isArtist,
         Long artistId
 ) {
-    public UserDTO(User user) {
+
+    public UserDTO(User user, Long artistId) {
         this(
                 user.getId(),
                 user.getUsername(),
@@ -19,7 +20,7 @@ public record UserDTO(
                 user.getEmail(),
                 user.getProfileImage() != null ? user.getProfileImage().getUrl() : null,
                 user.getIsArtist() != null ? user.getIsArtist() : false,
-                user.getArtist() != null ? user.getArtist().getId() : null
+                artistId
         );
     }
 }

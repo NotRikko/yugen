@@ -6,13 +6,14 @@ import java.util.Collections;
 
 import rikko.yugen.dto.product.ProductDTO;
 import rikko.yugen.model.Collection;
+import rikko.yugen.model.Product;
 
 public record CollectionDTO(
         Long id,
         String name,
         String description,
         String image,
-        Set<ProductDTO> products
+        Set<Long> productIds
 ) {
     public CollectionDTO(Collection collection) {
         this(
@@ -22,7 +23,7 @@ public record CollectionDTO(
                 collection.getImage(),
                 collection.getProducts() != null
                         ? collection.getProducts().stream()
-                        .map(ProductDTO::new)
+                        .map(Product::getId)
                         .collect(Collectors.toSet())
                         : Collections.emptySet()
         );

@@ -9,38 +9,29 @@ import rikko.yugen.dto.artist.ArtistDTO;
 import rikko.yugen.dto.collection.CollectionDTO;
 import rikko.yugen.dto.image.ImageDTO;
 import rikko.yugen.dto.series.SeriesDTO;
+import rikko.yugen.model.Collection;
+import rikko.yugen.model.Image;
 import rikko.yugen.model.Product;
+import rikko.yugen.model.Series;
 
 public record ProductDTO(
         Long id,
         String name,
-        String description,
         Float price,
-        Integer quantityInStock,
-        Set<ImageDTO> images,
-        ArtistDTO artist,
-        Set<SeriesDTO> series,
-        Set<CollectionDTO> collections
+        Long artistId,
+        Set<Long> seriesIds,
+        Set<Long> collectionIds,
+        Set<String> imageUrls
 ) {
     public ProductDTO(Product product) {
         this(
                 product.getId(),
                 product.getName(),
-                product.getDescription(),
                 product.getPrice(),
-                product.getQuantityInStock(),
-                product.getImages() != null
-                        ? product.getImages().stream()
-                        .map(ImageDTO::new)
-                        .collect(Collectors.toSet())
-                        :new HashSet<>(),
-                product.getArtist() != null ? new ArtistDTO(product.getArtist()) : null,
-                product.getSeries() != null
-                        ? product.getSeries().stream().map(SeriesDTO::new).collect(Collectors.toSet())
-                        : Collections.emptySet(),
-                product.getCollections() != null
-                        ? product.getCollections().stream().map(CollectionDTO::new).collect(Collectors.toSet())
-                        : Collections.emptySet()
+                product.getArtist() != null ? product.getArtist().getId() : null,
+                product.getSeries() != null ? product.getSeries().stream().map(Series::getId).collect(Collectors.toSet()) : Collections.emptySet(),
+                product.getCollections() != null ? product.getCollections().stream().map(Collection::getId).collect(Collectors.toSet()) : Collections.emptySet(),
+                product.getImages() != null ? product.getImages().stream().map(Image::getUrl).collect(Collectors.toSet()) : Collections.emptySet()
         );
     }
 }

@@ -13,7 +13,7 @@ public record CommentLikeDTO(
     public CommentLikeDTO(CommentLike commentLike) {
         this(
                 commentLike.getId(),
-                commentLike.getUser() != null ? new UserDTO(commentLike.getUser()) : null,
+                commentLike.getUser() != null ? new UserDTO(commentLike.getUser(), null) : null,
                 commentLike.getCreatedAt()
         );
     }
