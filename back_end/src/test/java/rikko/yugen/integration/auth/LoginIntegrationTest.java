@@ -1,4 +1,4 @@
-package rikko.yugen.integration;
+package rikko.yugen.integration.auth;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
