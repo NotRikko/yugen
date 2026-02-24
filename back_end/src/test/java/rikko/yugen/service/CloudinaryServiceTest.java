@@ -10,6 +10,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
+import rikko.yugen.exception.ExternalServiceException;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -74,41 +75,44 @@ class CloudinaryServiceTest {
 
     @Nested
     class DeleteImageTests {
+
         @Test
-        void deleteImage_shouldReturnTrue_whenResultOk() throws Exception {
+        void deleteImage_shouldCallUploader_whenResultOk() throws Exception {
             Map<String, String> response = Map.of("result", "ok");
             when(uploader.destroy(anyString(), anyMap())).thenReturn(response);
 
-            boolean result = cloudinaryService.deleteImage(fakeImageUrl);
+            cloudinaryService.deleteImage(fakeImageUrl);
 
-            assertTrue(result);
             verify(uploader).destroy(anyString(), anyMap());
         }
 
         @Test
-        void deleteImage_shouldReturnTrue_whenResultNotFound() throws Exception {
+        void deleteImage_shouldCallUploader_whenResultNotFound() throws Exception {
             Map<String, String> response = Map.of("result", "not found");
             when(uploader.destroy(anyString(), anyMap())).thenReturn(response);
 
-            boolean result = cloudinaryService.deleteImage(fakeImageUrl);
+            cloudinaryService.deleteImage(fakeImageUrl);
 
-            assertTrue(result);
+            verify(uploader).destroy(anyString(), anyMap());
         }
 
         @Test
-        void deleteImage_shouldReturnFalse_whenExceptionThrown() throws Exception {
-            when(uploader.destroy(anyString(), anyMap())).thenThrow(new RuntimeException("Cloudinary fail"));
+        void deleteImage_shouldThrowExternalServiceException_whenCloudinaryFails() throws Exception {
+            when(uploader.destroy(anyString(), anyMap()))
+                    .thenThrow(new RuntimeException("Cloudinary fail"));
 
-            boolean result = cloudinaryService.deleteImage(fakeImageUrl);
+            assertThrows(ExternalServiceException.class,
+                    () -> cloudinaryService.deleteImage(fakeImageUrl));
 
-            assertFalse(result);
+            verify(uploader).destroy(anyString(), anyMap());
         }
 
         @Test
         void deleteImage_shouldThrowIllegalArgumentException_forInvalidUrl() {
             String invalidUrl = "https://example.com/no-upload-path.jpg";
 
-            assertThrows(IllegalArgumentException.class, () -> cloudinaryService.deleteImage(invalidUrl));
+            assertThrows(IllegalArgumentException.class,
+                    () -> cloudinaryService.deleteImage(invalidUrl));
         }
     }
 }
