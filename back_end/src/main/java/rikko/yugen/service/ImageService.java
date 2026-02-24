@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
 import rikko.yugen.dto.image.ImageDTO;
-import rikko.yugen.exception.ImageDeletionException;
+import rikko.yugen.exception.ResourceAlreadyExistsException;
 import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.model.Image;
 import rikko.yugen.model.Post;
@@ -64,7 +64,7 @@ public class ImageService {
     @Transactional
     public void createImageForProduct(String imageUrl, Product product) {
         if (product.getImages().stream().anyMatch(img -> img.getUrl().equals(imageUrl))) {
-            throw new IllegalArgumentException("Image already exists for this product");
+            throw new ResourceAlreadyExistsException("Image", "imageUrl", imageUrl);
         }
 
         Image image = new Image();
@@ -101,10 +101,7 @@ public class ImageService {
         Image image = imageRepository.findById(imageId)
                 .orElseThrow(() -> new ResourceNotFoundException("Image", "imageID", imageId));
 
-        boolean deletedFromCloud = cloudinaryService.deleteImage(image.getUrl());
-        if (!deletedFromCloud) {
-            throw new ImageDeletionException("Failed to delete image from Cloudinary");
-        }
+        cloudinaryService.deleteImage(image.getUrl());
 
         if (image.getUser() != null) image.getUser().setProfileImage(null);
         if (image.getPost() != null) image.getPost().getImages().remove(image);
