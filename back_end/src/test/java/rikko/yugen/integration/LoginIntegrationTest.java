@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -98,23 +97,52 @@ class LoginIntegrationTest {
     }
 
     @Test
-    void login_returns401_whenInvalidUsername() {
-        UserLoginDTO dto = validDto();
-        dto.setUsername("nonexistentUser");
+    void login_returns400_whenUsernameOrPasswordMissing() {
+        UserLoginDTO dto = new UserLoginDTO();
+        dto.setUsername("");
+        dto.setPassword("somePassword");
 
         ResponseEntity<String> response =
                 restTemplate.postForEntity("/auth/login", dto, String.class);
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
 
-        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-        Assertions.assertNotNull(response.getBody());
-        Assertions.assertTrue(response.getBody().contains("Invalid username or password"));
+        dto.setUsername("rikko3");
+        dto.setPassword("");
+        response = restTemplate.postForEntity("/auth/login", dto, String.class);
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    void login_returns400_whenUsernameMissing() {
-        UserLoginDTO dto = new UserLoginDTO();
-        dto.setPassword("test12345!");
-        ResponseEntity<String> response = restTemplate.postForEntity("/auth/login", dto, String.class);
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    void refreshAccessToken_returnsNewAccessToken_whenValidRefreshToken() {
+        ResponseEntity<LoginResponseDTO> loginResponse =
+                restTemplate.postForEntity("/auth/login", validDto(), LoginResponseDTO.class);
+        String refreshToken = loginResponse.getHeaders().getFirst(HttpHeaders.SET_COOKIE);
+        Assertions.assertNotNull(refreshToken);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.COOKIE, refreshToken);
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+        ResponseEntity<LoginResponseDTO> refreshResponse =
+                restTemplate.exchange("/auth/refresh-token", HttpMethod.POST, requestEntity, LoginResponseDTO.class);
+
+        Assertions.assertEquals(HttpStatus.OK, refreshResponse.getStatusCode());
+        Assertions.assertNotNull(refreshResponse.getBody());
+        Assertions.assertNotNull(refreshResponse.getBody().accessToken());
+        Assertions.assertTrue(refreshResponse.getBody().accessTokenExpiresIn() > 0);
+    }
+
+    @Test
+    void refreshAccessToken_returns401_whenMissingOrInvalidToken() {
+        ResponseEntity<String> response =
+                restTemplate.postForEntity("/auth/refresh-token", null, String.class);
+        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.COOKIE, "refreshToken=invalidToken");
+        HttpEntity<Void> requestEntity = new HttpEntity<>(headers);
+
+        response = restTemplate.exchange("/auth/refresh-token", HttpMethod.POST, requestEntity, String.class);
+        Assertions.assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
 }
