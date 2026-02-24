@@ -17,10 +17,6 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public User authenticate(UserLoginDTO input) {
-        if (input.getUsername() == null || input.getPassword() == null) {
-            throw new IllegalArgumentException("Username and password must be provided");
-        }
-
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
