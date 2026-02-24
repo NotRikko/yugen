@@ -28,7 +28,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> authenticate(
-            @RequestBody UserLoginDTO userLoginDTO,
+            @RequestBody @Valid UserLoginDTO userLoginDTO,
             HttpServletResponse response
     ) {
         User authenticatedUser = authenticationService.authenticate(userLoginDTO);
