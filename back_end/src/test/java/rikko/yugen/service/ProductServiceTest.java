@@ -251,8 +251,8 @@ class ProductServiceTest {
 
             assertEquals("Updated Name", result.name());
             assertEquals(20F, result.price());
-            assertEquals(1, result.series().size());
-            assertEquals(1, result.collections().size());
+            assertEquals(1, result.seriesIds().size());
+            assertEquals(1, result.collectionIds().size());
             verify(imageService).deleteImage(2L);
         }
     }
