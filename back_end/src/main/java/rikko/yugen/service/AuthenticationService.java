@@ -18,9 +18,10 @@ public class AuthenticationService {
 
     public User authenticate(UserLoginDTO input) {
         try {
+            String normalizedUsername = input.getUsername().toLowerCase().trim();
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            input.getUsername(),
+                           normalizedUsername,
                             input.getPassword()
                     )
             );
@@ -29,6 +30,6 @@ public class AuthenticationService {
         }
 
         return userRepository.findByUsername(input.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new IllegalStateException("User should exist after successful authentication"));
     }
 }
