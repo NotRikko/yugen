@@ -54,7 +54,15 @@ public class UserService implements UserDetailsService {
     // Mapping
 
     private UserDTO userToUserDTO(User user) {
-        return new UserDTO(user);
+        return new UserDTO(
+                user.getId(),
+                user.getUsername(),
+                user.getDisplayName(),
+                user.getEmail(),
+                user.getProfileImage() != null ? user.getProfileImage().getUrl() : null,
+                user.getIsArtist() != null ? user.getIsArtist() : false,
+                user.getArtist() != null ? user.getArtist().getId() : null
+        );
     }
 
     // Read
