@@ -56,11 +56,11 @@ public class Post {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id")
     private Artist artist;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     private Product product;
 
