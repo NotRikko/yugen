@@ -48,7 +48,7 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/refresh")
+    @PostMapping("/refresh-token")
     public ResponseEntity<LoginResponseDTO> refresh(
             HttpServletRequest request
     ) {
