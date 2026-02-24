@@ -8,7 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rikko.yugen.dto.image.ImageDTO;
-import rikko.yugen.exception.ImageDeletionException;
+import rikko.yugen.exception.ExternalServiceException;
 import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.model.Image;
 import rikko.yugen.model.Post;
@@ -108,7 +108,6 @@ class ImageServiceTest {
             user.setProfileImage(oldImage);
 
             when(imageRepository.save(any(Image.class))).thenAnswer(invocation -> invocation.getArgument(0));
-            when(cloudinaryService.deleteImage(anyString())).thenReturn(true);
 
             ImageDTO dto = imageService.createImageForUser("http://example.com/new.jpg", user);
 
@@ -129,7 +128,6 @@ class ImageServiceTest {
             post.getImages().add(image);
 
             when(imageRepository.findById(1L)).thenReturn(Optional.of(image));
-            when(cloudinaryService.deleteImage(anyString())).thenReturn(true);
 
             imageService.deleteImage(1L);
 
@@ -147,9 +145,14 @@ class ImageServiceTest {
         @Test
         void deleteImage_shouldThrowIfCloudDeletionFails() {
             when(imageRepository.findById(1L)).thenReturn(Optional.of(image));
-            when(cloudinaryService.deleteImage(anyString())).thenReturn(false);
 
-            assertThrows(ImageDeletionException.class, () -> imageService.deleteImage(1L));
+            doThrow(new ExternalServiceException("Cloudinary deletion failed"))
+                    .when(cloudinaryService)
+                    .deleteImage(anyString());
+
+            assertThrows(ExternalServiceException.class,
+                    () -> imageService.deleteImage(1L));
+
             verify(imageRepository, never()).delete(any());
         }
     }
