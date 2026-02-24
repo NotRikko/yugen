@@ -48,7 +48,7 @@ public class User implements UserDetails {
     @Column(name = "is_artist")
     private Boolean isArtist;
 
-    @OneToOne(fetch = FetchType.EAGER, mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Artist artist;
