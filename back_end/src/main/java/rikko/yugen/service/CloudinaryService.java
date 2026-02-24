@@ -7,6 +7,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import rikko.yugen.exception.ExternalServiceException;
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -30,17 +32,23 @@ public class CloudinaryService {
         return imageUrl;
     }
 
-    @SuppressWarnings("unchecked")
-    public boolean deleteImage(String imageUrl) {
+    public void deleteImage(String imageUrl) {
         String publicId = extractPublicIdFromUrl(imageUrl);
 
         try {
-            Map<String, String> response = cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            Map<String, String> response =
+                    cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+
             String result = response.get("result");
-            return "ok".equals(result) || "not found".equals(result);
+
+            if (!"ok".equals(result) && !"not found".equals(result)) {
+                throw new ExternalServiceException(
+                        "Cloudinary deletion failed. Result: " + result
+                );
+            }
+
         } catch (Exception e) {
-            logger.error("Failed to delete image: {}", imageUrl, e);
-            return false;
+            throw new ExternalServiceException("Cloudinary deletion failed", e);
         }
     }
 
