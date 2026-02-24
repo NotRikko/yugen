@@ -177,7 +177,7 @@ class ArtistServiceTest {
             assertEquals(3L, result.id());
             assertEquals("Rikko3", result.artistName());
             assertEquals("I am a created test", result.bio());
-            assertEquals(3L, result.user().id());
+            assertEquals(3L, result.userId());
 
             verify(userRepository).findById(3L);
             verify(artistRepository).existsByArtistName("Rikko3");
