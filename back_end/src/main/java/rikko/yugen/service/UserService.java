@@ -110,9 +110,13 @@ public class UserService implements UserDetailsService {
         }
 
         User user = new User();
-        user.setUsername(dto.getUsername());
+
+        String normalizedUsername = dto.getUsername().toLowerCase().trim();
+        String normalizedEmail = dto.getEmail().toLowerCase().trim();
+
+        user.setUsername(normalizedUsername);
         user.setDisplayName(dto.getDisplayName());
-        user.setEmail(dto.getEmail());
+        user.setEmail(normalizedEmail);
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setIsArtist(dto.getIsArtist());
 
