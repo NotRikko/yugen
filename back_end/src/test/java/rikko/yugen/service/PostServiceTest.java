@@ -66,7 +66,7 @@ class PostServiceTest {
         user.setId(1L);
         user.setUsername("Rikko");
         user.setIsArtist(true);
-        user.setRole(Role.USER);
+        user.setRole(Role.ARTIST);
 
         artist = new Artist();
         artist.setId(1L);
@@ -78,6 +78,7 @@ class PostServiceTest {
         post1.setId(1L);
         post1.setContent("Post 1");
         post1.setArtist(artist);
+
 
         post2 = new Post();
         post2.setId(2L);
@@ -166,8 +167,6 @@ class PostServiceTest {
 
         @Test
         void createPost_shouldReturnPostDTO() {
-            user.setRole(Role.ARTIST);
-
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
             when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
 
@@ -195,11 +194,10 @@ class PostServiceTest {
         void updatePost_shouldUpdateContentAndSave() {
             Post existingPost = post1;
 
-            user.setRole(Role.ARTIST);
-
             PostUpdateDTO dto = createPostUpdateDTO("New");
 
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
+            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
             when(postRepository.findById(1L)).thenReturn(Optional.of(existingPost));
             when(postRepository.save(any(Post.class))).thenAnswer(i -> i.getArgument(0));
 
@@ -220,6 +218,7 @@ class PostServiceTest {
             otherUser.setArtist(otherArtist);
 
             when(currentUserHelper.getCurrentUser()).thenReturn(otherUser);
+            when(artistRepository.findByUserId(otherUser.getId())).thenReturn(Optional.of(otherArtist));
             when(postRepository.findById(1L)).thenReturn(Optional.of(existingPost));
 
             assertThrows(AccessDeniedException.class, () ->
@@ -243,6 +242,7 @@ class PostServiceTest {
 
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
             when(postRepository.findById(1L)).thenReturn(Optional.of(existingPost));
+            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
 
             PostDTO resultNull = postService.updatePost(1L, new PostUpdateDTO());
             assertEquals("Post 1", resultNull.content());
@@ -263,15 +263,13 @@ class PostServiceTest {
 
         @Test
         void deletePost_shouldDelete_whenOwner() {
-            Post mockPost = new Post();
-            mockPost.setArtist(artist);
-
-            when(postRepository.findById(1L)).thenReturn(Optional.of(mockPost));
+            when(postRepository.findById(1L)).thenReturn(Optional.of(post1));
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
+            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
 
             postService.deletePost(1L);
 
-            verify(postRepository).delete(mockPost);
+            verify(postRepository).delete(post1);
         }
 
         @Test
@@ -281,11 +279,8 @@ class PostServiceTest {
             Artist otherArtist = new Artist();
             otherArtist.setUser(otherUser);
 
-            Post mockPost = new Post();
-            mockPost.setArtist(otherArtist);
-
-            when(postRepository.findById(1L)).thenReturn(Optional.of(mockPost));
-            when(currentUserHelper.getCurrentUser()).thenReturn(user);
+            when(postRepository.findById(1L)).thenReturn(Optional.of(post1));
+            when(currentUserHelper.getCurrentUser()).thenReturn(otherUser);
 
             assertThrows(AccessDeniedException.class, () -> postService.deletePost(1L));
             verify(postRepository, never()).delete(any());
