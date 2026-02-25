@@ -318,7 +318,7 @@ class PostIntegrationTest {
     // Post likes get tests
 
     @Test
-    void toggleLike_returns200_andPostLikeResponseDTO() {
+    void likePost_returns200_andPostLikeResponseDTO() {
         String token = getToken(user, Role.USER);
 
         HttpHeaders headers = new HttpHeaders();
@@ -326,7 +326,7 @@ class PostIntegrationTest {
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
         ResponseEntity<PostLikeResponseDTO> response = restTemplate.exchange(
-                "/posts/" + savedPost.getId() + "/like",
+                "/posts/" + savedPost.getId() + "/likes",
                 HttpMethod.POST,
                 request,
                 PostLikeResponseDTO.class
@@ -341,7 +341,7 @@ class PostIntegrationTest {
     }
 
     @Test
-    void toggleLike_returns200_andPostLikeResponseDTO_unlike() {
+    void unlikePost_returns200_andPostLikeResponseDTO() {
         String token = getToken(user, Role.USER);
 
         HttpHeaders headers = new HttpHeaders();
@@ -349,15 +349,15 @@ class PostIntegrationTest {
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
         restTemplate.exchange(
-                "/posts/" + savedPost.getId() + "/like",
+                "/posts/" + savedPost.getId() + "/likes",
                 HttpMethod.POST,
                 request,
                 PostLikeResponseDTO.class
         );
 
         ResponseEntity<PostLikeResponseDTO> response = restTemplate.exchange(
-                "/posts/" + savedPost.getId() + "/like",
-                HttpMethod.POST,
+                "/posts/" + savedPost.getId() + "/likes",
+                HttpMethod.DELETE,
                 request,
                 PostLikeResponseDTO.class
         );
