@@ -20,6 +20,7 @@ import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Artist;
 import rikko.yugen.model.Post;
+import rikko.yugen.model.Role;
 import rikko.yugen.model.User;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.PostRepository;
@@ -164,6 +165,8 @@ class PostServiceTest {
 
         @Test
         void createPost_shouldReturnPostDTO() {
+            user.setRole(Role.ARTIST);
+
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
             when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
 
@@ -188,13 +191,14 @@ class PostServiceTest {
     class UpdatePostTests {
 
         @Test
-        void updatePost_shouldUpdateContent() {
-            Post existingPost = new Post();
-            existingPost.setId(1L);
-            existingPost.setContent("Old");
+        void updatePost_shouldUpdateContentAndSave() {
+            Post existingPost = post1;
+
+            user.setRole(Role.ARTIST);
 
             PostUpdateDTO dto = createPostUpdateDTO("New");
 
+            when(currentUserHelper.getCurrentUser()).thenReturn(user);
             when(postRepository.findById(1L)).thenReturn(Optional.of(existingPost));
             when(postRepository.save(any(Post.class))).thenAnswer(i -> i.getArgument(0));
 
@@ -211,16 +215,22 @@ class PostServiceTest {
         }
 
         @Test
-        void updatePost_shouldNotSave_whenContentNull() {
-            Post existingPost = new Post();
-            existingPost.setId(1L);
-            existingPost.setContent("Old");
+        void updatePost_shouldNotSave_whenContentNullOrBlank() {
+            Post existingPost = post1;
 
+            user.setRole(Role.ARTIST);
+
+            when(currentUserHelper.getCurrentUser()).thenReturn(user);
             when(postRepository.findById(1L)).thenReturn(Optional.of(existingPost));
 
-            PostDTO result = postService.updatePost(1L, new PostUpdateDTO());
+            PostDTO resultNull = postService.updatePost(1L, new PostUpdateDTO());
+            assertEquals("Post 1", resultNull.content());
 
-            assertEquals("Old", result.content());
+            PostUpdateDTO dtoBlank = new PostUpdateDTO();
+            dtoBlank.setContent("   ");
+            PostDTO resultBlank = postService.updatePost(1L, dtoBlank);
+            assertEquals("Post 1", resultBlank.content());
+
             verify(postRepository, never()).save(any());
         }
     }
