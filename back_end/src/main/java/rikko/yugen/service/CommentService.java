@@ -54,7 +54,7 @@ public class CommentService {
     @Transactional(readOnly = true)
     public Page<CommentDTO> getCurrentUserComments(Pageable pageable) {
         User currentUser = currentUserHelper.getCurrentUser();
-        return commentRepository.findByUserId(currentUser.getId(), PageRequest.of(0, 10))
+        return commentRepository.findByUserId(currentUser.getId(), pageable)
                 .map(CommentDTO::new);
     }
 
