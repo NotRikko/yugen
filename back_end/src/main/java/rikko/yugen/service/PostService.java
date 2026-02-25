@@ -116,6 +116,7 @@ public class PostService {
 
         if (dto.getContent() != null && !dto.getContent().isBlank()) {
             post.setContent(dto.getContent());
+            postRepository.save(post);
         }
 
         return new PostDTO(post);
