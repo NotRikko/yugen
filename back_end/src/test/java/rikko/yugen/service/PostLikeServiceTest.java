@@ -8,6 +8,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rikko.yugen.dto.like.PostLikeDTO;
+import rikko.yugen.dto.like.PostLikeResponse;
+import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Post;
 import rikko.yugen.model.PostLike;
@@ -94,6 +96,7 @@ class PostLikeServiceTest {
 
     @Nested
     class toggleLikeTests {
+
         @Test
         void toggleLike_shouldAddLikeIfNotPresent() {
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
@@ -102,9 +105,10 @@ class PostLikeServiceTest {
             when(postLikeRepository.countByPost(post)).thenReturn(1);
             when(postLikeRepository.save(any(PostLike.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-            int count = postLikeService.toggleLike(1L);
+            PostLikeResponse response = postLikeService.toggleLikeAndReturnResponse(1L);
 
-            assertEquals(1, count);
+            assertEquals(1, response.likes());
+            assertTrue(response.likedByCurrentUser());
             verify(postLikeRepository, times(1)).save(any(PostLike.class));
         }
 
@@ -115,9 +119,10 @@ class PostLikeServiceTest {
             when(postLikeRepository.findByUserAndPost(user, post)).thenReturn(Optional.of(postLike));
             when(postLikeRepository.countByPost(post)).thenReturn(0);
 
-            int count = postLikeService.toggleLike(1L);
+            PostLikeResponse response = postLikeService.toggleLikeAndReturnResponse(1L);
 
-            assertEquals(0, count);
+            assertEquals(0, response.likes());
+            assertFalse(response.likedByCurrentUser());
             verify(postLikeRepository, times(1)).delete(postLike);
         }
 
@@ -126,7 +131,8 @@ class PostLikeServiceTest {
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
             when(postRepository.findById(1L)).thenReturn(Optional.empty());
 
-            assertThrows(RuntimeException.class, () -> postLikeService.toggleLike(1L));
+            assertThrows(ResourceNotFoundException.class,
+                    () -> postLikeService.toggleLikeAndReturnResponse(1L));
         }
     }
 }
