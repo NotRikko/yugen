@@ -8,7 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rikko.yugen.dto.like.PostLikeDTO;
-import rikko.yugen.dto.like.PostLikeResponse;
+import rikko.yugen.dto.like.PostLikeResponseDTO;
 import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Post;
@@ -105,7 +105,7 @@ class PostLikeServiceTest {
             when(postLikeRepository.countByPost(post)).thenReturn(1);
             when(postLikeRepository.save(any(PostLike.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-            PostLikeResponse response = postLikeService.toggleLikeAndReturnResponse(1L);
+            PostLikeResponseDTO response = postLikeService.toggleLikeAndReturnResponse(1L);
 
             assertEquals(1, response.likes());
             assertTrue(response.likedByCurrentUser());
@@ -119,7 +119,7 @@ class PostLikeServiceTest {
             when(postLikeRepository.findByUserAndPost(user, post)).thenReturn(Optional.of(postLike));
             when(postLikeRepository.countByPost(post)).thenReturn(0);
 
-            PostLikeResponse response = postLikeService.toggleLikeAndReturnResponse(1L);
+            PostLikeResponseDTO response = postLikeService.toggleLikeAndReturnResponse(1L);
 
             assertEquals(0, response.likes());
             assertFalse(response.likedByCurrentUser());
