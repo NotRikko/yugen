@@ -39,13 +39,19 @@ public class SecurityConfiguration {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                         .requestMatchers("/error").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/posts/**", "/feed/**", "/artists/**", "/follow/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,
+                                "/products/**",
+                                "/posts/**",
+                                "/feed/**",
+                                "/artists/**",
+                                "/follow/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/posts/**").hasAnyRole("ADMIN", "ARTIST")
+                        .requestMatchers(HttpMethod.PUT, "/posts/**").hasAnyRole("ADMIN", "ARTIST")
+                        .requestMatchers(HttpMethod.DELETE, "/posts/**").hasAnyRole("ADMIN", "ARTIST")
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)
