@@ -1,6 +1,6 @@
 package rikko.yugen.dto.like;
 
-public record PostLikeResponse(
+public record PostLikeResponseDTO(
         int likes,
         boolean likedByCurrentUser
 ) {}
