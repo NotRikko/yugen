@@ -134,6 +134,12 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
+        User currentUser = currentUserHelper.getCurrentUser();
+        Artist currentArtist = currentUser.getArtist();
+        if (currentArtist == null || !product.getArtist().getId().equals(currentArtist.getId())) {
+            throw new AccessDeniedException("Only the owner artist can update this product");
+        }
+
         if (productUpdateDTO.getName() != null) product.setName(productUpdateDTO.getName());
         if (productUpdateDTO.getDescription() != null) product.setDescription(productUpdateDTO.getDescription());
         if (productUpdateDTO.getPrice() != null) product.setPrice(productUpdateDTO.getPrice());
