@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import rikko.yugen.dto.like.PostLikeDTO;
-import rikko.yugen.dto.like.PostLikeResponse;
+import rikko.yugen.dto.like.PostLikeResponseDTO;
 import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Post;
@@ -47,7 +47,7 @@ public class PostLikeService {
     // Write
 
     @Transactional
-    public PostLikeResponse toggleLikeAndReturnResponse(Long postId) {
+    public PostLikeResponseDTO toggleLikeAndReturnResponse(Long postId) {
         User currentUser = currentUserHelper.getCurrentUser();
         Post post = getPostOrThrow(postId);
 
@@ -67,7 +67,7 @@ public class PostLikeService {
 
         int updatedCount = getLikeCountForPost(postId);
 
-        return new PostLikeResponse(updatedCount, likedNow);
+        return new PostLikeResponseDTO(updatedCount, likedNow);
     }
 
     // Helpers
