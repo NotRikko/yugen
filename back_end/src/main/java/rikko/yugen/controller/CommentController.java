@@ -4,6 +4,10 @@ import jakarta.validation.Valid;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +18,8 @@ import rikko.yugen.dto.comment.CommentDTO;
 import rikko.yugen.dto.comment.CommentUpdateDTO;
 import rikko.yugen.service.CommentLikeService;
 import rikko.yugen.service.CommentService;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "${frontend.url}")
@@ -48,4 +54,17 @@ public class CommentController {
     public ResponseEntity<?> toggleLike(@PathVariable Long commentId) {
        return ResponseEntity.ok(commentLikeService.toggleLikeAndReturnResponse(commentId));
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<Page<CommentDTO>> getCommentsByUserId(@PathVariable Long userId,
+                                                                @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(commentService.getCommentsByUserId(userId, pageable));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<Page<CommentDTO>> getCurrentUserComments(@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(commentService.getCurrentUserComments(pageable));
+    }
+
+
 }
