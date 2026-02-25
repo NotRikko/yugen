@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,7 +59,8 @@ public class PostController {
         return ResponseEntity.ok(commentService.getCommentsByPostId(postId, pageable));
     }
 
-    @PostMapping(value = "/create", consumes = {"multipart/form-data"})
+    @PostMapping(value = "", consumes = {"multipart/form-data"})
+    @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<PostDTO> createPost(
             @RequestPart("post") PostCreateDTO postCreateDTO,
             @RequestPart(value = "files", required = false) List<MultipartFile> files) {
