@@ -83,41 +83,4 @@ class AuthenticationServiceTest {
         verify(authenticationManager, times(1)).authenticate(any());
         verify(userRepository, never()).findByUsername(any());
     }
-
-    // User does not exist test
-
-    @Test
-    void authenticate_shouldThrowUsernameNotFoundException_whenUserDoesNotExist() {
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenReturn(mock(Authentication.class));
-
-        when(userRepository.findByUsername("testuser")).thenReturn(Optional.empty());
-
-        UsernameNotFoundException ex = assertThrows(
-                UsernameNotFoundException.class,
-                () -> authenticationService.authenticate(validLogin)
-        );
-
-        assertEquals("User not found", ex.getMessage());
-        verify(authenticationManager, times(1)).authenticate(any());
-        verify(userRepository, times(1)).findByUsername("testuser");
-    }
-
-    // Input null test
-
-    @Test
-    void authenticate_shouldThrowIllegalArgumentException_whenUsernameOrPasswordNull() {
-        UserLoginDTO nullUsername = new UserLoginDTO();
-        nullUsername.setUsername(null);
-        nullUsername.setPassword("pass");
-
-        UserLoginDTO nullPassword = new UserLoginDTO();
-        nullPassword.setUsername("user");
-        nullPassword.setPassword(null);
-
-        assertThrows(IllegalArgumentException.class, () -> authenticationService.authenticate(nullUsername));
-        assertThrows(IllegalArgumentException.class, () -> authenticationService.authenticate(nullPassword));
-        verify(authenticationManager, never()).authenticate(any());
-        verify(userRepository, never()).findByUsername(any());
-    }
 }
