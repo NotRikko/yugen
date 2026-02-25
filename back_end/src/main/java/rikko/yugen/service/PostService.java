@@ -108,9 +108,14 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
 
-        if (dto.getContent() != null) {
+        User currentUser = currentUserHelper.getCurrentUser();
+        Artist currentArtist = currentUser.getArtist();
+        if (currentArtist == null || !post.getArtist().getId().equals(currentArtist.getId())) {
+            throw new AccessDeniedException("Only the owner artist can update this post");
+        }
+
+        if (dto.getContent() != null && !dto.getContent().isBlank()) {
             post.setContent(dto.getContent());
-            postRepository.save(post);
         }
 
         return new PostDTO(post);
