@@ -53,6 +53,11 @@ public class PostController {
         );
     }
 
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostDTO> getPostById(@PathVariable Long postId) {
+        return ResponseEntity.ok(postService.getPostById(postId));
+    }
+
     @GetMapping("/{postId}/comments")
     public ResponseEntity<Page<CommentDTO>> getComments(@PathVariable Long postId
     , @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC)Pageable pageable) {
