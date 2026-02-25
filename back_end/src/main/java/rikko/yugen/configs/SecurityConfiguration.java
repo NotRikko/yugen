@@ -45,13 +45,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                         .requestMatchers("/error").permitAll()
-
-                        .requestMatchers(HttpMethod.GET,
-                                "/feed/global",
-                                "/artists/**",
-                                "/follow/artist/*/followers",
-                                "/follow/user/*/following"
-                        ).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/posts/**", "/feed/**", "/artists/**", "/follow/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)
