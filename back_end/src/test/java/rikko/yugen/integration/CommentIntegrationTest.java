@@ -163,6 +163,7 @@ class CommentIntegrationTest {
         );
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertNotNull(response.getBody());
         Assertions.assertEquals("Updated comment", response.getBody().content());
     }
 
