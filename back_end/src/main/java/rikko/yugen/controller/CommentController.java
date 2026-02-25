@@ -19,8 +19,6 @@ import rikko.yugen.dto.comment.CommentUpdateDTO;
 import rikko.yugen.service.CommentLikeService;
 import rikko.yugen.service.CommentService;
 
-import java.util.List;
-
 @RestController
 @CrossOrigin(origins = "${frontend.url}")
 @RequestMapping("/comments")
