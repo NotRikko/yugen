@@ -46,8 +46,28 @@ public class PostLikeService {
 
     // Write
 
-    @Transactional
-    public PostLikeResponseDTO toggleLikeAndReturnResponse(Long postId) {
+    public PostLikeResponseDTO likePost(Long postId) {
+        User currentUser = currentUserHelper.getCurrentUser();
+        Post post = getPostOrThrow(postId);
+
+        boolean likedNow;
+        Optional<PostLike> existingLike = postLikeRepository.findByUserAndPost(currentUser, post);
+
+        if (existingLike.isPresent()) {
+            likedNow = true;
+        } else {
+            PostLike like = new PostLike();
+            like.setUser(currentUser);
+            like.setPost(post);
+            postLikeRepository.save(like);
+            likedNow = true;
+        }
+
+        int updatedCount = getLikeCountForPost(postId);
+        return new PostLikeResponseDTO(updatedCount, likedNow);
+    }
+
+    public PostLikeResponseDTO unlikePost(Long postId) {
         User currentUser = currentUserHelper.getCurrentUser();
         Post post = getPostOrThrow(postId);
 
@@ -58,15 +78,10 @@ public class PostLikeService {
             postLikeRepository.delete(existingLike.get());
             likedNow = false;
         } else {
-            PostLike like = new PostLike();
-            like.setUser(currentUser);
-            like.setPost(post);
-            postLikeRepository.save(like);
-            likedNow = true;
+            likedNow = false;
         }
 
         int updatedCount = getLikeCountForPost(postId);
-
         return new PostLikeResponseDTO(updatedCount, likedNow);
     }
 
