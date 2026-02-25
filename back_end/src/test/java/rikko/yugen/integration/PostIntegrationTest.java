@@ -16,6 +16,8 @@ import org.springframework.util.MultiValueMap;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+import rikko.yugen.dto.like.PostLikeDTO;
+import rikko.yugen.dto.like.PostLikeResponseDTO;
 import rikko.yugen.dto.post.PostCreateDTO;
 import rikko.yugen.dto.post.PostDTO;
 import rikko.yugen.dto.post.PostUpdateDTO;
@@ -317,24 +319,56 @@ class PostIntegrationTest {
     // Post likes get tests
 
     @Test
-    void toggleLike_returns200_andLikesCount() {
+    void toggleLike_returns200_andPostLikeResponseDTO() {
         String token = getToken(user, Role.USER);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(token);
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
-        ResponseEntity<Map<String, Integer>> response = restTemplate.exchange(
+        ResponseEntity<PostLikeResponseDTO> response = restTemplate.exchange(
                 "/posts/" + savedPost.getId() + "/like",
                 HttpMethod.POST,
                 request,
-                new ParameterizedTypeReference<>() {
-                }
+                PostLikeResponseDTO.class
         );
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertNotNull(response.getBody());
-        Assertions.assertTrue(response.getBody().containsKey("likes"));
+        PostLikeResponseDTO body = response.getBody();
+        Assertions.assertNotNull(body);
+
+        Assertions.assertTrue(body.likedByCurrentUser());
+        Assertions.assertEquals(1, body.likes());
+    }
+
+    @Test
+    void toggleLike_returns200_andPostLikeResponseDTO_unlike() {
+        String token = getToken(user, Role.USER);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+
+        restTemplate.exchange(
+                "/posts/" + savedPost.getId() + "/like",
+                HttpMethod.POST,
+                request,
+                PostLikeResponseDTO.class
+        );
+
+        ResponseEntity<PostLikeResponseDTO> response = restTemplate.exchange(
+                "/posts/" + savedPost.getId() + "/like",
+                HttpMethod.POST,
+                request,
+                PostLikeResponseDTO.class
+        );
+
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        PostLikeResponseDTO body = response.getBody();
+        Assertions.assertNotNull(body);
+
+        Assertions.assertFalse(body.likedByCurrentUser());
+        Assertions.assertEquals(0, body.likes());
     }
 
     // Comments get test
