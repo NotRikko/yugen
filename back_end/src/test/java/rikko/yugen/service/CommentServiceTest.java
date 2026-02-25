@@ -22,6 +22,7 @@ import rikko.yugen.model.Post;
 import rikko.yugen.model.User;
 import rikko.yugen.repository.CommentRepository;
 import rikko.yugen.repository.PostRepository;
+import rikko.yugen.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +40,9 @@ class CommentServiceTest {
 
     @Mock
     private PostRepository postRepository;
+
+    @Mock
+    private UserRepository userRepository;
 
     @Mock
     private CurrentUserHelper currentUserHelper;
@@ -92,6 +96,27 @@ class CommentServiceTest {
 
             assertThrows(ResourceNotFoundException.class,
                     () -> commentService.getCommentsByPostId(1L, pageable));
+        }
+
+        @Test
+        void getCommentsByUserId_shouldReturnPage() {
+            Pageable pageable = PageRequest.of(0, 10);
+            Page<Comment> page = new PageImpl<>(List.of(mockComment));
+            when(userRepository.existsById(1L)).thenReturn(true);
+            when(commentRepository.findByUserId(1L, pageable)).thenReturn(page);
+
+            Page<CommentDTO> result = commentService.getCommentsByUserId(1L, pageable);
+            assertEquals(1, result.getTotalElements());
+            assertEquals("Hello world", result.getContent().get(0).content());
+        }
+
+        @Test
+        void getCommentsByUserId_shouldThrow_whenUserDoesNotExist() {
+            Pageable pageable = PageRequest.of(0, 10);
+            when(userRepository.existsById(1L)).thenReturn(false);
+
+            assertThrows(ResourceNotFoundException.class,
+                    () -> commentService.getCommentsByUserId(1L, pageable));
         }
     }
 
