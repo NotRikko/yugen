@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rikko.yugen.dto.like.CommentLikeDTO;
+import rikko.yugen.dto.like.CommentLikeResponseDTO;
 import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.*;
@@ -42,23 +43,27 @@ public class CommentLikeService {
     // Write
 
     @Transactional
-    public int toggleLike(Long commentId) {
+    public CommentLikeResponseDTO toggleLikeAndReturnResponse(Long commentId) {
         User currentUser = currentUserHelper.getCurrentUser();
         Comment comment = getCommentOrThrow(commentId);
 
-        Optional<CommentLike> existingLike = commentLikeRepository
-                .findByUserAndComment(currentUser, comment);
+        Optional<CommentLike> existingLike =commentLikeRepository.findByUserAndComment(currentUser, comment);
 
+        boolean likedNow;
         if (existingLike.isPresent()) {
             commentLikeRepository.delete(existingLike.get());
+            likedNow = false;
         } else {
             CommentLike like = new CommentLike();
             like.setUser(currentUser);
             like.setComment(comment);
             commentLikeRepository.save(like);
+            likedNow = true;
         }
 
-        return getLikeCountForComment(commentId);
+        int updatedCount = getLikeCountForComment(commentId);
+
+        return new CommentLikeResponseDTO(updatedCount, likedNow);
     }
 
     // Helpers
