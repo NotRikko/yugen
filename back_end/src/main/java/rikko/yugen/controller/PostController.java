@@ -61,7 +61,7 @@ public class PostController {
         return ResponseEntity.ok(commentService.getCommentsByPostId(postId, pageable));
     }
 
-    @PostMapping(value = "", consumes = {"multipart/form-data"})
+    @PostMapping(consumes = {"multipart/form-data"})
     @PreAuthorize("hasRole('ADMIN') or hasRole('ARTIST')")
     public ResponseEntity<PostDTO> createPost(
             @RequestPart("post") PostCreateDTO postCreateDTO,
