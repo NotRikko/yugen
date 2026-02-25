@@ -62,7 +62,7 @@ public class PostController {
     }
 
     @PostMapping(value = "", consumes = {"multipart/form-data"})
-    @PreAuthorize("hasRole('ARTIST')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ARTIST')")
     public ResponseEntity<PostDTO> createPost(
             @RequestPart("post") PostCreateDTO postCreateDTO,
             @RequestPart(value = "files", required = false) List<MultipartFile> files) {
@@ -76,7 +76,7 @@ public class PostController {
     }
 
     @PutMapping("/{postId}")
-    @PreAuthorize("hasRole('ARTIST')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ARTIST')")
     public ResponseEntity<PostDTO> updatePost(
             @PathVariable Long postId,
             @RequestBody PostUpdateDTO postUpdateDTO) {
@@ -85,6 +85,7 @@ public class PostController {
 
 
     @DeleteMapping("/{postId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ARTIST')")
     public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
         return ResponseEntity.noContent().build();
