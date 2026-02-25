@@ -98,14 +98,14 @@ class PostLikeServiceTest {
     class toggleLikeTests {
 
         @Test
-        void toggleLike_shouldAddLikeIfNotPresent() {
+        void likePost_shouldAddLikeIfNotPresent() {
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
             when(postRepository.findById(1L)).thenReturn(Optional.of(post));
             when(postLikeRepository.findByUserAndPost(user, post)).thenReturn(Optional.empty());
             when(postLikeRepository.countByPost(post)).thenReturn(1);
             when(postLikeRepository.save(any(PostLike.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-            PostLikeResponseDTO response = postLikeService.toggleLikeAndReturnResponse(1L);
+            PostLikeResponseDTO response = postLikeService.likePost(1L);
 
             assertEquals(1, response.likes());
             assertTrue(response.likedByCurrentUser());
@@ -113,13 +113,28 @@ class PostLikeServiceTest {
         }
 
         @Test
-        void toggleLike_shouldRemoveLikeIfPresent() {
+        void likePost_shouldDoNothingIfAlreadyLiked() {
+            when(currentUserHelper.getCurrentUser()).thenReturn(user);
+            when(postRepository.findById(1L)).thenReturn(Optional.of(post));
+            when(postLikeRepository.findByUserAndPost(user, post)).thenReturn(Optional.of(postLike));
+            when(postLikeRepository.countByPost(post)).thenReturn(1);
+
+            PostLikeResponseDTO response = postLikeService.likePost(1L);
+
+            assertEquals(1, response.likes());
+            assertTrue(response.likedByCurrentUser());
+            verify(postLikeRepository, never()).save(any());
+        }
+
+        // ---------------------- unlikePost ----------------------
+        @Test
+        void unlikePost_shouldRemoveLikeIfPresent() {
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
             when(postRepository.findById(1L)).thenReturn(Optional.of(post));
             when(postLikeRepository.findByUserAndPost(user, post)).thenReturn(Optional.of(postLike));
             when(postLikeRepository.countByPost(post)).thenReturn(0);
 
-            PostLikeResponseDTO response = postLikeService.toggleLikeAndReturnResponse(1L);
+            PostLikeResponseDTO response = postLikeService.unlikePost(1L);
 
             assertEquals(0, response.likes());
             assertFalse(response.likedByCurrentUser());
@@ -127,12 +142,36 @@ class PostLikeServiceTest {
         }
 
         @Test
-        void toggleLike_shouldThrowIfPostNotFound() {
+        void unlikePost_shouldDoNothingIfNotLiked() {
+            when(currentUserHelper.getCurrentUser()).thenReturn(user);
+            when(postRepository.findById(1L)).thenReturn(Optional.of(post));
+            when(postLikeRepository.findByUserAndPost(user, post)).thenReturn(Optional.empty());
+            when(postLikeRepository.countByPost(post)).thenReturn(0);
+
+            PostLikeResponseDTO response = postLikeService.unlikePost(1L);
+
+            assertEquals(0, response.likes());
+            assertFalse(response.likedByCurrentUser());
+            verify(postLikeRepository, never()).delete(any());
+        }
+
+        // ---------------------- Post Not Found ----------------------
+        @Test
+        void likePost_shouldThrowIfPostNotFound() {
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
             when(postRepository.findById(1L)).thenReturn(Optional.empty());
 
             assertThrows(ResourceNotFoundException.class,
-                    () -> postLikeService.toggleLikeAndReturnResponse(1L));
+                    () -> postLikeService.likePost(1L));
+        }
+
+        @Test
+        void unlikePost_shouldThrowIfPostNotFound() {
+            when(currentUserHelper.getCurrentUser()).thenReturn(user);
+            when(postRepository.findById(1L)).thenReturn(Optional.empty());
+
+            assertThrows(ResourceNotFoundException.class,
+                    () -> postLikeService.unlikePost(1L));
         }
     }
 }
