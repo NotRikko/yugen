@@ -106,8 +106,10 @@ public class PostService {
 
         User currentUser = currentUserHelper.getCurrentUser();
 
-        Artist currentArtist = currentUser.getArtist();
-        if (currentArtist == null || !post.getArtist().getId().equals(currentArtist.getId())) {
+        Artist currentArtist = artistRepository.findByUserId(currentUser.getId())
+                .orElseThrow(() -> new AccessDeniedException("Only artists can update posts"));
+
+        if (!post.getArtist().getId().equals(currentArtist.getId())) {
             throw new AccessDeniedException("Only the owner artist can update this post");
         }
 
@@ -128,7 +130,10 @@ public class PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
 
-        if (!post.getArtist().getUser().getId().equals(currentUser.getId())) {
+        Artist currentArtist = artistRepository.findByUserId(currentUser.getId())
+                .orElseThrow(() -> new AccessDeniedException("Only artists can delete posts"));
+
+        if (!post.getArtist().getId().equals(currentArtist.getId())) {
             throw new AccessDeniedException("You are not allowed to delete this post");
         }
 
