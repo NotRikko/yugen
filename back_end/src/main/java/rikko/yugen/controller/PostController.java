@@ -70,9 +70,16 @@ public class PostController {
         return ResponseEntity.status(HttpStatus.CREATED).body(postDTO);
     }
 
-    @PostMapping("/{postId}/like")
-    public ResponseEntity<PostLikeResponseDTO> toggleLike(@PathVariable Long postId) {
-        return ResponseEntity.ok(postLikeService.toggleLikeAndReturnResponse(postId));
+    @PostMapping("/{postId}/likes")
+    @PreAuthorize("hasAnyRole('USER','ARTIST','ADMIN')")
+    public ResponseEntity<PostLikeResponseDTO> likePost(@PathVariable Long postId) {
+        return ResponseEntity.ok(postLikeService.likePost(postId));
+    }
+
+    @DeleteMapping("/{postId}/likes")
+    @PreAuthorize("hasAnyRole('USER','ARTIST','ADMIN')")
+    public ResponseEntity<PostLikeResponseDTO> unlikePost(@PathVariable Long postId) {
+        return ResponseEntity.ok(postLikeService.unlikePost(postId));
     }
 
     @PutMapping("/{postId}")
