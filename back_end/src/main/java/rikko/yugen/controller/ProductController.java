@@ -3,6 +3,7 @@ package rikko.yugen.controller;
 import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,6 +30,7 @@ public class ProductController {
     }
 
     @PostMapping(value = "/", consumes = {"multipart/form-data"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ARTIST')")
     public ResponseEntity<ProductDTO> createProduct(
             @RequestPart("product") ProductCreateDTO productCreateDTO,
             @RequestPart(value = "files", required = false) List<MultipartFile> files
@@ -38,6 +40,7 @@ public class ProductController {
     }
 
     @PutMapping(value = "/{productId}", consumes = {"multipart/form-data"})
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ARTIST')")
     public ResponseEntity<ProductDTO> updateProduct(
             @PathVariable Long productId,
             @RequestPart("product")ProductUpdateDTO productUpdateDTO,
@@ -48,6 +51,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{productId}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('ARTIST')")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
         return ResponseEntity.noContent().build();
