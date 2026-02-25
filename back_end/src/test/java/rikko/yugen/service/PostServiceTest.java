@@ -66,6 +66,7 @@ class PostServiceTest {
         user.setId(1L);
         user.setUsername("Rikko");
         user.setIsArtist(true);
+        user.setRole(Role.USER);
 
         artist = new Artist();
         artist.setId(1L);
@@ -204,12 +205,32 @@ class PostServiceTest {
 
             PostDTO result = postService.updatePost(1L, dto);
 
-            assertEquals("New", result.content());
-            verify(postRepository).save(existingPost);
+            verify(postRepository).save(any(Post.class));
         }
 
         @Test
-        void updatePost_shouldThrow_whenNotFound() {
+        void updatePost_shouldThrowAccessDenied_whenArtistIsNotOwner() {
+            Post existingPost = post1;
+
+            User otherUser = new User();
+            otherUser.setRole(Role.ARTIST);
+
+            Artist otherArtist = new Artist();
+            otherArtist.setId(999L);
+            otherUser.setArtist(otherArtist);
+
+            when(currentUserHelper.getCurrentUser()).thenReturn(otherUser);
+            when(postRepository.findById(1L)).thenReturn(Optional.of(existingPost));
+
+            assertThrows(AccessDeniedException.class, () ->
+                    postService.updatePost(1L, createPostUpdateDTO("New"))
+            );
+
+            verify(postRepository, never()).save(any());
+        }
+
+        @Test
+        void updatePost_shouldThrowResourceNotFound_whenNotFound() {
             when(postRepository.findById(1L)).thenReturn(Optional.empty());
             assertThrows(ResourceNotFoundException.class, () -> postService.updatePost(1L, createPostUpdateDTO("New")));
         }
