@@ -75,10 +75,6 @@ public class PostService {
     public PostDTO createPost(PostCreateDTO dto, List<MultipartFile> files) {
         User currentUser = currentUserHelper.getCurrentUser();
 
-        if (!"ARTIST".equals(currentUser.getRole().name())) {
-            throw new AccessDeniedException("Only artists can create posts");
-        }
-
         Artist artist = artistRepository.findByUserId(currentUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Artist", "userId", currentUser.getId()));
 
@@ -109,6 +105,7 @@ public class PostService {
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
 
         User currentUser = currentUserHelper.getCurrentUser();
+
         Artist currentArtist = currentUser.getArtist();
         if (currentArtist == null || !post.getArtist().getId().equals(currentArtist.getId())) {
             throw new AccessDeniedException("Only the owner artist can update this post");
