@@ -27,6 +27,7 @@ import rikko.yugen.repository.ProductRepository;
 import rikko.yugen.repository.SeriesRepository;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -226,6 +227,9 @@ class ProductServiceTest {
 
         @Test
         void updateProduct_shouldUpdateFieldsAndImages() {
+            when(currentUserHelper.getCurrentUser()).thenReturn(user);
+            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
+
             product1.setDescription("Old Desc");
             product1.setPrice(10F);
             product1.setQuantityInStock(5);
@@ -255,6 +259,79 @@ class ProductServiceTest {
             assertEquals(1, result.collectionIds().size());
             verify(imageService).deleteImage(2L);
         }
+
+        @Test
+        void updateProduct_shouldThrowAccessDenied_whenUserDoesNotOwnProduct() {
+            User otherUser = new User();
+            otherUser.setId(2L);
+
+            Artist otherArtist = new Artist();
+            otherArtist.setUser(otherUser);
+            otherArtist.setId(99L);
+
+            Product product = new Product();
+            product.setId(1L);
+            product.setArtist(otherArtist);
+
+            when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+            when(currentUserHelper.getCurrentUser()).thenReturn(user);
+            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
+
+            ProductUpdateDTO dto = new ProductUpdateDTO();
+            dto.setName("Should Fail");
+
+            assertThrows(AccessDeniedException.class,
+                    () -> productService.updateProduct(1L, dto, null));
+
+            verify(productRepository, never()).save(any());
+        }
+
+        @Test
+        void updateProduct_shouldUploadNewFilesAndDeleteOldImages() throws Exception {
+            when(currentUserHelper.getCurrentUser()).thenReturn(user);
+            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
+
+            product1.setImages(new ArrayList<>(List.of(image1, image2)));
+            when(productRepository.findById(1L)).thenReturn(Optional.of(product1));
+            when(productRepository.save(any(Product.class))).thenAnswer(i -> i.getArgument(0));
+
+            MultipartFile file1 = mock(MultipartFile.class);
+            MultipartFile file2 = mock(MultipartFile.class);
+            List<MultipartFile> newFiles = List.of(file1, file2);
+
+            when(cloudinaryService.uploadImage(file1)).thenReturn("newUrl1");
+            when(cloudinaryService.uploadImage(file2)).thenReturn("newUrl2");
+
+            doNothing().when(imageService).deleteImage(anyLong());
+
+            doAnswer(invocation -> {
+                String url = invocation.getArgument(0);
+                Product product = invocation.getArgument(1);
+                Image img = new Image();
+                img.setUrl(url);
+                product.getImages().add(img);
+                return null;
+            }).when(imageService).createImageForProduct(anyString(), any(Product.class));
+
+            ProductUpdateDTO dto = new ProductUpdateDTO();
+            dto.setExistingImageIds(Set.of(1L)); // keep first image
+
+            ProductDTO result = productService.updateProduct(1L, dto, newFiles);
+
+            verify(imageService).deleteImage(2L);
+
+            verify(cloudinaryService).uploadImage(file1);
+            verify(cloudinaryService).uploadImage(file2);
+
+            verify(imageService).createImageForProduct("newUrl1", product1);
+            verify(imageService).createImageForProduct("newUrl2", product1);
+
+            Set<String> imageUrls = result.imageUrls();
+            assertEquals(3, imageUrls.size());
+            assertTrue(imageUrls.contains(image1.getUrl()));
+            assertTrue(imageUrls.contains("newUrl1"));
+            assertTrue(imageUrls.contains("newUrl2"));
+        }
     }
 
     // Delete product tests
@@ -265,6 +342,7 @@ class ProductServiceTest {
         @Test
         void deleteProduct_shouldDeleteProductAndImagesWhenUserOwnsProduct() {
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
+            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
 
             Product product = new Product();
             product.setArtist(artist);
@@ -282,17 +360,23 @@ class ProductServiceTest {
 
         @Test
         void deleteProduct_shouldThrowAccessDenied_whenUserDoesNotOwnProduct() {
+            when(currentUserHelper.getCurrentUser()).thenReturn(user);
+            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
+
             User otherUser = new User();
             otherUser.setId(2L);
             Artist otherArtist = new Artist();
+            otherArtist.setId(99L);
             otherArtist.setUser(otherUser);
+
             Product product = new Product();
+            product.setId(1L);
             product.setArtist(otherArtist);
 
             when(productRepository.findById(1L)).thenReturn(Optional.of(product));
-            when(currentUserHelper.getCurrentUser()).thenReturn(user);
 
             assertThrows(AccessDeniedException.class, () -> productService.deleteProduct(1L));
+
             verify(productRepository, never()).delete(any());
         }
     }
