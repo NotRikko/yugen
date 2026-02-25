@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.RequiredArgsConstructor;
 
 import rikko.yugen.dto.comment.CommentDTO;
+import rikko.yugen.dto.like.PostLikeResponse;
 import rikko.yugen.dto.post.PostCreateDTO;
 import rikko.yugen.dto.post.PostDTO;
 
@@ -74,9 +75,8 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/like")
-    public ResponseEntity<Map<String, Integer>> toggleLike(@PathVariable Long postId) {
-        int updatedLikes = postLikeService.toggleLike(postId);
-        return ResponseEntity.ok(Map.of("likes", updatedLikes));
+    public ResponseEntity<PostLikeResponse> toggleLike(@PathVariable Long postId) {
+        return ResponseEntity.ok(postLikeService.toggleLikeAndReturnResponse(postId));
     }
 
     @PutMapping("/{postId}")
