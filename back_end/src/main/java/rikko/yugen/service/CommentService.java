@@ -1,6 +1,7 @@
 package rikko.yugen.service;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -49,6 +50,12 @@ public class CommentService {
       }
       return commentRepository.findByUserId(userId, pageable)
               .map(CommentDTO::new);
+    }
+    @Transactional(readOnly = true)
+    public Page<CommentDTO> getCurrentUserComments(Pageable pageable) {
+        User currentUser = currentUserHelper.getCurrentUser();
+        return commentRepository.findByUserId(currentUser.getId(), PageRequest.of(0, 10))
+                .map(CommentDTO::new);
     }
 
     // Create methods
