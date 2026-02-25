@@ -73,7 +73,7 @@ class SignupIntegrationTest {
     }
 
     @Test
-    void signup_createsUserAndArtistAndReturns201() {
+    void signup_createsUserAndArtist_returns201_whenValid() {
         UserCreateDTO dto = validDto();
         dto.setIsArtist(true);
 
@@ -103,7 +103,7 @@ class SignupIntegrationTest {
     }
 
     @Test
-    void signup_createsUserAndNotArtistAndReturns201() {
+    void signup_createsUserAndNotArtist_returns201_whenValid() {
         UserCreateDTO dto = validDto();
         dto.setIsArtist(false);
 
@@ -161,7 +161,7 @@ class SignupIntegrationTest {
     }
 
     @Test
-    void signup_failsWithDuplicateUsername() {
+    void signup_returns409_whenDuplicateUsername() {
         UserCreateDTO dto = validDto();
         restTemplate.postForEntity("/auth/signup", dto, UserDTO.class);
 
@@ -174,7 +174,7 @@ class SignupIntegrationTest {
     }
 
     @Test
-    void signup_failsWithDuplicateEmail() {
+    void signup_returns409_whenDuplicateEmail() {
         UserCreateDTO dto = validDto();
         restTemplate.postForEntity("/auth/signup", dto, UserDTO.class);
 
@@ -187,7 +187,7 @@ class SignupIntegrationTest {
     }
 
     @Test
-    void signup_returns400_forInvalidEmail() {
+    void signup_returns400_whenInvalidEmail() {
         UserCreateDTO dto = validDto();
         dto.setEmail("not-an-email");
 
@@ -203,7 +203,7 @@ class SignupIntegrationTest {
     }
 
     @Test
-    void signup_returns400_forInvalidPasswordLength() {
+    void signup_returns400_whenInvalidPasswordLength() {
         UserCreateDTO dto = validDto();
         dto.setPassword("rikko");
 
@@ -218,7 +218,7 @@ class SignupIntegrationTest {
     }
 
     @Test
-    void signup_returns400_forInvalidPasswordFormat() {
+    void signup_returns400_whenInvalidPasswordFormat() {
         UserCreateDTO dto = validDto();
         dto.setPassword("rikko1345");
 
