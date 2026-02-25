@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import rikko.yugen.dto.comment.CommentDTO;
 import rikko.yugen.dto.follow.FollowWithUserDTO;
 import rikko.yugen.dto.user.*;
 import rikko.yugen.model.User;
@@ -29,6 +31,7 @@ public class UserController {
 
     private final UserService userService;
     private final FollowService followService;
+    private final CommentService commentService;
 
     // Users
 
@@ -104,5 +107,20 @@ public class UserController {
     public ResponseEntity<List<FollowWithUserDTO>> getFolloweesForCurrentUser() {
         List<FollowWithUserDTO> following = followService.getFollowingForCurrentUser();
         return ResponseEntity.ok(following);
+    }
+
+    // Comments
+
+    @GetMapping("/{userId}/comments")
+    public ResponseEntity<Page<CommentDTO>> getCommentsByUserId(
+            @PathVariable Long userId,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(commentService.getCommentsByUserId(userId, pageable));
+    }
+
+    @GetMapping("/me/comments")
+    public ResponseEntity<Page<CommentDTO>> getCurrentUserComments(
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return ResponseEntity.ok(commentService.getCurrentUserComments(pageable));
     }
 }

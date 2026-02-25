@@ -53,16 +53,4 @@ public class CommentController {
        return ResponseEntity.ok(commentLikeService.toggleLikeAndReturnResponse(commentId));
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<Page<CommentDTO>> getCommentsByUserId(@PathVariable Long userId,
-                                                                @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(commentService.getCommentsByUserId(userId, pageable));
-    }
-
-    @GetMapping("/me")
-    public ResponseEntity<Page<CommentDTO>> getCurrentUserComments(@PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(commentService.getCurrentUserComments(pageable));
-    }
-
-
 }
