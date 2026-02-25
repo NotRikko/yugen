@@ -40,6 +40,11 @@ public class ProductService {
 
     private final CurrentUserHelper currentUserHelper;
 
+    private Artist getCurrentArtist() {
+        User currentUser = currentUserHelper.getCurrentUser();
+        return artistRepository.findByUserId(currentUser.getId())
+                .orElseThrow(() -> new RuntimeException("Artist not found for current user"));
+    }
 
     // Read
 
@@ -95,15 +100,14 @@ public class ProductService {
     public ProductDTO createProduct(ProductCreateDTO productCreateDTO, List<MultipartFile> files) {
         User currentUser = currentUserHelper.getCurrentUser();
 
-        Artist artist = artistRepository.findByUserId(currentUser.getId())
-                .orElseThrow(() -> new RuntimeException("Artist not found for current user"));
+        Artist currentArtist = getCurrentArtist();
 
         Product product = new Product();
         product.setName(productCreateDTO.getName());
         product.setDescription(productCreateDTO.getDescription());
         product.setPrice(productCreateDTO.getPrice());
         product.setQuantityInStock(productCreateDTO.getQuantityInStock());
-        product.setArtist(artist);
+        product.setArtist(currentArtist);
 
         if (productCreateDTO.getSeriesIds() != null) {
             List<Series> seriesList = seriesRepository.findAllById(productCreateDTO.getSeriesIds());
@@ -132,11 +136,10 @@ public class ProductService {
     @Transactional
     public ProductDTO updateProduct(Long productId, ProductUpdateDTO productUpdateDTO, List<MultipartFile> newFiles) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
 
-        User currentUser = currentUserHelper.getCurrentUser();
-        Artist currentArtist = currentUser.getArtist();
-        if (currentArtist == null || !product.getArtist().getId().equals(currentArtist.getId())) {
+        Artist currentArtist = getCurrentArtist();
+        if (!product.getArtist().getId().equals(currentArtist.getId())) {
             throw new AccessDeniedException("Only the owner artist can update this product");
         }
 
@@ -169,11 +172,9 @@ public class ProductService {
                 .filter(image -> !imagesToKeep.contains(image.getId()))
                 .toList();
 
-        for (Image image : imagesToDelete) {
-            imageService.deleteImage(image.getId());
-        }
+        imagesToDelete.forEach(image -> imageService.deleteImage(image.getId()));
 
-        if(newFiles != null & !newFiles.isEmpty()) {
+        if (newFiles != null && !newFiles.isEmpty()) {
             uploadAndSaveFilesForProduct(newFiles, product.getId());
         }
 
@@ -196,18 +197,15 @@ public class ProductService {
 
     @Transactional
     public void deleteProduct(Long productId) {
-        User currentUser = currentUserHelper.getCurrentUser();
-
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product",  "id", productId));
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
 
-        if (!product.getArtist().getUser().equals(currentUser)) {
+        Artist currentArtist = getCurrentArtist();
+        if (!product.getArtist().getId().equals(currentArtist.getId())) {
             throw new AccessDeniedException("You are not allowed to delete this product.");
         }
 
-        for (Image image : product.getImages()) {
-            imageService.deleteImage(image.getId());
-        }
+        product.getImages().forEach(image -> imageService.deleteImage(image.getId()));
 
         productRepository.delete(product);
     }
