@@ -49,9 +49,14 @@ public class SecurityConfiguration {
                                 "/feed/**",
                                 "/artists/**",
                                 "/follow/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST, "/posts/*/likes").hasAnyRole("USER","ARTIST","ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/posts/*/likes").hasAnyRole("USER","ARTIST","ADMIN")
+
                         .requestMatchers(HttpMethod.POST, "/posts/**").hasAnyRole("ADMIN", "ARTIST")
                         .requestMatchers(HttpMethod.PUT, "/posts/**").hasAnyRole("ADMIN", "ARTIST")
                         .requestMatchers(HttpMethod.DELETE, "/posts/**").hasAnyRole("ADMIN", "ARTIST")
+
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)
