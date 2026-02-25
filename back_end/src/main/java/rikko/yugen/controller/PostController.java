@@ -1,8 +1,6 @@
 package rikko.yugen.controller;
 
-import java.util.List;
-import java.util.Map;
-
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -12,18 +10,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import lombok.RequiredArgsConstructor;
-
 import rikko.yugen.dto.comment.CommentDTO;
-import rikko.yugen.dto.like.PostLikeResponse;
+import rikko.yugen.dto.like.PostLikeResponseDTO;
 import rikko.yugen.dto.post.PostCreateDTO;
 import rikko.yugen.dto.post.PostDTO;
-
 import rikko.yugen.dto.post.PostUpdateDTO;
-import rikko.yugen.service.PostService;
-import rikko.yugen.service.PostLikeService;
 import rikko.yugen.service.CommentService;
+import rikko.yugen.service.PostLikeService;
+import rikko.yugen.service.PostService;
+
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "${frontend.url}")
@@ -75,11 +71,12 @@ public class PostController {
     }
 
     @PostMapping("/{postId}/like")
-    public ResponseEntity<PostLikeResponse> toggleLike(@PathVariable Long postId) {
+    public ResponseEntity<PostLikeResponseDTO> toggleLike(@PathVariable Long postId) {
         return ResponseEntity.ok(postLikeService.toggleLikeAndReturnResponse(postId));
     }
 
     @PutMapping("/{postId}")
+    @PreAuthorize("hasRole('ARTIST')")
     public ResponseEntity<PostDTO> updatePost(
             @PathVariable Long postId,
             @RequestBody PostUpdateDTO postUpdateDTO) {
