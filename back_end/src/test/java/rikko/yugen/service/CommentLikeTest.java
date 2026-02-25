@@ -8,6 +8,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import rikko.yugen.dto.like.CommentLikeDTO;
+import rikko.yugen.dto.like.CommentLikeResponseDTO;
+import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Comment;
 import rikko.yugen.model.CommentLike;
@@ -102,9 +104,10 @@ class CommentLikeServiceTest {
             when(commentLikeRepository.countByComment(comment)).thenReturn(1);
             when(commentLikeRepository.save(any(CommentLike.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-            int count = commentLikeService.toggleLike(1L);
+            CommentLikeResponseDTO response = commentLikeService.toggleLikeAndReturnResponse(1L);
 
-            assertEquals(1, count);
+            assertEquals(1, response.likes());
+            assertTrue(response.likedByCurrentUser());
             verify(commentLikeRepository, times(1)).save(any(CommentLike.class));
         }
 
@@ -115,9 +118,10 @@ class CommentLikeServiceTest {
             when(commentLikeRepository.findByUserAndComment(user, comment)).thenReturn(Optional.of(commentLike));
             when(commentLikeRepository.countByComment(comment)).thenReturn(0);
 
-            int count = commentLikeService.toggleLike(1L);
+            CommentLikeResponseDTO response = commentLikeService.toggleLikeAndReturnResponse(1L);
 
-            assertEquals(0, count);
+            assertEquals(0, response.likes());
+            assertFalse(response.likedByCurrentUser());
             verify(commentLikeRepository, times(1)).delete(commentLike);
         }
 
@@ -126,7 +130,8 @@ class CommentLikeServiceTest {
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
             when(commentRepository.findById(1L)).thenReturn(Optional.empty());
 
-            assertThrows(RuntimeException.class, () -> commentLikeService.toggleLike(1L));
+            assertThrows(ResourceNotFoundException.class,
+                    () ->commentLikeService.toggleLikeAndReturnResponse(1L));
         }
     }
 }
