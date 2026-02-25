@@ -16,7 +16,6 @@ import org.springframework.util.MultiValueMap;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import rikko.yugen.dto.like.PostLikeDTO;
 import rikko.yugen.dto.like.PostLikeResponseDTO;
 import rikko.yugen.dto.post.PostCreateDTO;
 import rikko.yugen.dto.post.PostDTO;
