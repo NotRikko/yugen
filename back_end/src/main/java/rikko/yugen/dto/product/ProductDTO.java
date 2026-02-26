@@ -1,14 +1,9 @@
 package rikko.yugen.dto.product;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import rikko.yugen.dto.artist.ArtistDTO;
-import rikko.yugen.dto.collection.CollectionDTO;
-import rikko.yugen.dto.image.ImageDTO;
-import rikko.yugen.dto.series.SeriesDTO;
 import rikko.yugen.model.Collection;
 import rikko.yugen.model.Image;
 import rikko.yugen.model.Product;
