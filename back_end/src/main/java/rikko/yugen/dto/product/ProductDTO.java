@@ -17,6 +17,7 @@ import rikko.yugen.model.Series;
 public record ProductDTO(
         Long id,
         String name,
+        String description,
         Float price,
         Long artistId,
         Set<Long> seriesIds,
@@ -27,6 +28,7 @@ public record ProductDTO(
         this(
                 product.getId(),
                 product.getName(),
+                product.getDescription(),
                 product.getPrice(),
                 product.getArtist() != null ? product.getArtist().getId() : null,
                 product.getSeries() != null ? product.getSeries().stream().map(Series::getId).collect(Collectors.toSet()) : Collections.emptySet(),
