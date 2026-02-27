@@ -1,6 +1,5 @@
 package rikko.yugen.bootstrap;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import rikko.yugen.model.Artist;
 import rikko.yugen.model.Product;
