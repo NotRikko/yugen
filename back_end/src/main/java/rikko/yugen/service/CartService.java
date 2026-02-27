@@ -32,7 +32,6 @@ public class CartService {
 
     private final CartRepository cartRepository;
     private final ProductRepository productRepository;
-    private final CartItemService cartItemService;
 
     private final CurrentUserHelper currentUserHelper;
     private final CartItemRepository cartItemRepository;
@@ -138,6 +137,7 @@ public class CartService {
         }
 
         cartItemRepository.deleteAllByCartId(cart.getId());
+        cart.getItems().clear();
         return new CartDTO(cart);
     }
 
