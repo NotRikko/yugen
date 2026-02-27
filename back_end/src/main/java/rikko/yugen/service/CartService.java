@@ -6,6 +6,9 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import rikko.yugen.dto.cart.CartAddItemDTO;
+import rikko.yugen.dto.cart.CartUpdateItemDTO;
+import rikko.yugen.dto.cart.CheckoutResponseDTO;
 import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Cart;
@@ -15,11 +18,13 @@ import rikko.yugen.model.User;
 
 import rikko.yugen.dto.cart.CartDTO;
 
+import rikko.yugen.repository.CartItemRepository;
 import rikko.yugen.repository.CartRepository;
 import rikko.yugen.repository.ProductRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,12 +35,13 @@ public class CartService {
     private final CartItemService cartItemService;
 
     private final CurrentUserHelper currentUserHelper;
+    private final CartItemRepository cartItemRepository;
 
     // Helpers
 
     private Cart getOrCreateCartEntity() {
         User currentUser = currentUserHelper.getCurrentUser();
-        return cartRepository.findByUserId(currentUser.getId())
+        return cartRepository.findByUserIdWithItems(currentUser.getId())
                 .orElseGet(() -> {
                     Cart newCart = new Cart();
                     newCart.setUser(currentUser);
@@ -50,29 +56,31 @@ public class CartService {
     }
 
     @Transactional
-    public CartDTO addItem(Long productId, int quantity) {
-        if (quantity < 1) throw new IllegalArgumentException("Quantity must be at least 1");
+    public CartDTO addItem(CartAddItemDTO request) {
+        if (request.getQuantity() < 1)
+            throw new IllegalArgumentException("Quantity must be at least 1");
 
         Cart cart = getOrCreateCartEntity();
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", productId));
 
-        List<CartItem> items = cartItemService.getItemsByCartId(cart.getId());
+        Product product = productRepository.findById(request.getProductId())
+                .orElseThrow(() -> new ResourceNotFoundException("Product", "id", request.getProductId()));
 
-        CartItem item = items.stream()
-                .filter(i -> i.getProduct().getId().equals(productId))
-                .findFirst()
-                .orElse(null);
+        if (request.getQuantity() > product.getQuantityInStock()) {
+            throw new IllegalArgumentException("Not enough stock available");
+        }
 
-        if (item != null) {
-            item.setQuantity(item.getQuantity() + quantity);
-            cartItemService.save(item);
+        Optional<CartItem> optionalItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), product.getId());
+
+        if (optionalItem.isPresent()) {
+            CartItem item = optionalItem.get();
+            item.setQuantity(item.getQuantity() + request.getQuantity());
+            cartItemRepository.save(item);
         } else {
             CartItem newItem = new CartItem();
             newItem.setCart(cart);
             newItem.setProduct(product);
-            newItem.setQuantity(quantity);
-            cartItemService.save(newItem);
+            newItem.setQuantity(request.getQuantity());
+            cartItemRepository.save(newItem);
             cart.getItems().add(newItem);
         }
 
@@ -80,54 +88,71 @@ public class CartService {
     }
 
     @Transactional
-    public CartDTO updateItem(Long cartItemId, int quantity) {
+    public CartDTO updateItem(CartUpdateItemDTO request) {
+        if (request.getQuantity() < 1)
+            throw new IllegalArgumentException("Quantity must be at least 1");
 
-        if (quantity < 1) throw new IllegalArgumentException("Quantity must be at least 1");
-
-        CartItem item = cartItemService.getItemById(cartItemId);
+        CartItem item = cartItemRepository.findById(request.getCartItemId())
+                .orElseThrow(() -> new ResourceNotFoundException("CartItem", "id", request.getCartItemId()));
 
         User currentUser = currentUserHelper.getCurrentUser();
-
         if (!item.getCart().getUser().getId().equals(currentUser.getId())) {
-            throw new AccessDeniedException("You do not own this cart");
+            throw new AccessDeniedException("You do not own this cart item");
         }
 
-        if (quantity > item.getProduct().getQuantityInStock()) {
-            throw new IllegalArgumentException("Not enough stock");
+        if (request.getQuantity() > item.getProduct().getQuantityInStock()) {
+            throw new IllegalArgumentException("Not enough stock available");
         }
 
-        item.setQuantity(quantity);
-        cartItemService.save(item);
+        item.setQuantity(request.getQuantity());
+        cartItemRepository.save(item);
 
         return new CartDTO(item.getCart());
     }
 
     @Transactional
     public CartDTO removeItem(Long cartItemId) {
-        CartItem item = cartItemService.getItemById(cartItemId);
+        CartItem item = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new ResourceNotFoundException("CartItem", "id", cartItemId));
+
+        User currentUser = currentUserHelper.getCurrentUser();
+        if (!item.getCart().getUser().getId().equals(currentUser.getId())) {
+            throw new AccessDeniedException("You do not own this cart item");
+        }
 
         Cart cart = item.getCart();
-        cartItemService.delete(item.getId());
+        cartItemRepository.delete(item);
         cart.getItems().remove(item);
+
         return new CartDTO(cart);
     }
 
     @Transactional
     public CartDTO clearCart() {
         Cart cart = getOrCreateCartEntity();
-        cartItemService.getItemsByCartId(cart.getId())
-                .forEach(item -> cartItemService.delete(item.getId()));
+
+        User currentUser = currentUserHelper.getCurrentUser();
+
+        if (!cart.getUser().getId().equals(currentUser.getId())) {
+            throw new AccessDeniedException("You do not own this cart");
+        }
+
+        cartItemRepository.deleteAllByCartId(cart.getId());
         return new CartDTO(cart);
     }
 
     @Transactional
-    public String checkout() {
+    public CheckoutResponseDTO checkout() {
         Cart cart = getOrCreateCartEntity();
-        List<CartItem> items = new ArrayList<>(cartItemService.getItemsByCartId(cart.getId()));
+        List<CartItem> items = new ArrayList<>(cart.getItems());
 
-        if (items.isEmpty()) return "Your cart is empty.";
+        CheckoutResponseDTO response = new CheckoutResponseDTO();
 
-        StringBuilder messages = new StringBuilder();
+        if (items.isEmpty()) {
+            response.setSuccess(false);
+            response.getMessages().add("Your cart is empty.");
+            return response;
+        }
 
         for (CartItem item : items) {
             Product product = item.getProduct();
@@ -137,38 +162,39 @@ public class CartService {
 
             while (!success && retries > 0) {
                 try {
-                    Product finalProduct = product;
-                    product = productRepository.findById(product.getId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Product", "id", finalProduct.getId()));
+                    Product currentProduct = productRepository.findById(product.getId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Product", "id", product.getId()));
 
-                    if (product.getQuantityInStock() < quantityNeeded) {
-                        messages.append("Not enough stock for product: ")
-                                .append(product.getName())
-                                .append(". Available: ")
-                                .append(product.getQuantityInStock())
-                                .append("\n");
+                    if (currentProduct.getQuantityInStock() < quantityNeeded) {
+                        response.getMessages().add("Not enough stock for product: " +
+                                currentProduct.getName() + ". Available: " + currentProduct.getQuantityInStock());
                         break;
                     }
 
-                    product.setQuantityInStock(product.getQuantityInStock() - quantityNeeded);
-                    productRepository.save(product);
+                    currentProduct.setQuantityInStock(currentProduct.getQuantityInStock() - quantityNeeded);
+                    productRepository.save(currentProduct);
                     success = true;
                 } catch (OptimisticLockException e) {
                     retries--;
                     if (retries == 0) {
-                        messages.append("Could not update stock for product: ")
-                                .append(product.getName())
-                                .append(". Please try again.\n");
+                        response.getMessages().add("Could not update stock for product: " +
+                                product.getName() + ". Please try again.");
                     }
                 }
             }
         }
 
-        if (!messages.isEmpty()) return "Checkout failed:\n" + messages;
+        if (!response.getMessages().isEmpty()) {
+            response.setSuccess(false);
+            return response;
+        }
 
-        items.forEach(i -> cartItemService.delete(i.getId()));
+        cartItemRepository.deleteAllByCartId(cart.getId());
+        cart.getItems().clear();
 
-        return "Checkout successful! Your order has been placed.";
+        response.setSuccess(true);
+        response.getMessages().add("Checkout successful! Your order has been placed.");
+        return response;
     }
 
 }
