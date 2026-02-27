@@ -1,5 +1,6 @@
 package rikko.yugen.service;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -43,7 +44,7 @@ public class ProductService {
     private Artist getCurrentArtist() {
         User currentUser = currentUserHelper.getCurrentUser();
         return artistRepository.findByUserId(currentUser.getId())
-                .orElseThrow(() -> new RuntimeException("Artist not found for current user"));
+                .orElseThrow(() -> new ResourceNotFoundException("Artist", "userId", currentUser.getId()));
     }
 
     // Read
@@ -63,14 +64,9 @@ public class ProductService {
 
     @Transactional(readOnly = true)
     public Page<ProductDTO> getProductsOfCurrentArtist(Pageable pageable) {
-        User currentUser = currentUserHelper.getCurrentUser();
-        Artist artist = currentUser.getArtist();
+        Artist currentArtist = getCurrentArtist();
 
-        if (artist == null) {
-            throw new ResourceNotFoundException("Artist", "userId", currentUser.getId());
-        }
-
-        return productRepository.findByArtistId(artist.getId(), pageable)
+        return productRepository.findByArtistId(currentArtist.getId(), pageable)
                 .map(ProductDTO::new);
 
     }
@@ -98,8 +94,6 @@ public class ProductService {
 
     @Transactional
     public ProductDTO createProduct(ProductCreateDTO productCreateDTO, List<MultipartFile> files) {
-        User currentUser = currentUserHelper.getCurrentUser();
-
         Artist currentArtist = getCurrentArtist();
 
         Product product = new Product();
@@ -108,6 +102,7 @@ public class ProductService {
         product.setPrice(productCreateDTO.getPrice());
         product.setQuantityInStock(productCreateDTO.getQuantityInStock());
         product.setArtist(currentArtist);
+        product.setCreatedAt(LocalDateTime.now());
 
         if (productCreateDTO.getSeriesIds() != null) {
             List<Series> seriesList = seriesRepository.findAllById(productCreateDTO.getSeriesIds());
@@ -151,7 +146,7 @@ public class ProductService {
         if (productUpdateDTO.getSeries() != null) {
             Set<Series> seriesSet = productUpdateDTO.getSeries().stream()
                     .map(dto -> seriesRepository.findById(dto.id())
-                            .orElseThrow(() -> new RuntimeException("Series not found")))
+                            .orElseThrow(() -> new ResourceNotFoundException("Series", "productId", dto.id())))
                     .collect(Collectors.toSet());
             product.setSeries(seriesSet);
         }
@@ -159,7 +154,7 @@ public class ProductService {
         if (productUpdateDTO.getCollections() != null) {
             Set<Collection> collectionsSet = productUpdateDTO.getCollections().stream()
                     .map(dto -> collectionRepository.findById(dto.id())
-                            .orElseThrow(() -> new RuntimeException("Collection not found")))
+                            .orElseThrow(() -> new ResourceNotFoundException("Collection", "productId", dto.id())))
                     .collect(Collectors.toSet());
             product.setCollections(collectionsSet);
         }
@@ -190,7 +185,7 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException("Product",  "id", productId));
 
-        return "Product '" + product.getName() + "' bought!";
+        return "Product '" + product.getName() + "' purchased!";
     }
 
     // Delete
