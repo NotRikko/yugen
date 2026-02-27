@@ -1,9 +1,13 @@
 package rikko.yugen.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import rikko.yugen.dto.cart.CartAddItemDTO;
 import rikko.yugen.dto.cart.CartDTO;
+import rikko.yugen.dto.cart.CartUpdateItemDTO;
+import rikko.yugen.dto.cart.CheckoutResponseDTO;
 import rikko.yugen.service.CartService;
 
 @RestController
@@ -21,16 +25,14 @@ public class CartController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<CartDTO> addItem(@RequestParam Long productId,
-                                           @RequestParam int quantity) {
-        CartDTO cart = cartService.addItem(productId, quantity);
+    public ResponseEntity<CartDTO> addItem(@Valid @RequestBody CartAddItemDTO dto) {
+        CartDTO cart = cartService.addItem(dto);
         return ResponseEntity.ok(cart);
     }
 
     @PatchMapping("/update")
-    public ResponseEntity<CartDTO> updateItem(@RequestParam Long cartItemId,
-                                              @RequestParam int quantity) {
-        CartDTO cart = cartService.updateItem(cartItemId, quantity);
+    public ResponseEntity<CartDTO> updateItem(@Valid @RequestBody CartUpdateItemDTO dto) {
+        CartDTO cart = cartService.updateItem(dto);
         return ResponseEntity.ok(cart);
     }
 
@@ -47,8 +49,8 @@ public class CartController {
     }
 
     @PostMapping("/checkout")
-    public ResponseEntity<String> checkoutCart() {
-        String result = cartService.checkout();
+    public ResponseEntity<CheckoutResponseDTO> checkoutCart() {
+        CheckoutResponseDTO result = cartService.checkout();
         return ResponseEntity.ok(result);
     }
 }
