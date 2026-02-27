@@ -42,6 +42,12 @@ public class PostService {
 
     private final CurrentUserHelper currentUserHelper;
 
+    private Artist getCurrentArtist() {
+        User currentUser = currentUserHelper.getCurrentUser();
+        return artistRepository.findByUserId(currentUser.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Artist", "userId", currentUser.getId()));
+    }
+
     // Read
 
     @Transactional(readOnly = true)
@@ -73,10 +79,7 @@ public class PostService {
     // Create
     @Transactional
     public PostDTO createPost(PostCreateDTO dto, List<MultipartFile> files) {
-        User currentUser = currentUserHelper.getCurrentUser();
-
-        Artist artist = artistRepository.findByUserId(currentUser.getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Artist", "userId", currentUser.getId()));
+        Artist currentArtist = getCurrentArtist();
 
         Product product = null;
         if (dto.getProductId() != null) {
@@ -87,7 +90,7 @@ public class PostService {
         Post post = new Post();
         post.setContent(dto.getContent());
         post.setCreatedAt(LocalDateTime.now());
-        post.setArtist(artist);
+        post.setArtist(currentArtist);
         post.setProduct(product);
 
         Post savedPost = postRepository.save(post);
@@ -104,10 +107,7 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
 
-        User currentUser = currentUserHelper.getCurrentUser();
-
-        Artist currentArtist = artistRepository.findByUserId(currentUser.getId())
-                .orElseThrow(() -> new AccessDeniedException("Only artists can update posts"));
+        Artist currentArtist = getCurrentArtist();
 
         if (!post.getArtist().getId().equals(currentArtist.getId())) {
             throw new AccessDeniedException("Only the owner artist can update this post");
@@ -125,17 +125,15 @@ public class PostService {
 
     @Transactional
     public void deletePost(Long postId) {
-        User currentUser = currentUserHelper.getCurrentUser();
-
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
 
-        Artist currentArtist = artistRepository.findByUserId(currentUser.getId())
-                .orElseThrow(() -> new AccessDeniedException("Only artists can delete posts"));
-
+        Artist currentArtist = getCurrentArtist();
         if (!post.getArtist().getId().equals(currentArtist.getId())) {
-            throw new AccessDeniedException("You are not allowed to delete this post");
+            throw new AccessDeniedException("You are not allowed to delete this product.");
         }
+
+        post.getImages().forEach(image -> imageService.deleteImage(image.getId()));
 
         postRepository.delete(post);
     }
