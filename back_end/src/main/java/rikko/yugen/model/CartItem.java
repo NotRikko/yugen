@@ -6,12 +6,10 @@ import lombok.*;
 @Entity
 @Table(name = "cart_items")
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class CartItem {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class CartItem extends BaseModel {
 
     @ManyToOne
     @JoinColumn(name = "cart_id")

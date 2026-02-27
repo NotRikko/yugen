@@ -9,12 +9,10 @@ import java.util.ArrayList;
 @Entity
 @Table(name = "carts")
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Cart {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Cart extends BaseModel {
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.Collection;
 
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,9 +15,10 @@ import lombok.*;
 @Entity
 @Table(name = "users")
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class User implements UserDetails {
+public class User extends BaseModel implements UserDetails {
 
     public User(String username, String displayName, String email, String password, Boolean isArtist) {
         this.username = username;
@@ -27,10 +27,6 @@ public class User implements UserDetails {
         this.password = password;
         this.isArtist = isArtist;
     }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Column(unique = true)
     private String username;

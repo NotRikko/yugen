@@ -9,13 +9,13 @@ import java.util.Set;
 import jakarta.persistence.*;
 import lombok.*;
 
-
 @Entity
 @Table(name= "posts")
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Post {
+public class Post extends BaseModel {
 
     public Post(String content, LocalDateTime createdAt, Artist artist, Product product) {
         this.content = content;
@@ -30,10 +30,6 @@ public class Post {
         this.artist = artist;
         this.product = null;
     }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude

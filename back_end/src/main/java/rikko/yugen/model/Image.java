@@ -7,12 +7,10 @@ import lombok.*;
 @Entity
 @Table(name = "images")
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Image {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Image  extends BaseModel{
 
     @Column(nullable = false)
     private String url;

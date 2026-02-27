@@ -18,6 +18,7 @@ public class Follow {
         this.follower = user;
         this.followee = followedArtist;
         this.id = new FollowId(user.getId(), followedArtist.getId());
+        this.followedAt = LocalDateTime.now();
     }
 
     @EmbeddedId
@@ -33,6 +34,7 @@ public class Follow {
     @JoinColumn(name = "followee_id")
     private Artist followee;
 
+    @Column(nullable = false)
     private LocalDateTime followedAt = LocalDateTime.now();
 
 

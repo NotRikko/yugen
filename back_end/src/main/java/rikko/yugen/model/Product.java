@@ -11,12 +11,10 @@ import lombok.*;
 @Entity
 @Table(name = "products")
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Product extends BaseModel {
 
     private String name;
     private String description;

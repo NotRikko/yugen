@@ -1,11 +1,7 @@
 package rikko.yugen.model;
 
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -13,9 +9,10 @@ import lombok.*;
 @Entity
 @Table(name = "artists")
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Artist {
+public class Artist extends BaseModel {
 
     public Artist(String artistName, String bio, User user, Image profileImage, Image bannerImage) {
         this.artistName = artistName;
@@ -33,21 +30,10 @@ public class Artist {
         }
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "artist_name")
     private String artistName;
 
     private String bio;
-
-    @Column(updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "profile_image_id", unique = true)

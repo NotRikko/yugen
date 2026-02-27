@@ -5,16 +5,13 @@ import java.util.Set;
 import jakarta.persistence.*;
 import lombok.*;
 
-
 @Entity
 @Table(name = "collections")
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Collection {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Collection extends BaseModel {
 
     private String name;
     private String description;

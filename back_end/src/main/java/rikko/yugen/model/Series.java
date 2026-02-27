@@ -5,16 +5,13 @@ import java.util.Set;
 import jakarta.persistence.*;
 import lombok.*;
 
-
 @Entity
 @Table(name = "series")
 @Data
+@EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-public class Series {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Series extends BaseModel {
 
     private String name;
     private String image;
