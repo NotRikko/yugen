@@ -1,4 +1,4 @@
-package rikko.yugen.integration;
+package rikko.yugen.integration.base;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

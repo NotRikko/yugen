@@ -1,4 +1,4 @@
-package rikko.yugen.integration;
+package rikko.yugen.integration.base;
 
 import org.testcontainers.DockerClientFactory;
 

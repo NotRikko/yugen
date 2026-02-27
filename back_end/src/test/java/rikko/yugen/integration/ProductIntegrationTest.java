@@ -12,6 +12,7 @@ import org.springframework.util.MultiValueMap;
 import rikko.yugen.dto.product.ProductCreateDTO;
 import rikko.yugen.dto.product.ProductDTO;
 import rikko.yugen.dto.product.ProductUpdateDTO;
+import rikko.yugen.integration.base.IntegrationTestBase;
 import rikko.yugen.model.*;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.PostRepository;

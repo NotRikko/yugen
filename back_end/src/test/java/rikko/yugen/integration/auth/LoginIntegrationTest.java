@@ -9,7 +9,7 @@ import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import rikko.yugen.dto.user.LoginResponseDTO;
 import rikko.yugen.dto.user.UserLoginDTO;
-import rikko.yugen.integration.IntegrationTestBase;
+import rikko.yugen.integration.base.IntegrationTestBase;
 import rikko.yugen.model.User;
 import rikko.yugen.repository.UserRepository;
 

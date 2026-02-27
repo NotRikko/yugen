@@ -11,6 +11,7 @@ import rikko.yugen.dto.comment.CommentCreateDTO;
 import rikko.yugen.dto.comment.CommentDTO;
 import rikko.yugen.dto.comment.CommentUpdateDTO;
 import rikko.yugen.dto.like.CommentLikeResponseDTO;
+import rikko.yugen.integration.base.IntegrationTestBase;
 import rikko.yugen.model.*;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.CommentRepository;

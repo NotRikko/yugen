@@ -13,6 +13,7 @@ import rikko.yugen.dto.like.PostLikeResponseDTO;
 import rikko.yugen.dto.post.PostCreateDTO;
 import rikko.yugen.dto.post.PostDTO;
 import rikko.yugen.dto.post.PostUpdateDTO;
+import rikko.yugen.integration.base.IntegrationTestBase;
 import rikko.yugen.model.Artist;
 import rikko.yugen.model.Post;
 import rikko.yugen.model.Role;

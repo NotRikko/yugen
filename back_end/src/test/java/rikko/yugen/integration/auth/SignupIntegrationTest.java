@@ -12,7 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import rikko.yugen.dto.user.UserCreateDTO;
 import rikko.yugen.dto.user.UserDTO;
-import rikko.yugen.integration.IntegrationTestBase;
+import rikko.yugen.integration.base.IntegrationTestBase;
 import rikko.yugen.model.Artist;
 import rikko.yugen.model.User;
 import rikko.yugen.repository.ArtistRepository;
