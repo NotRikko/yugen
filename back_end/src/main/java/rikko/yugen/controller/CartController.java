@@ -26,36 +26,36 @@ public class CartController {
         return ResponseEntity.ok(cart);
     }
 
-    @PreAuthorize("isAuthenticated()")
     @PostMapping("/add")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CartDTO> addItem(@Valid @RequestBody CartAddItemDTO dto) {
         CartDTO cart = cartService.addItem(dto);
         return ResponseEntity.ok(cart);
     }
 
-    @PreAuthorize("isAuthenticated()")
     @PatchMapping("/update")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CartDTO> updateItem(@Valid @RequestBody CartUpdateItemDTO dto) {
         CartDTO cart = cartService.updateItem(dto);
         return ResponseEntity.ok(cart);
     }
 
-    @PreAuthorize("isAuthenticated()")
     @DeleteMapping("/remove")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CartDTO> removeItem(@RequestParam Long cartItemId) {
         CartDTO cart = cartService.removeItem(cartItemId);
         return ResponseEntity.ok(cart);
     }
 
-    @PreAuthorize("isAuthenticated()")
     @PostMapping("/clear")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CartDTO> clearCart() {
         CartDTO cart = cartService.clearCart();
         return ResponseEntity.ok(cart);
     }
 
-    @PreAuthorize("isAuthenticated()")
     @PostMapping("/checkout")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CheckoutResponseDTO> checkoutCart() {
         CheckoutResponseDTO result = cartService.checkout();
         return ResponseEntity.ok(result);
