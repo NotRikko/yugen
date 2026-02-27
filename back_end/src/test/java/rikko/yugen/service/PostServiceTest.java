@@ -281,6 +281,7 @@ class PostServiceTest {
 
             when(postRepository.findById(1L)).thenReturn(Optional.of(post1));
             when(currentUserHelper.getCurrentUser()).thenReturn(otherUser);
+            when(artistRepository.findByUserId(otherUser.getId())).thenReturn(Optional.of(otherArtist));
 
             assertThrows(AccessDeniedException.class, () -> postService.deletePost(1L));
             verify(postRepository, never()).delete(any());
