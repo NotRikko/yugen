@@ -56,6 +56,7 @@ class PostIntegrationTest extends IntegrationTestBase {
         user = new User();
         user.setUsername("rikko3");
         user.setPassword("test12345!");
+        user.setRole(Role.USER);
         userRepository.save(user);
 
         artist = new Artist();
@@ -86,8 +87,6 @@ class PostIntegrationTest extends IntegrationTestBase {
     }
 
     private String getToken(User user, Role role) {
-        user.setRole(role);
-        userRepository.save(user);
         return jwtService.generateAccessToken(
                 org.springframework.security.core.userdetails.User
                         .withUsername(user.getUsername())
@@ -130,9 +129,6 @@ class PostIntegrationTest extends IntegrationTestBase {
 
     @Test
     void createPost_returns403_whenUserIsNotArtist() {
-        user.setRole(Role.USER);
-        userRepository.save(user);
-
         String token = getToken(user, Role.USER);
 
         HttpHeaders headers = new HttpHeaders();
@@ -154,23 +150,34 @@ class PostIntegrationTest extends IntegrationTestBase {
 
     @Test
     void getAllPosts_returns200_andPosts() {
+        String token = getToken(user, Role.USER);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+
+        HttpEntity<Void> request = new HttpEntity<>(headers);
+
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                 "/posts",
                 HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<>() {}
+                request,
+                new ParameterizedTypeReference<>() {
+                }
         );
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+
         Map<String, Object> body = response.getBody();
         Assertions.assertNotNull(body);
 
         List<Map<String, Object>> content = (List<Map<String, Object>>) body.get("content");
-        Assertions.assertFalse(content.isEmpty());
-        Assertions.assertTrue(content.get(0).containsKey("content"));
-        Assertions.assertTrue(content.get(0).containsKey("artistId"));
-    }
 
+        Assertions.assertFalse(content.isEmpty());
+
+        Map<String, Object> firstPost = content.get(0);
+        Assertions.assertNotNull(firstPost.get("content"));
+        Assertions.assertNotNull(firstPost.get("artistId"));
+    }
 
 
     @Test
@@ -215,6 +222,9 @@ class PostIntegrationTest extends IntegrationTestBase {
 
     @Test
     void updatePost_returns200_whenUserIsOwner() {
+        user.setRole(Role.ARTIST);
+        userRepository.save(user);
+
         String token = getToken(user, Role.ARTIST);
 
         PostUpdateDTO updateDto = new PostUpdateDTO();
@@ -237,7 +247,14 @@ class PostIntegrationTest extends IntegrationTestBase {
         User otherUser = new User();
         otherUser.setUsername("other");
         otherUser.setPassword("pass");
+        otherUser.setRole(Role.ARTIST);
         userRepository.save(otherUser);
+
+        Artist otherArtist = new Artist();
+        otherArtist.setArtistName("other");
+        otherArtist.setUser(otherUser);
+        artistRepository.save(otherArtist);
+        otherUser.setArtist(otherArtist);
 
         String token = getToken(otherUser, Role.ARTIST);
 
@@ -258,6 +275,8 @@ class PostIntegrationTest extends IntegrationTestBase {
 
     @Test
     void deletePost_returns204_whenUserIsOwner() {
+        user.setRole(Role.ARTIST);
+        userRepository.save(user);
         String token = getToken(user, Role.ARTIST);
 
         HttpHeaders headers = new HttpHeaders();
@@ -276,7 +295,14 @@ class PostIntegrationTest extends IntegrationTestBase {
         User otherUser = new User();
         otherUser.setUsername("other");
         otherUser.setPassword("pass");
+        otherUser.setRole(Role.ARTIST);
         userRepository.save(otherUser);
+
+        Artist otherArtist = new Artist();
+        otherArtist.setArtistName("other");
+        otherArtist.setUser(otherUser);
+        artistRepository.save(otherArtist);
+        otherUser.setArtist(otherArtist);
 
         String token = getToken(otherUser, Role.ARTIST);
 
