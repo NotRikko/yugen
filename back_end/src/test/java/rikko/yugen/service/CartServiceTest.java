@@ -20,8 +20,6 @@ import rikko.yugen.repository.CartItemRepository;
 import rikko.yugen.repository.CartRepository;
 import rikko.yugen.repository.ProductRepository;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
