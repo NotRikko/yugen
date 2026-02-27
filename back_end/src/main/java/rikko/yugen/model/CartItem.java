@@ -12,10 +12,14 @@ import lombok.*;
 public class CartItem extends BaseModel {
 
     @ManyToOne
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @JoinColumn(name = "cart_id")
     private Cart cart;
 
     @ManyToOne
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @JoinColumn(name = "product_id")
     private Product product;
 

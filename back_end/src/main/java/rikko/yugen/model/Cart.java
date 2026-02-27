@@ -15,6 +15,8 @@ import java.util.ArrayList;
 public class Cart extends BaseModel {
 
     @OneToOne
+    @ToString.Exclude 
+    @EqualsAndHashCode.Exclude
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
