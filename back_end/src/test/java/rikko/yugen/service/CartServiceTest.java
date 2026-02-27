@@ -7,12 +7,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import rikko.yugen.dto.cart.CartAddItemDTO;
 import rikko.yugen.dto.cart.CartDTO;
+import rikko.yugen.dto.cart.CartUpdateItemDTO;
+import rikko.yugen.dto.cart.CheckoutResponseDTO;
 import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Cart;
 import rikko.yugen.model.CartItem;
 import rikko.yugen.model.Product;
 import rikko.yugen.model.User;
+import rikko.yugen.repository.CartItemRepository;
 import rikko.yugen.repository.CartRepository;
 import rikko.yugen.repository.ProductRepository;
 
@@ -34,7 +38,7 @@ class CartServiceTest {
     private ProductRepository productRepository;
 
     @Mock
-    private CartItemService cartItemService;
+    private CartItemRepository cartItemRepository;
 
     @Mock
     private CurrentUserHelper currentUserHelper;
@@ -75,7 +79,8 @@ class CartServiceTest {
         @Test
         void getOrCreateCart_shouldReturnExistingCart() {
             when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
-            when(cartRepository.findByUserId(1L)).thenReturn(Optional.of(mockCart));
+            when(cartRepository.findByUserIdWithItems(1L))
+                    .thenReturn(Optional.of(mockCart));
 
             CartDTO result = cartService.getOrCreateCart();
 
@@ -85,7 +90,7 @@ class CartServiceTest {
         @Test
         void getOrCreateCart_shouldCreateNewCartIfNotExist() {
             when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
-            when(cartRepository.findByUserId(1L)).thenReturn(Optional.empty());
+            when(cartRepository.findByUserIdWithItems(1L)).thenReturn(Optional.empty());
             when(cartRepository.save(any(Cart.class))).thenAnswer(i -> i.getArguments()[0]);
 
             CartDTO result = cartService.getOrCreateCart();
@@ -100,13 +105,19 @@ class CartServiceTest {
     class AddItemTests {
         @Test
         void addItem_shouldAddNewItemToCart() {
-            when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
-            when(cartRepository.findByUserId(1L)).thenReturn(Optional.of(mockCart));
-            when(productRepository.findById(100L)).thenReturn(Optional.of(mockProduct));
-            when(cartItemService.getItemsByCartId(10L)).thenReturn(List.of());
-            when(cartItemService.save(any(CartItem.class))).thenAnswer(i -> i.getArguments()[0]);
+            CartAddItemDTO request = new CartAddItemDTO(100L, 3);
 
-            CartDTO result = cartService.addItem(100L, 3);
+            when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
+            when(cartRepository.findByUserIdWithItems(1L))
+                    .thenReturn(Optional.of(mockCart));
+            when(productRepository.findById(100L))
+                    .thenReturn(Optional.of(mockProduct));
+            when(cartItemRepository.findByCartIdAndProductId(10L, 100L))
+                    .thenReturn(Optional.empty());
+            when(cartItemRepository.save(any(CartItem.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            CartDTO result = cartService.addItem(request);
 
             assertEquals(1, result.items().size());
             assertEquals(3, result.items().get(0).quantity());
@@ -114,14 +125,22 @@ class CartServiceTest {
 
         @Test
         void addItem_shouldIncrementQuantityIfExists() {
-            mockCart.getItems().add(mockItem);
-            when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
-            when(cartRepository.findByUserId(1L)).thenReturn(Optional.of(mockCart));
-            when(productRepository.findById(100L)).thenReturn(Optional.of(mockProduct));
-            when(cartItemService.getItemsByCartId(10L)).thenReturn(List.of(mockItem));
-            when(cartItemService.save(any(CartItem.class))).thenAnswer(i -> i.getArguments()[0]);
+            CartAddItemDTO request = new CartAddItemDTO(100L, 2);
 
-            CartDTO result = cartService.addItem(100L, 2);
+            mockItem.setQuantity(2);
+            mockCart.getItems().add(mockItem);
+
+            when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
+            when(cartRepository.findByUserIdWithItems(1L))
+                    .thenReturn(Optional.of(mockCart));
+            when(productRepository.findById(100L))
+                    .thenReturn(Optional.of(mockProduct));
+            when(cartItemRepository.findByCartIdAndProductId(10L, 100L))
+                    .thenReturn(Optional.of(mockItem));
+            when(cartItemRepository.save(any(CartItem.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            CartDTO result = cartService.addItem(request);
 
             assertEquals(1, result.items().size());
             assertEquals(4, result.items().get(0).quantity());
@@ -129,7 +148,10 @@ class CartServiceTest {
 
         @Test
         void addItem_shouldThrow_whenQuantityLessThanOne() {
-            assertThrows(IllegalArgumentException.class, () -> cartService.addItem(100L, 0));
+            CartAddItemDTO request = new CartAddItemDTO(100L, 0);
+
+            assertThrows(IllegalArgumentException.class,
+                    () -> cartService.addItem(request));
         }
     }
 
@@ -137,21 +159,32 @@ class CartServiceTest {
 
     @Nested
     class UpdateItemTests {
+
         @Test
         void updateItem_shouldUpdateQuantity() {
-            mockCart.getItems().add(mockItem);
-            when(cartItemService.getItemById(1L)).thenReturn(mockItem);
-            when(cartItemService.save(mockItem)).thenReturn(mockItem);
-            when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
+            CartUpdateItemDTO request = new CartUpdateItemDTO(1L, 5);
 
-            CartDTO result = cartService.updateItem(1L, 5);
+            mockItem.setCart(mockCart);
+            mockCart.getItems().add(mockItem);
+
+            when(cartItemRepository.findById(1L))
+                    .thenReturn(Optional.of(mockItem));
+            when(currentUserHelper.getCurrentUser())
+                    .thenReturn(mockUser);
+            when(cartItemRepository.save(mockItem))
+                    .thenReturn(mockItem);
+
+            CartDTO result = cartService.updateItem(request);
 
             assertEquals(5, result.items().get(0).quantity());
         }
 
         @Test
         void updateItem_shouldThrow_whenQuantityInvalid() {
-            assertThrows(IllegalArgumentException.class, () -> cartService.updateItem(1L, 0));
+            CartUpdateItemDTO request = new CartUpdateItemDTO(1L, 0);
+
+            assertThrows(IllegalArgumentException.class,
+                    () -> cartService.updateItem(request));
         }
     }
 
@@ -160,11 +193,15 @@ class CartServiceTest {
     class RemoveItemTests {
         @Test
         void removeItem_shouldDeleteItemFromCart() {
-            when(cartItemService.getItemById(1L)).thenReturn(mockItem);
+            mockCart.getItems().add(mockItem);
+            when(cartItemRepository.findById(1L))
+                    .thenReturn(Optional.of(mockItem));
+            when(currentUserHelper.getCurrentUser())
+                    .thenReturn(mockUser);
 
             CartDTO result = cartService.removeItem(1L);
 
-            verify(cartItemService, times(1)).delete(1L);
+            verify(cartItemRepository).delete(mockItem);
             assertTrue(result.items().isEmpty());
         }
     }
@@ -178,17 +215,12 @@ class CartServiceTest {
             mockCart.getItems().add(mockItem);
 
             when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
-            when(cartRepository.findByUserId(1L)).thenReturn(Optional.of(mockCart));
-            when(cartItemService.getItemsByCartId(10L)).thenReturn(new ArrayList<>(mockCart.getItems()));
-
-            doAnswer(invocation -> {
-                mockCart.getItems().clear();
-                return null;
-            }).when(cartItemService).delete(anyLong());
+            when(cartRepository.findByUserIdWithItems(1L))
+                    .thenReturn(Optional.of(mockCart));
 
             CartDTO result = cartService.clearCart();
 
-            verify(cartItemService, times(1)).delete(mockItem.getId());
+            verify(cartItemRepository).deleteAllByCartId(mockCart.getId());
             assertTrue(result.items().isEmpty());
         }
     }
@@ -198,43 +230,64 @@ class CartServiceTest {
     @Nested
     class CheckoutTests {
         @Test
-        void checkout_shouldReturnEmptyCartMessage() {
+        void checkout_shouldReturnFailure_whenCartIsEmpty() {
             when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
-            when(cartRepository.findByUserId(1L)).thenReturn(Optional.of(mockCart));
-            when(cartItemService.getItemsByCartId(10L)).thenReturn(List.of());
+            when(cartRepository.findByUserIdWithItems(1L))
+                    .thenReturn(Optional.of(mockCart));
 
-            String result = cartService.checkout();
+            CheckoutResponseDTO result = cartService.checkout();
 
-            assertEquals("Your cart is empty.", result);
+            assertFalse(result.isSuccess());
+            assertTrue(result.getMessages().contains("Your cart is empty."));
+            verify(cartItemRepository, never()).deleteAllByCartId(anyLong());
         }
 
         @Test
-        void checkout_shouldReduceStockAndDeleteItems() {
+        void checkout_shouldReduceStockAndClearCart() {
+            mockCart.getItems().add(mockItem);
+
             when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
-            when(cartRepository.findByUserId(1L)).thenReturn(Optional.of(mockCart));
-            when(cartItemService.getItemsByCartId(10L)).thenReturn(List.of(mockItem));
-            when(productRepository.findById(100L)).thenReturn(Optional.of(mockProduct));
-            when(productRepository.save(mockProduct)).thenReturn(mockProduct);
+            when(cartRepository.findByUserIdWithItems(1L))
+                    .thenReturn(Optional.of(mockCart));
+            when(productRepository.findById(100L))
+                    .thenReturn(Optional.of(mockProduct));
 
-            String result = cartService.checkout();
+            when(productRepository.save(any(Product.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
 
-            assertEquals("Checkout successful! Your order has been placed.", result);
-            assertEquals(3, mockProduct.getQuantityInStock()); // 5 - 2
-            verify(cartItemService).delete(mockItem.getId());
+            CheckoutResponseDTO result = cartService.checkout();
+
+            assertTrue(result.isSuccess());
+            assertTrue(result.getMessages()
+                    .contains("Checkout successful! Your order has been placed."));
+
+            assertEquals(3, mockProduct.getQuantityInStock());
+
+            verify(cartItemRepository).deleteAllByCartId(mockCart.getId());
+            assertTrue(mockCart.getItems().isEmpty());
         }
 
         @Test
         void checkout_shouldFailWhenNotEnoughStock() {
-            mockItem.setQuantity(10); // more than stock
+            mockItem.setQuantity(10);
+            mockCart.getItems().add(mockItem);
+
             when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
-            when(cartRepository.findByUserId(1L)).thenReturn(Optional.of(mockCart));
-            when(cartItemService.getItemsByCartId(10L)).thenReturn(List.of(mockItem));
-            when(productRepository.findById(100L)).thenReturn(Optional.of(mockProduct));
+            when(cartRepository.findByUserIdWithItems(1L))
+                    .thenReturn(Optional.of(mockCart));
 
-            String result = cartService.checkout();
+            when(productRepository.findById(100L))
+                    .thenReturn(Optional.of(mockProduct));
 
-            assertTrue(result.contains("Not enough stock"));
-            verify(cartItemService, never()).delete(any());
+            CheckoutResponseDTO result = cartService.checkout();
+
+            assertFalse(result.isSuccess());
+            assertTrue(result.getMessages().get(0)
+                    .contains("Not enough stock"));
+
+            assertEquals(5, mockProduct.getQuantityInStock());
+
+            verify(cartItemRepository, never()).deleteAllByCartId(anyLong());
         }
     }
 }
