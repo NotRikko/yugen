@@ -80,6 +80,7 @@ public class CartService {
             newItem.setProduct(product);
             newItem.setQuantity(request.getQuantity());
             cartItemRepository.save(newItem);
+            cartRepository.save(cart);
             cart.getItems().add(newItem);
         }
 
@@ -144,8 +145,8 @@ public class CartService {
     @Transactional
     public CheckoutResponseDTO checkout() {
         Cart cart = getOrCreateCartEntity();
-        List<CartItem> items = new ArrayList<>(cart.getItems());
 
+        List<CartItem> items = new ArrayList<>(cart.getItems());
         CheckoutResponseDTO response = new CheckoutResponseDTO();
 
         if (items.isEmpty()) {
@@ -155,46 +156,24 @@ public class CartService {
         }
 
         for (CartItem item : items) {
-            Product product = item.getProduct();
-            int quantityNeeded = item.getQuantity();
-            boolean success = false;
-            int retries = 3;
+            Product product = productRepository.findById(item.getProduct().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Product", "id", item.getProduct().getId()));
 
-            while (!success && retries > 0) {
-                try {
-                    Product currentProduct = productRepository.findById(product.getId())
-                            .orElseThrow(() -> new ResourceNotFoundException("Product", "id", product.getId()));
-
-                    if (currentProduct.getQuantityInStock() < quantityNeeded) {
-                        response.getMessages().add("Not enough stock for product: " +
-                                currentProduct.getName() + ". Available: " + currentProduct.getQuantityInStock());
-                        break;
-                    }
-
-                    currentProduct.setQuantityInStock(currentProduct.getQuantityInStock() - quantityNeeded);
-                    productRepository.save(currentProduct);
-                    success = true;
-                } catch (OptimisticLockException e) {
-                    retries--;
-                    if (retries == 0) {
-                        response.getMessages().add("Could not update stock for product: " +
-                                product.getName() + ". Please try again.");
-                    }
-                }
+            if (product.getQuantityInStock() < item.getQuantity()) {
+                response.getMessages().add("Not enough stock for product: " + product.getName());
+                continue;
             }
-        }
 
-        if (!response.getMessages().isEmpty()) {
-            response.setSuccess(false);
-            return response;
+            product.setQuantityInStock(product.getQuantityInStock() - item.getQuantity());
+            productRepository.save(product);
         }
 
         cartItemRepository.deleteAllByCartId(cart.getId());
+        cartItemRepository.flush();
         cart.getItems().clear();
 
         response.setSuccess(true);
         response.getMessages().add("Checkout successful! Your order has been placed.");
         return response;
     }
-
 }
