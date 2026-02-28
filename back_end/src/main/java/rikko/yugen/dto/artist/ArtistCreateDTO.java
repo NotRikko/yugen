@@ -16,6 +16,4 @@ public class ArtistCreateDTO {
     private String profilePictureUrl;
     private String bannerPictureUrl;
 
-    @NotNull(message = "User ID is required")
-    private Long userId;
 }
