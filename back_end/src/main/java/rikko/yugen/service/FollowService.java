@@ -31,10 +31,6 @@ public class FollowService {
 
     // Helpers
 
-    private User getCurrentUser() {
-        return currentUserHelper.getCurrentUser();
-    }
-
     private FollowWithUserDTO mapFollowToDTO(Follow follow, boolean followerView) {
         if (followerView) {
             User follower = follow.getFollower();
@@ -75,7 +71,7 @@ public class FollowService {
 
     @Transactional(readOnly = true)
     public List<FollowWithUserDTO> getFollowingForCurrentUser() {
-        Long currentUserId = getCurrentUser().getId();
+        Long currentUserId = currentUserHelper.getCurrentUser().getId();
         return followRepository.findByFollowerId(currentUserId)
                 .stream()
                 .map(f -> mapFollowToDTO(f, false))
@@ -93,7 +89,7 @@ public class FollowService {
     // Write
     @Transactional
     public FollowWithUserDTO followArtist(Long artistId) {
-        User user = getCurrentUser();
+        User user = currentUserHelper.getCurrentUser();
         Artist artist = artistRepository.findById(artistId)
                 .orElseThrow(() -> new ResourceNotFoundException("Artist", "id", artistId));
 
@@ -101,16 +97,16 @@ public class FollowService {
 
         FollowId followId = new FollowId(user.getId(), artist.getId());
         return followRepository.findById(followId)
-                .map(f -> mapFollowToDTO(f, false))
+                .map(f -> mapFollowToDTO(f, true))
                 .orElseGet(() -> {
                     Follow saved = followRepository.save(new Follow(followId, user, artist, LocalDateTime.now()));
-                    return mapFollowToDTO(saved, false);
+                    return mapFollowToDTO(saved, true);
                 });
     }
 
     @Transactional
     public void unfollowArtist(Long artistId) {
-        User user = getCurrentUser();
+        User user = currentUserHelper.getCurrentUser();
         FollowId followId = new FollowId(user.getId(), artistId);
 
         if (!followRepository.existsById(followId)) {
@@ -122,7 +118,8 @@ public class FollowService {
 
     @Transactional(readOnly = true)
     public boolean isFollowing(Long artistId) {
-        User user = getCurrentUser();
+        User user = currentUserHelper.getCurrentUser();
+
         FollowId followId = new FollowId(user.getId(), artistId);
         return followRepository.existsById(followId);
     }
