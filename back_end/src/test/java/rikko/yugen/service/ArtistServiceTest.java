@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import rikko.yugen.dto.artist.ArtistCreateDTO;
 import rikko.yugen.dto.artist.ArtistDTO;
 import rikko.yugen.exception.ResourceNotFoundException;
+import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Artist;
 import rikko.yugen.model.User;
 import rikko.yugen.repository.ArtistRepository;
@@ -34,6 +35,9 @@ class ArtistServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private CurrentUserHelper currentUserHelper;
 
     @InjectMocks
     private ArtistService artistService;
@@ -157,9 +161,9 @@ class ArtistServiceTest {
 
             ArtistCreateDTO dto = new ArtistCreateDTO();
             dto.setArtistName("Rikko3");
-            dto.setUserId(3L);
             dto.setBio("I am a created test");
 
+            when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
             when(userRepository.findById(3L)).thenReturn(Optional.of(mockUser));
             when(artistRepository.existsByArtistName("Rikko3")).thenReturn(false);
 
