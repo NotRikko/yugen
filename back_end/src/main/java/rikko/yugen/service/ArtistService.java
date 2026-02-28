@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import rikko.yugen.exception.ResourceAlreadyExistsException;
 import rikko.yugen.exception.ResourceNotFoundException;
+import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Image;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.UserRepository;
@@ -24,6 +25,7 @@ public class ArtistService {
 
     private final ArtistRepository artistRepository;
     private final UserRepository userRepository;
+    private final CurrentUserHelper currentUserHelper;
 
     // Mapping
 
@@ -56,6 +58,7 @@ public class ArtistService {
 
     @Transactional
     public ArtistDTO createArtist(ArtistCreateDTO dto) {
+        User currentUser = currentUserHelper.getCurrentUser();
 
         String normalizedName = dto.getArtistName().trim();
 
@@ -63,18 +66,16 @@ public class ArtistService {
             throw new ResourceAlreadyExistsException("Artist", "artistName", normalizedName);
         }
 
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("User", "id", dto.getUserId()));
-
         Artist artist = new Artist();
         artist.setArtistName(normalizedName);
+
         if (dto.getProfilePictureUrl() != null) {
             Image profileImage = new Image();
             profileImage.setUrl(dto.getProfilePictureUrl());
-            profileImage.setProfileForArtist(artist);  // bidirectional
+            profileImage.setProfileForArtist(artist);
             artist.setProfileImage(profileImage);
         }
+
         if (dto.getBannerPictureUrl() != null) {
             Image bannerImage = new Image();
             bannerImage.setUrl(dto.getBannerPictureUrl());
@@ -82,7 +83,7 @@ public class ArtistService {
             artist.setBannerImage(bannerImage);
         }
 
-        artist.setUser(user);
+        artist.setUser(currentUser);
 
         try {
             Artist savedArtist = artistRepository.save(artist);
