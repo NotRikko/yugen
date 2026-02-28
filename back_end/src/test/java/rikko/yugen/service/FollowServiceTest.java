@@ -77,7 +77,7 @@ class FollowServiceTest {
             List<FollowWithUserDTO> result = followService.getFollowingForCurrentUser();
 
             assertEquals(1, result.size());
-            assertEquals(mockArtist.getId(), result.get(0).id());
+            assertEquals(mockArtist.getId(), result.get(0).userId());
         }
 
         @Test
@@ -87,7 +87,7 @@ class FollowServiceTest {
             List<FollowWithUserDTO> result = followService.getFollowersForArtist(mockArtist.getId());
 
             assertEquals(1, result.size());
-            assertEquals(mockUser.getId(), result.get(0).id());
+            assertEquals(mockUser.getId(), result.get(0).userId());
         }
     }
 
@@ -104,7 +104,7 @@ class FollowServiceTest {
 
             FollowWithUserDTO result = followService.followArtist(mockArtist.getId());
 
-            assertEquals(mockArtist.getId(), result.id());
+            assertEquals(mockArtist.getId(), result.userId());
             verify(followRepository, times(1)).save(any(Follow.class));
         }
 
