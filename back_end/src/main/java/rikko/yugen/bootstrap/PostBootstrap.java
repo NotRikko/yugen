@@ -40,15 +40,15 @@ public class PostBootstrap {
             List<Product> products = productRepository.findAll();
 
             List<Post> posts = List.of(
-                    new Post("This is me if anyone even cares.", LocalDateTime.now().minusDays(1),
+                    new Post("This is me if anyone even cares.",
                             artists.get(0), !products.isEmpty() ? products.get(0) : null),
-                    new Post("Felt pretty.", LocalDateTime.now().minusDays(2),
+                    new Post("Felt pretty.",
                             artists.get(1), products.size() > 1 ? products.get(1) : null),
-                    new Post("Character design drop 💥", LocalDateTime.now().minusDays(3),
+                    new Post("Character design drop 💥",
                             artists.get(2), null),
-                    new Post("Landscape art inspired by Ghibli", LocalDateTime.now().minusDays(4),
+                    new Post("Landscape art inspired by Ghibli",
                             artists.get(1), null),
-                    new Post("Color study from a reference photo", LocalDateTime.now().minusDays(5),
+                    new Post("Color study from a reference photo",
                             artists.get(0), null)
             );
 
