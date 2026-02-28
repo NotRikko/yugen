@@ -1,6 +1,5 @@
 package rikko.yugen.dto.artist;
 
-import rikko.yugen.dto.user.UserDTO;
 import rikko.yugen.model.Artist;
 
 public record ArtistDTO(
