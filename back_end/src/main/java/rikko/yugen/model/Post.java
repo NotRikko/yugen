@@ -17,16 +17,14 @@ import lombok.*;
 @AllArgsConstructor
 public class Post extends BaseModel {
 
-    public Post(String content, LocalDateTime createdAt, Artist artist, Product product) {
+    public Post(String content, Artist artist, Product product) {
         this.content = content;
-        this.createdAt = createdAt;
         this.artist = artist;
         this.product = product;
     }
 
-    public Post(String content, LocalDateTime createdAt, Artist artist) {
+    public Post(String content, Artist artist) {
         this.content = content;
-        this.createdAt = createdAt;
         this.artist = artist;
         this.product = null;
     }
@@ -48,9 +46,6 @@ public class Post extends BaseModel {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<Image> images = new ArrayList<>();
-
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id")
