@@ -9,10 +9,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import lombok.RequiredArgsConstructor;
 
+import rikko.yugen.dto.PageResponseDTO;
 import rikko.yugen.dto.artist.ArtistCreateDTO;
 import rikko.yugen.dto.artist.ArtistDTO;
 import rikko.yugen.dto.follow.FollowWithUserDTO;
@@ -37,11 +39,9 @@ public class ArtistController {
     // Artists
 
     @GetMapping
-    public ResponseEntity<Page<ArtistDTO>> getAllArtists(
-            @PageableDefault Pageable pageable
-    ) {
-        Page<ArtistDTO> artists = artistService.getAllArtists(pageable);
-        return ResponseEntity.ok(artists);
+    public PageResponseDTO<ArtistDTO> getAllArtists(@PageableDefault Pageable pageable) {
+        Page<ArtistDTO> page = artistService.getAllArtists(pageable);
+        return new PageResponseDTO<>(page);
     }
 
     @GetMapping("/{artistId}")
@@ -57,6 +57,7 @@ public class ArtistController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<ArtistDTO> createArtist(@Valid @RequestBody ArtistCreateDTO dto) {
         ArtistDTO createdArtist = artistService.createArtist(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdArtist);
@@ -65,28 +66,39 @@ public class ArtistController {
     // Posts
 
     @GetMapping("/{artistId}/posts")
-    public ResponseEntity<Page<PostDTO>> getPostsByArtistId(
+    public PageResponseDTO<PostDTO> getPostsByArtistId(
             @PathVariable Long artistId,
-            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC)
+            @PageableDefault(sort = "createdAt",
+                    direction = Sort.Direction.DESC)
             Pageable pageable) {
 
-        return ResponseEntity.ok(
-                postService.getPostsByArtistId(artistId, pageable)
-        );
+        Page<PostDTO> page =
+                postService.getPostsByArtistId(artistId, pageable);
+
+        return new PageResponseDTO<>(page);
     }
 
     // Products
 
     @GetMapping("/{artistId}/products")
-    public ResponseEntity<Page<ProductDTO>> getProductsByArtistId(@PathVariable Long artistId, @PageableDefault Pageable pageable) {
-        Page<ProductDTO> products = productService.getProductsByArtistId(artistId, pageable);
-        return ResponseEntity.ok(products);
+    public PageResponseDTO<ProductDTO> getProductsByArtistId(
+            @PathVariable Long artistId,
+            @PageableDefault Pageable pageable) {
+
+        Page<ProductDTO> page =
+                productService.getProductsByArtistId(artistId, pageable);
+
+        return new PageResponseDTO<>(page);
     }
 
     @GetMapping("/me/products")
-    public ResponseEntity<Page<ProductDTO>> getProductsOfLoggedInArtist(@PageableDefault Pageable pageable) {
-        Page<ProductDTO> products = productService.getProductsOfCurrentArtist(pageable);
-        return ResponseEntity.ok(products);
+    public PageResponseDTO<ProductDTO> getProductsOfLoggedInArtist(
+            @PageableDefault Pageable pageable) {
+
+        Page<ProductDTO> page =
+                productService.getProductsOfCurrentArtist(pageable);
+
+        return new PageResponseDTO<>(page);
     }
 
     // Followers
