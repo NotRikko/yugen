@@ -55,7 +55,6 @@ class ArtistIntegrationTest extends IntegrationTestBase {
         artistRepository.deleteAll();
         userRepository.deleteAll();
 
-        // Main user
         user = new User();
         user.setUsername("rikko");
         user.setPassword("test123!");
@@ -88,7 +87,7 @@ class ArtistIntegrationTest extends IntegrationTestBase {
         post = postRepository.save(post);
     }
 
-    // ===== Helpers =====
+    // Helpers
     private String getToken(User user, Role role) {
         return jwtService.generateAccessToken(
                 org.springframework.security.core.userdetails.User
