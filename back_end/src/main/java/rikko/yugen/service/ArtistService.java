@@ -13,7 +13,6 @@ import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Image;
 import rikko.yugen.repository.ArtistRepository;
-import rikko.yugen.repository.UserRepository;
 import rikko.yugen.dto.artist.ArtistCreateDTO;
 import rikko.yugen.dto.artist.ArtistDTO;
 import rikko.yugen.model.Artist;
@@ -24,7 +23,6 @@ import rikko.yugen.model.User;
 public class ArtistService {
 
     private final ArtistRepository artistRepository;
-    private final UserRepository userRepository;
     private final CurrentUserHelper currentUserHelper;
 
     // Mapping
