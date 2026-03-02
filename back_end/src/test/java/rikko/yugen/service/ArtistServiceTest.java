@@ -16,6 +16,7 @@ import rikko.yugen.dto.artist.ArtistDTO;
 import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Artist;
+import rikko.yugen.model.Role;
 import rikko.yugen.model.User;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.UserRepository;
@@ -54,12 +55,14 @@ class ArtistServiceTest {
         mockUser.setUsername("Rikko");
         mockUser.setDisplayName("Rikko");
         mockUser.setEmail("rikko@test.com");
+        mockUser.setRole(Role.ARTIST);
 
         User mockUser2 = new User();
         mockUser2.setId(2L);
         mockUser2.setUsername("Rikko2");
         mockUser2.setDisplayName("Rikko2");
         mockUser2.setEmail("rikko2@test.com");
+        mockUser2.setRole(Role.ARTIST);
 
         artist = new Artist();
         artist.setId(1L);
@@ -158,13 +161,13 @@ class ArtistServiceTest {
             mockUser.setUsername("Rikko3");
             mockUser.setDisplayName("Rikko3");
             mockUser.setEmail("rikko3@test.com");
+            mockUser.setRole(Role.USER);
 
             ArtistCreateDTO dto = new ArtistCreateDTO();
             dto.setArtistName("Rikko3");
             dto.setBio("I am a created test");
 
             when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
-            when(userRepository.findById(3L)).thenReturn(Optional.of(mockUser));
             when(artistRepository.existsByArtistName("Rikko3")).thenReturn(false);
 
             Artist savedArtist = new Artist();
@@ -183,7 +186,6 @@ class ArtistServiceTest {
             assertEquals("I am a created test", result.bio());
             assertEquals(3L, result.userId());
 
-            verify(userRepository).findById(3L);
             verify(artistRepository).existsByArtistName("Rikko3");
             verify(artistRepository).save(any(Artist.class));
         }
