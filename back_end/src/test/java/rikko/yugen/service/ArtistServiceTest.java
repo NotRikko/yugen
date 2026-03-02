@@ -19,8 +19,6 @@ import rikko.yugen.model.Artist;
 import rikko.yugen.model.Role;
 import rikko.yugen.model.User;
 import rikko.yugen.repository.ArtistRepository;
-import rikko.yugen.repository.UserRepository;
-
 
 import java.util.List;
 import java.util.Optional;
@@ -33,9 +31,6 @@ import static org.mockito.Mockito.*;
 class ArtistServiceTest {
     @Mock
     private ArtistRepository artistRepository;
-
-    @Mock
-    private UserRepository userRepository;
 
     @Mock
     private CurrentUserHelper currentUserHelper;
