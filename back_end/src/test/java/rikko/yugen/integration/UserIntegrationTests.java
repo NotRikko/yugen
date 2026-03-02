@@ -80,10 +80,6 @@ class UserIntegrationTests extends IntegrationTestBase {
         return headers;
     }
 
-    private ResponseEntity<UserDTO> createUser(UserCreateDTO dto) {
-        return restTemplate.postForEntity("/users", dto, UserDTO.class);
-    }
-
     // Get tests
 
     @Test
