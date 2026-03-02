@@ -14,6 +14,7 @@ import rikko.yugen.dto.comment.CommentDTO;
 import rikko.yugen.dto.like.PostLikeResponseDTO;
 import rikko.yugen.dto.post.PostCreateDTO;
 import rikko.yugen.dto.post.PostDTO;
+import rikko.yugen.dto.post.PostDetailsDTO;
 import rikko.yugen.dto.post.PostUpdateDTO;
 import rikko.yugen.service.CommentService;
 import rikko.yugen.service.PostLikeService;
@@ -96,5 +97,13 @@ public class PostController {
     public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{postId}/detail")
+    public ResponseEntity<PostDetailsDTO> getPostDetails(
+            @PathVariable Long postId,
+            @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        return ResponseEntity.ok(postService.getPostDetails(postId, pageable));
     }
 }
