@@ -69,6 +69,13 @@ public class SecurityConfiguration {
                     .requestMatchers(HttpMethod.PUT, "/posts/**").hasAnyRole("ADMIN", "ARTIST")
                     .requestMatchers(HttpMethod.DELETE, "/posts/**").hasAnyRole("ADMIN", "ARTIST")
 
+                    .requestMatchers(
+                            "/v3/api-docs/**",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html",
+                            "/webjars/**"
+                    ).permitAll()
+
                     .anyRequest().authenticated()
             )
             .authenticationProvider(authenticationProvider)
