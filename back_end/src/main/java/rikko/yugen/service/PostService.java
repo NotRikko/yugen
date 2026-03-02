@@ -11,19 +11,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import org.springframework.transaction.annotation.Transactional;
+import rikko.yugen.dto.post.PostDetailsDTO;
 import rikko.yugen.dto.post.PostUpdateDTO;
 import rikko.yugen.exception.ResourceNotFoundException;
+import rikko.yugen.model.*;
+import rikko.yugen.repository.CommentRepository;
 import rikko.yugen.repository.PostRepository;
 import rikko.yugen.repository.ArtistRepository;
 import rikko.yugen.repository.ProductRepository;
 
 import rikko.yugen.dto.post.PostCreateDTO;
 import rikko.yugen.dto.post.PostDTO;
-
-import rikko.yugen.model.Artist;
-import rikko.yugen.model.Post;
-import rikko.yugen.model.Product;
-import rikko.yugen.model.User;
 
 import rikko.yugen.helpers.CurrentUserHelper;
 
@@ -36,6 +34,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final ArtistRepository artistRepository;
     private final ProductRepository productRepository;
+    private final CommentRepository commentRepository;
 
     private final CloudinaryService cloudinaryService;
     private final ImageService imageService;
@@ -74,6 +73,16 @@ public class PostService {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
         return new PostDTO(post);
+    }
+
+    @Transactional(readOnly = true)
+    public PostDetailsDTO getPostDetails(Long postId, Pageable pageable) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ResourceNotFoundException("Post", "id", postId));
+
+        Page<Comment> commentsPage = commentRepository.findByPostId(postId, pageable);
+
+        return new PostDetailsDTO(post, commentsPage);
     }
 
     // Create
