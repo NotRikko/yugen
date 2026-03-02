@@ -1,6 +1,5 @@
 package rikko.yugen.dto.comment;
 
-import rikko.yugen.dto.user.UserDTO;
 import rikko.yugen.dto.user.UserSummaryDTO;
 import rikko.yugen.model.Comment;
 
