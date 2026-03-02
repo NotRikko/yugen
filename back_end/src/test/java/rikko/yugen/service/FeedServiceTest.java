@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import rikko.yugen.dto.post.FeedPostDTO;
 import rikko.yugen.dto.post.PostDTO;
 import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Artist;
@@ -70,7 +71,7 @@ class FeedServiceTest {
 
             when(postRepository.findAll(pageable)).thenReturn(postPage);
 
-            FeedService.FeedResponse<PostDTO> response = feedService.getGlobalFeed(pageable);
+            FeedService.FeedResponse<FeedPostDTO> response = feedService.getGlobalFeed(pageable);
 
             assertEquals(1, response.posts().size());
             assertEquals(post.getId(), response.posts().get(0).id());
@@ -84,7 +85,7 @@ class FeedServiceTest {
 
             when(postRepository.findAll(pageable)).thenReturn(emptyPage);
 
-            FeedService.FeedResponse<PostDTO> response = feedService.getGlobalFeed(pageable);
+            FeedService.FeedResponse<FeedPostDTO> response = feedService.getGlobalFeed(pageable);
 
             assertTrue(response.posts().isEmpty());
             assertFalse(response.hasNext());
@@ -106,7 +107,7 @@ class FeedServiceTest {
             when(postRepository.findByArtist_IdIn(List.of(followedArtist.getId()), pageable))
                     .thenReturn(postPage);
 
-            FeedService.FeedResponse<PostDTO> response = feedService.getUserFeed(pageable);
+            FeedService.FeedResponse<FeedPostDTO> response = feedService.getUserFeed(pageable);
 
             assertEquals(1, response.posts().size());
             assertEquals(post.getId(), response.posts().get(0).id());
@@ -120,7 +121,7 @@ class FeedServiceTest {
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
             when(followRepository.findByFollowerId(user.getId())).thenReturn(Collections.emptyList());
 
-            FeedService.FeedResponse<PostDTO> response = feedService.getUserFeed(pageable);
+            FeedService.FeedResponse<FeedPostDTO> response = feedService.getUserFeed(pageable);
 
             assertTrue(response.posts().isEmpty());
             assertFalse(response.hasNext());
@@ -137,7 +138,7 @@ class FeedServiceTest {
             when(postRepository.findByArtist_IdIn(List.of(followedArtist.getId()), pageable))
                     .thenReturn(emptyPage);
 
-            FeedService.FeedResponse<PostDTO> response = feedService.getUserFeed(pageable);
+            FeedService.FeedResponse<FeedPostDTO> response = feedService.getUserFeed(pageable);
 
             assertTrue(response.posts().isEmpty());
             assertFalse(response.hasNext());

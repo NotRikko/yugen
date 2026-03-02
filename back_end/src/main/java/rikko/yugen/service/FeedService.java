@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.*;
 
+import rikko.yugen.dto.post.FeedPostDTO;
 import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Post;
 import rikko.yugen.dto.post.PostDTO;
@@ -25,12 +26,6 @@ public class FeedService {
 
     // Helpers
 
-    private List<PostDTO> mapToDTOs(Page<Post> postPage) {
-        return postPage.getContent().stream()
-                .map(PostDTO::new)
-                .toList();
-    }
-
     private List<Long> getFollowedArtistIds(User user) {
         return followRepository.findByFollowerId(user.getId())
                 .stream()
@@ -41,15 +36,20 @@ public class FeedService {
     // Global feed
 
     @Transactional(readOnly = true)
-    public FeedResponse<PostDTO> getGlobalFeed(Pageable pageable) {
+    public FeedResponse<FeedPostDTO> getGlobalFeed(Pageable pageable) {
         Page<Post> postPage = postRepository.findAll(pageable);
-        return new FeedResponse<>(mapToDTOs(postPage), postPage.hasNext());
+
+        List<FeedPostDTO> dtoList = postPage.stream()
+                .map(FeedPostDTO::new)
+                .toList();
+
+        return new FeedResponse<>(dtoList, postPage.hasNext());
     }
 
     // User feed
 
     @Transactional(readOnly = true)
-    public FeedResponse<PostDTO> getUserFeed(Pageable pageable) {
+    public FeedResponse<FeedPostDTO> getUserFeed(Pageable pageable) {
         User currentUser = currentUserHelper.getCurrentUser();
         List<Long> followedArtistIds = getFollowedArtistIds(currentUser);
 
@@ -58,7 +58,12 @@ public class FeedService {
         }
 
         Page<Post> postPage = postRepository.findByArtist_IdIn(followedArtistIds, pageable);
-        return new FeedResponse<>(mapToDTOs(postPage), postPage.hasNext());
+
+        List<FeedPostDTO> dtoList = postPage.stream()
+                .map(FeedPostDTO::new)
+                .toList();
+
+        return new FeedResponse<>(dtoList, postPage.hasNext());
     }
 
     public record FeedResponse<T>(List<T> posts, boolean hasNext) {}
