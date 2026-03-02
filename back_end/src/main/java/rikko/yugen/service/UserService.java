@@ -61,7 +61,9 @@ public class UserService implements UserDetailsService {
                 user.getEmail(),
                 user.getProfileImage() != null ? user.getProfileImage().getUrl() : null,
                 user.getIsArtist() != null ? user.getIsArtist() : false,
-                user.getArtist() != null ? user.getArtist().getId() : null
+                user.getArtist() != null ? user.getArtist().getId() : null,
+                user.getCreatedAt(),
+                user.getUpdatedAt()
         );
     }
 
