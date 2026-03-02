@@ -155,15 +155,26 @@ public class CartService {
             return response;
         }
 
+        List<String> outOfStockMessages = new ArrayList<>();
         for (CartItem item : items) {
             Product product = productRepository.findById(item.getProduct().getId())
                     .orElseThrow(() -> new ResourceNotFoundException("Product", "id", item.getProduct().getId()));
 
             if (product.getQuantityInStock() < item.getQuantity()) {
-                response.getMessages().add("Not enough stock for product: " + product.getName());
-                continue;
+                outOfStockMessages.add(
+                        "Not enough stock for product: " + product.getName()
+                );
             }
+        }
 
+        if (!outOfStockMessages.isEmpty()) {
+            response.setSuccess(false);
+            response.getMessages().addAll(outOfStockMessages);
+            return response;
+        }
+
+        for (CartItem item : items) {
+            Product product = productRepository.findById(item.getProduct().getId()).get();
             product.setQuantityInStock(product.getQuantityInStock() - item.getQuantity());
             productRepository.save(product);
         }
