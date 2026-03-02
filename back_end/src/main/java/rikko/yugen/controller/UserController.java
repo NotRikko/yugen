@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import rikko.yugen.dto.PageResponseDTO;
 import rikko.yugen.dto.comment.CommentDTO;
 import rikko.yugen.dto.follow.FollowWithUserDTO;
 import rikko.yugen.dto.user.*;
@@ -54,20 +56,17 @@ public class UserController {
     }
 
     @GetMapping("/me")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<UserDTO> getAuthenticatedUser(@AuthenticationPrincipal User user) {
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-        }
-        UserDTO userDTO = userService.getUserById(user.getId());
-        return ResponseEntity.ok(userDTO);
+        return ResponseEntity.ok(userService.getUserById(user.getId()));
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserDTO>> getAllUsers(
+    public ResponseEntity<PageResponseDTO<UserDTO>> getAllUsers(
             @PageableDefault Pageable pageable
             ) {
-        Page<UserDTO> users = userService.getAllUsers(pageable);
-        return ResponseEntity.ok(users);
+        Page<UserDTO> page = userService.getAllUsers(pageable);
+        return ResponseEntity.ok(new PageResponseDTO<>(page));
     }
 
     @PostMapping
@@ -87,18 +86,17 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, String>> deleteUser(@PathVariable Long id) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
-        return ResponseEntity.ok(Map.of("message", "Account deleted successfully"));
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/me")
-    public ResponseEntity<Map<String, String>> deleteCurrentUser(@AuthenticationPrincipal User user) {
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not authenticated");
-        }
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<Void> deleteCurrentUser(@AuthenticationPrincipal User user) {
         userService.deleteUser(user.getId());
-        return ResponseEntity.ok(Map.of("message", "Account deleted successfully"));
+        return ResponseEntity.noContent().build();
     }
 
     // Follows
