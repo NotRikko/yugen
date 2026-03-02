@@ -62,6 +62,7 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<PageResponseDTO<UserDTO>> getAllUsers(
             @PageableDefault Pageable pageable
             ) {
@@ -70,6 +71,7 @@ public class UserController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserCreateDTO dto) {
         UserDTO createdUser = userService.createUser(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
@@ -82,6 +84,17 @@ public class UserController {
             @RequestPart(value = "file", required = false) MultipartFile file
     ) {
         UserDTO updatedUser = userService.updateUser(id, dto, file);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @PatchMapping(value = "/me", consumes = {"multipart/form-data"})
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<UserDTO> updateCurrentUser(
+            @AuthenticationPrincipal User currentUser,
+            @RequestPart("patch") UserUpdateDTO dto,
+            @RequestPart(value = "file", required = false) MultipartFile file
+    ) {
+        UserDTO updatedUser = userService.updateUser(currentUser.getId(), dto, file);
         return ResponseEntity.ok(updatedUser);
     }
 
@@ -102,6 +115,7 @@ public class UserController {
     // Follows
 
     @GetMapping("/me/following")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<List<FollowWithUserDTO>> getFolloweesForCurrentUser() {
         List<FollowWithUserDTO> following = followService.getFollowingForCurrentUser();
         return ResponseEntity.ok(following);
@@ -117,6 +131,7 @@ public class UserController {
     }
 
     @GetMapping("/me/comments")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Page<CommentDTO>> getCurrentUserComments(
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(commentService.getCurrentUserComments(pageable));
