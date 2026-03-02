@@ -39,9 +39,9 @@ public class ArtistController {
     // Artists
 
     @GetMapping
-    public PageResponseDTO<ArtistDTO> getAllArtists(@PageableDefault Pageable pageable) {
+    public ResponseEntity<PageResponseDTO<ArtistDTO> >getAllArtists(@PageableDefault Pageable pageable) {
         Page<ArtistDTO> page = artistService.getAllArtists(pageable);
-        return new PageResponseDTO<>(page);
+        return ResponseEntity.ok(new PageResponseDTO<>(page));
     }
 
     @GetMapping("/{artistId}")
@@ -66,7 +66,7 @@ public class ArtistController {
     // Posts
 
     @GetMapping("/{artistId}/posts")
-    public PageResponseDTO<PostDTO> getPostsByArtistId(
+    public ResponseEntity<PageResponseDTO<PostDTO>> getPostsByArtistId(
             @PathVariable Long artistId,
             @PageableDefault(sort = "createdAt",
                     direction = Sort.Direction.DESC)
@@ -75,30 +75,30 @@ public class ArtistController {
         Page<PostDTO> page =
                 postService.getPostsByArtistId(artistId, pageable);
 
-        return new PageResponseDTO<>(page);
+        return ResponseEntity.ok(new PageResponseDTO<>(page));
     }
 
     // Products
 
     @GetMapping("/{artistId}/products")
-    public PageResponseDTO<ProductDTO> getProductsByArtistId(
+    public ResponseEntity<PageResponseDTO<ProductDTO>> getProductsByArtistId(
             @PathVariable Long artistId,
             @PageableDefault Pageable pageable) {
 
         Page<ProductDTO> page =
                 productService.getProductsByArtistId(artistId, pageable);
 
-        return new PageResponseDTO<>(page);
+        return ResponseEntity.ok(new PageResponseDTO<>(page));
     }
 
     @GetMapping("/me/products")
-    public PageResponseDTO<ProductDTO> getProductsOfLoggedInArtist(
+    public ResponseEntity<PageResponseDTO<ProductDTO>> getProductsOfLoggedInArtist(
             @PageableDefault Pageable pageable) {
 
         Page<ProductDTO> page =
                 productService.getProductsOfCurrentArtist(pageable);
 
-        return new PageResponseDTO<>(page);
+        return ResponseEntity.ok(new PageResponseDTO<>(page));
     }
 
     // Followers
