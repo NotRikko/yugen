@@ -2,6 +2,8 @@ package rikko.yugen.dto.user;
 
 import rikko.yugen.model.User;
 
+import java.time.LocalDateTime;
+
 public record UserDTO(
         Long id,
         String username,
@@ -9,7 +11,9 @@ public record UserDTO(
         String email,
         String image,
         Boolean isArtist,
-        Long artistId
+        Long artistId,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {
 
     public UserDTO(User user, Long artistId) {
@@ -20,7 +24,9 @@ public record UserDTO(
                 user.getEmail(),
                 user.getProfileImage() != null ? user.getProfileImage().getUrl() : null,
                 user.getIsArtist() != null ? user.getIsArtist() : false,
-                artistId
+                artistId,
+                user.getCreatedAt(),
+                user.getUpdatedAt()
         );
     }
 }
