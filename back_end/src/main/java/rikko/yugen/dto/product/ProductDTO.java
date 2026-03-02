@@ -1,5 +1,6 @@
 package rikko.yugen.dto.product;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,7 +18,9 @@ public record ProductDTO(
         Long artistId,
         Set<Long> seriesIds,
         Set<Long> collectionIds,
-        Set<String> imageUrls
+        Set<String> imageUrls,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {
     public ProductDTO(Product product) {
         this(
@@ -28,7 +31,9 @@ public record ProductDTO(
                 product.getArtist() != null ? product.getArtist().getId() : null,
                 product.getSeries() != null ? product.getSeries().stream().map(Series::getId).collect(Collectors.toSet()) : Collections.emptySet(),
                 product.getCollections() != null ? product.getCollections().stream().map(Collection::getId).collect(Collectors.toSet()) : Collections.emptySet(),
-                product.getImages() != null ? product.getImages().stream().map(Image::getUrl).collect(Collectors.toSet()) : Collections.emptySet()
+                product.getImages() != null ? product.getImages().stream().map(Image::getUrl).collect(Collectors.toSet()) : Collections.emptySet(),
+                product.getCreatedAt(),
+                product.getUpdatedAt()
         );
     }
 }

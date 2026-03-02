@@ -10,7 +10,8 @@ public record CommentDTO(
         UserDTO user,
         String content,
         Long postId,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {
     public CommentDTO(Comment comment) {
         this(
@@ -18,7 +19,8 @@ public record CommentDTO(
                 comment.getUser() != null ? new UserDTO(comment.getUser(), null) : null,
                 comment.getContent(),
                 comment.getPost() != null ? comment.getPost().getId() : null,
-                comment.getCreatedAt()
+                comment.getCreatedAt(),
+                comment.getUpdatedAt()
         );
     }
 }
