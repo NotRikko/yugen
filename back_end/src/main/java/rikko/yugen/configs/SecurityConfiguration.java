@@ -39,30 +39,40 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
-                        .requestMatchers("/error").permitAll()
-                        .requestMatchers(HttpMethod.GET,
-                                "/products/**",
-                                "/posts/**",
-                                "/feed/**",
-                                "/artists/**",
-                                "/follow/**").permitAll()
+            .csrf(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                    .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                    .requestMatchers("/error").permitAll()
+                    .requestMatchers(HttpMethod.GET,
+                            "/products/**",
+                            "/posts/**",
+                            "/feed/**",
+                            "/artists/**",
+                            "/follow/**").permitAll()
 
-                        .requestMatchers(HttpMethod.POST, "/posts/*/likes").hasAnyRole("USER","ARTIST","ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/posts/*/likes").hasAnyRole("USER","ARTIST","ADMIN")
+                    .requestMatchers(HttpMethod.GET, "/users/me/**").authenticated()
+                    .requestMatchers(HttpMethod.PATCH, "/users/me").authenticated()
+                    .requestMatchers(HttpMethod.DELETE, "/users/me").authenticated()
+                    .requestMatchers(HttpMethod.GET, "/posts/*/likes").authenticated()
+                    .requestMatchers(HttpMethod.POST, "/posts/*/likes").authenticated()
+                    .requestMatchers(HttpMethod.DELETE, "/posts/*/likes").authenticated()
 
-                        .requestMatchers(HttpMethod.POST, "/posts/**").hasAnyRole("ADMIN", "ARTIST")
-                        .requestMatchers(HttpMethod.PUT, "/posts/**").hasAnyRole("ADMIN", "ARTIST")
-                        .requestMatchers(HttpMethod.DELETE, "/posts/**").hasAnyRole("ADMIN", "ARTIST")
+                    .requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.POST, "/users").hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.DELETE, "/users/**").hasRole("ADMIN")
 
-                        .anyRequest().authenticated()
-                )
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                    .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
+
+                    .requestMatchers(HttpMethod.POST, "/posts/**").hasAnyRole("ADMIN", "ARTIST")
+                    .requestMatchers(HttpMethod.PUT, "/posts/**").hasAnyRole("ADMIN", "ARTIST")
+                    .requestMatchers(HttpMethod.DELETE, "/posts/**").hasAnyRole("ADMIN", "ARTIST")
+
+                    .anyRequest().authenticated()
+            )
+            .authenticationProvider(authenticationProvider)
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
