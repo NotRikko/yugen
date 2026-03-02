@@ -44,7 +44,6 @@ class CommentIntegrationTest extends IntegrationTestBase {
     private JwtService jwtService;
 
     private User user;
-    private Artist artist;
     private Post savedPost;
     private Comment savedComment;
 
@@ -55,12 +54,17 @@ class CommentIntegrationTest extends IntegrationTestBase {
         artistRepository.deleteAll();
         userRepository.deleteAll();
 
+        Image image = new Image();
+        image.setUser(user);
+        image.setUrl("mockimage");
+
         user = new User();
         user.setUsername("rikko3");
         user.setPassword("test12345!");
+        user.setProfileImage(image);
         userRepository.save(user);
 
-        artist = new Artist();
+        Artist artist = new Artist();
         artist.setArtistName("testArtist");
         artist.setUser(user);
         artistRepository.save(artist);

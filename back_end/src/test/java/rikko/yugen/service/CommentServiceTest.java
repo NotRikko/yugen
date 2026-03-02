@@ -18,6 +18,7 @@ import rikko.yugen.dto.comment.CommentUpdateDTO;
 import rikko.yugen.exception.ResourceNotFoundException;
 import rikko.yugen.helpers.CurrentUserHelper;
 import rikko.yugen.model.Comment;
+import rikko.yugen.model.Image;
 import rikko.yugen.model.Post;
 import rikko.yugen.model.User;
 import rikko.yugen.repository.CommentRepository;
@@ -56,10 +57,14 @@ class CommentServiceTest {
 
     @BeforeEach
     void setUp() {
+        Image mockImage = new Image();
+        mockImage.setUser(mockUser);
+        mockImage.setUrl("mockimage");
 
         mockUser = new User();
         mockUser.setId(1L);
         mockUser.setUsername("Rikko");
+        mockUser.setProfileImage(mockImage);
 
         mockPost = new Post();
         mockPost.setId(1L);
