@@ -19,8 +19,8 @@ public class CartController {
 
     private final CartService cartService;
 
-    @PreAuthorize("isAuthenticated()")
     @GetMapping
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<CartDTO> getCart() {
         CartDTO cart = cartService.getOrCreateCart();
         return ResponseEntity.ok(cart);
