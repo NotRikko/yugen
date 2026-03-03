@@ -82,7 +82,10 @@ public class PostService {
 
         Page<Comment> commentsPage = commentRepository.findByPostId(postId, pageable);
 
-        return new PostDetailsDTO(post, commentsPage);
+        User currentUser = currentUserHelper.getCurrentUser();
+        Long currentUserId = currentUser != null ? currentUser.getId() : null;
+
+        return new PostDetailsDTO(post, commentsPage, currentUserId);
     }
 
     // Create
