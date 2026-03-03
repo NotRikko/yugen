@@ -28,7 +28,7 @@ public class UserBootstrap {
                     createUser("charlie", "Charlie Rose", "charlie@example.com", "password3", "charlie.png", false),
                     createUser("diana", "Diana Prince", "diana@example.com", "password4", "diana.png", true),
                     createUser("edward", "Edward Nigma", "edward@example.com", "password5", "edward.png", true),
-                    createUser("Test", "Rikko", "holymoly@email.com", "asdfasdf",
+                    createUser("test", "Rikko", "holymoly@email.com", "asdfasdf",
                             "https://pbs.twimg.com/profile_images/1966106142481731584/0U9vHmdl_400x400.jpg", true)
             );
 
