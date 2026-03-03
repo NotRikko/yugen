@@ -36,7 +36,7 @@ export default function SignupForm() {
   
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      const updatedUser = await userApi.updateUser(user.id, values);
+      const updatedUser = await userApi.updateUser(values);
       localStorage.setItem("user", JSON.stringify(updatedUser));
       setUser(updatedUser);
       console.log("Update successful:", updatedUser);
