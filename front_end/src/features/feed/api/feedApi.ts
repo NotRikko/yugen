@@ -1,10 +1,10 @@
 import { fetchClient } from "@/shared/api/fetchClient";
-import type { PostDTO } from "@/features/posts/types/postTypes";
+import type { FeedResponseDTO } from "../types";
 
 export const feedApi = {
     getGlobalFeed: (page = 0, size = 20) => 
-      fetchClient<PostDTO[]>(`/feed/global?page=${page}&size=${size}`, { method: "GET" }),
+      fetchClient<FeedResponseDTO>(`/feed/global?page=${page}&size=${size}`, { method: "GET" }),
   
     getUserFeed: (page = 0, size = 20) =>
-      fetchClient<PostDTO[]>(`/feed/user?page=${page}&size=${size}`, { method: "GET" }),
+      fetchClient<FeedResponseDTO>(`/feed/user?page=${page}&size=${size}`, { method: "GET" }),
   };
