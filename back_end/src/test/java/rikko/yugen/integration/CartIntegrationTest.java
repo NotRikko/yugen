@@ -154,7 +154,7 @@ class CartIntegrationTest extends IntegrationTestBase {
         CartDTO cart = addItem(user, product, 2);
         Assertions.assertEquals(1, cart.items().size());
         CartItemDTO item = cart.items().get(0);
-        Assertions.assertEquals(product.getId(), item.productId());
+        Assertions.assertEquals(product.getId(), item.product().id());
         Assertions.assertEquals(2, item.quantity());
     }
 
