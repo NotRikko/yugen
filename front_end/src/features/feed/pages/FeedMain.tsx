@@ -3,17 +3,19 @@ import Post from "@/features/posts/components/Post";
 import PostCreate from "@/features/posts/components/PostCreate";
 import TrendingArtistsBar from "@/features/feed/components/TrendingArtistsBar";
 import { useFeed } from "../hooks/useFeed";
+import { usePost } from "../../posts/hooks/usePost";
 import { useArtist } from "@/features/artists/hooks/useArtist";
 
-import type { PostDTO } from "@/features/posts/types/postTypes";
 import PostModalWrapper from "@/features/posts/components/PostModalWrapper";
+
 function FeedMain(): JSX.Element {
   const [userFeed, setUserFeed] = useState(false);
 
-  const { posts, loading, createPostOptimistic, deletePostOptimistic, updatePostOptimistic, loadMore } = useFeed({ userFeed, size: 10 });
+  const { posts, loading, loadMore } = useFeed({ userFeed, size: 10 });
+  const { createPostOptimistic, deletePostOptimistic, updatePostOptimistic} = usePost();
 
-  const [selectedPost, setSelectedPost] = useState<PostDTO | null>(null);
-
+  const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
+  
   const { trendingArtists, loadingTrendingArtists } = useArtist();
 
   const observer = useRef<IntersectionObserver | null>(null);
@@ -59,9 +61,9 @@ function FeedMain(): JSX.Element {
             <Post 
               key={post.id} 
               post={post} 
-              onSelect={() => setSelectedPost(post)}  
-              onUpdate={() => setSelectedPost(post)} 
-              onDelete={() => deletePostOptimistic(post.id)} />
+              onSelect={() => setSelectedPostId(post.id!)}
+              onUpdate={() => setSelectedPostId(post.id!)}
+              onDelete={() => deletePostOptimistic(post.id!)} />
           ))}
 
           {loading && <div className="text-center py-8">Loading posts...</div>}
@@ -78,14 +80,12 @@ function FeedMain(): JSX.Element {
         loadingTrendingArtists={loadingTrendingArtists}
       />
 
-      {selectedPost && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
-        >
-          <div className="bg-white rounded-xl shadow-lg w-11/12 md:w-3/4 lg:w-1/2 relative max-h-[90vh] overflow-y-auto">
-          <PostModalWrapper post={selectedPost} onClose={() => setSelectedPost(null)} updatePost={updatePostOptimistic} />
-          </div>
-        </div>
+      {selectedPostId && (
+        <PostModalWrapper
+          postId={selectedPostId}
+          onClose={() => setSelectedPostId(null)}
+          updatePost={updatePostOptimistic}
+        />
       )}
     </div>
   );

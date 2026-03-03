@@ -1,18 +1,40 @@
-import type { PostDTO } from "@/features/posts/types/postTypes";
-import PostModal from "@/features/posts/components/PostModal";
+import { useEffect, useState } from "react";
+import { postApi } from "../api/postApi";
+import PostModal from "./PostModal";
+import type { PostDTO } from "../types";
 
 interface PostModalWrapperProps {
-  post: PostDTO | null;
+  postId: number;
   onClose: () => void;
   updatePost: (postId: number, updatedContent: string) => Promise<void>;
 }
 
-const PostModalWrapper: React.FC<PostModalWrapperProps> = ({ post, onClose, updatePost }) => {
-  if (!post) return null;
+const PostModalWrapper: React.FC<PostModalWrapperProps> = ({ postId, onClose, updatePost }) => {
+  const [post, setPost] = useState<PostDTO | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      setLoading(true);
+      try {
+        const result = await postApi.getPostDetails(postId); 
+        setPost(result);
+      } catch (error) {
+        console.error("Failed to fetch post:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [postId]);
 
   const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) onClose();
   };
+
+  if (loading) return <div>Loading post...</div>;
+  if (!post) return null;
 
   return (
     <div

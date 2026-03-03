@@ -1,8 +1,7 @@
 import { FollowButton } from "@/features/follow/components/FollowButton";
-import { PartialArtist } from "../types/artistTypes";
-
+import type { ArtistDTO } from "../types";
 interface ArtistProfileHeaderProps {
-  artist: PartialArtist;
+  artist: ArtistDTO;
 }
 
 const ArtistProfileHeader: React.FC<ArtistProfileHeaderProps> = ({ artist }) => {
@@ -33,7 +32,7 @@ const ArtistProfileHeader: React.FC<ArtistProfileHeaderProps> = ({ artist }) => 
           {artist.artistName || "Unknown Artist"}
         </h1>
 
-        <FollowButton artistId={artist.id} />
+        {artist.id && <FollowButton artistId={artist.id} />}
 
         {artist.bio ? (
           <p className="text-gray-300 text-sm sm:text-base leading-relaxed whitespace-pre-line">

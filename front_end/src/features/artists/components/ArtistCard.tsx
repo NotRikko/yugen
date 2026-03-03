@@ -1,7 +1,6 @@
-import type { PartialArtist } from "../types/artistTypes";
-
+import type { ArtistDTO } from "../types";
 interface ArtistCardProps {
-    artist: PartialArtist;
+    artist: ArtistDTO;
     onClick?: () => void;
 }
 

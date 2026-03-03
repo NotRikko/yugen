@@ -1,5 +1,5 @@
 import { fetchClient } from "@/shared/api/fetchClient";
-import type { PostDTO } from "../types/postTypes";
+import { PostDetailsDTO, type PostDTO } from "../types";
 
 export const postApi = {
   createPost: async (data: {
@@ -49,6 +49,12 @@ export const postApi = {
       body: JSON.stringify({ userId }),
       auth: true,
   }),
+
+  getPostById: (id: number) => 
+    fetchClient<PostDTO>(`/posts/${id}`, { method: "GET"}),
+
+  getPostDetails: (id: number) =>
+    fetchClient<PostDetailsDTO>(`/posts/${id}/details`, { method: "GET" }),
 
   getPostsByArtistName: (artistName: string) =>
     fetchClient<PostDTO[]>(`/artists/${artistName}/posts`, { method: "GET" }),
