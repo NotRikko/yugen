@@ -6,139 +6,146 @@ import type { PostDetailsDTO } from "../types";
 import { useNavigate } from "react-router-dom";
 import { useComment } from "@/features/comments/hooks/useComment";
 import { useEffect, useState } from "react";
+import { useUser } from "@/features/user/useUserContext";
 
-interface PostDetailsProps {
+interface PostModalProps {
   post: PostDetailsDTO;
-  updatePost: (postId: number, content: string) => void
-
+  updatePost: (postId: number, content: string) => void;
 }
 
-export default function PostModal({ post, updatePost }: PostDetailsProps) {
+const DEFAULT_IMAGE =
+  "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg";
+
+const PostModal = ({ post, updatePost }: PostModalProps) => {
   const navigate = useNavigate();
-  const { createComment, deleteComment, comments, setComments } = useComment();
+  const { user } = useUser();
+  const {
+    comments,
+    createComment,
+    deleteComment,
+    setComments,
+  } = useComment(post.comments?.content ?? []);
 
   const [isEditing, setIsEditing] = useState(false);
-  const [content, setContent] = useState(post.content || "");
+  const [content, setContent] = useState(post.content ?? "");
+
+  const images = post.imageUrls ?? [];
 
   useEffect(() => {
-    if (post.comments?.content) {
-      setComments(post.comments.content);
-    }
+    if (post.comments?.content) setComments(post.comments.content);
   }, [post.comments, setComments]);
 
-  const handleEditClick = () => setIsEditing(true);
+  const handleArtistClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (post.artist?.artistName) navigate(`/artist/${post.artist.artistName}`);
+  };
 
   const handleSaveClick = () => {
-    if (post.id != null && content !== post.content) {
-      updatePost(post.id, content);
-    }
+    if (!post.id || content === post.content) return;
+    updatePost(post.id, content);
     setIsEditing(false);
   };
 
   const handleCommentSubmit = async (commentContent: string) => {
-    if (post.id != null) {
-      await createComment(post.id, commentContent);
-    }
+    if (!post.id) return;
+    await createComment(post.id, commentContent);
   };
 
   const handleCommentDelete = async (commentId: number) => {
     await deleteComment(commentId);
   };
 
-  const handleArtistClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (post.artist?.artistName) {
-      navigate(`/artist/${post.artist.artistName}`);
-    }
-  };
-
-  const DEFAULT_IMAGE =
-    "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg";
-
-  const images = post.imageUrls || [];
-
-
   return (
-    <div className="w-5/6 h-5/6 mx-auto my-6 p-8 border rounded-2xl shadow-xl bg-white overflow-y-auto">
-      <div className="flex items-center gap-4 mb-6">
-        <img
-          onClick={handleArtistClick}
-          src={post.artist?.profilePictureUrl || DEFAULT_IMAGE}
-          onError={(e) => (e.currentTarget.src = DEFAULT_IMAGE)}
-          className="cursor-pointer w-14 h-14 rounded-full object-cover"
-          alt="Artist profile"
-        />
-
-        <p
-          onClick={handleArtistClick}
-          className="cursor-pointer text-blue-600 text-lg font-semibold"
-        >
-          {post.artist?.artistName || "Unknown Artist"}
-        </p>
-
-        {post.artist?.id != null && <FollowButton artistId={post.artist.id} />}
+    <div className="flex w-full h-full">
+      <div className="w-1/2 bg-black flex items-center justify-center p-4">
+        {images.length > 0 ? (
+          <img
+            src={images[0]}
+            alt="Post"
+            className="object-contain max-h-full max-w-full rounded-xl"
+          />
+        ) : (
+          <img
+            src={DEFAULT_IMAGE}
+            alt="Default"
+            className="object-cover w-full h-full rounded-xl"
+          />
+        )}
       </div>
 
-      {!isEditing && (
-        <button onClick={handleEditClick} className="text-blue-500 mb-2">
-          Edit
-        </button>
-      )}
-
-      {isEditing ? (
-        <div className="flex flex-col gap-2 mb-6">
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="border p-2 rounded w-full min-h-[100px]"
+      <div className="w-1/2 flex flex-col h-full overflow-y-auto border-l">
+        <div className="flex items-center gap-4 p-4 border-b">
+          <img
+            src={post.artist?.profilePictureUrl ?? DEFAULT_IMAGE}
+            onClick={handleArtistClick}
+            onError={(e) => (e.currentTarget.src = DEFAULT_IMAGE)}
+            className="cursor-pointer w-12 h-12 rounded-full object-cover"
+            alt="Artist profile"
           />
-          <div className="flex gap-2">
-            <button
-              onClick={handleSaveClick}
-              className="bg-blue-500 text-white px-4 py-2 rounded"
+          <div className="flex flex-col">
+            <p
+              onClick={handleArtistClick}
+              className="cursor-pointer font-semibold text-gray-900"
             >
-              Save
-            </button>
-            <button
-              onClick={() => setIsEditing(false)}
-              className="bg-gray-200 px-4 py-2 rounded"
-            >
-              Cancel
-            </button>
+              {post.artist?.artistName ?? "Unknown Artist"}
+            </p>
+            {post.artist?.id && <FollowButton artistId={post.artist.id} />}
           </div>
         </div>
-      ) : (
-        <p className="text-gray-800 text-base mb-6">{post.content}</p>
-      )}
 
-      {images.length > 0 && (
-        <div
-          className={`
-            grid gap-4 mb-8
-            ${images.length === 1 ? "grid-cols-1" : ""}
-            ${images.length === 2 ? "grid-cols-2" : ""}
-            ${images.length >= 3 ? "grid-cols-2 grid-rows-2" : ""}
-          `}
-        >
-          {images.map((url, idx) => (
-            <img
-              key={idx}
-              src={url}
-              alt={`Post image ${idx + 1}`}
-              className={`w-full rounded-xl object-cover min-h-[300px] ${
-                images.length >= 3 ? "max-h-[300px]" : "max-h-[600px]"
-              }`}
-            />
-          ))}
+        <div className="p-4 border-b">
+          {isEditing ? (
+            <div className="flex flex-col gap-2">
+              <textarea
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="border p-2 rounded w-full min-h-[80px]"
+              />
+              <div className="flex gap-2">
+                <button
+                  onClick={handleSaveClick}
+                  className="bg-blue-500 text-white px-3 py-1 rounded"
+                >
+                  Save
+                </button>
+                <button
+                  onClick={() => setIsEditing(false)}
+                  className="bg-gray-200 px-3 py-1 rounded"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <p className="text-gray-800 whitespace-pre-wrap">{post.content}</p>
+              {user?.id === post.artist?.id && !isEditing && (
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="text-sm text-blue-500 mt-2"
+                >
+                  Edit
+                </button>
+              )}
+            </>
+          )}
         </div>
-      )}
 
-      <PostFooter post={post} />
+        <div className="p-4 border-b">
+          <PostFooter post={post} />
+        </div>
 
-      <div className="mt-8">
-        <CommentCreate onSubmit={handleCommentSubmit} />
-        <CommentSection comments={comments} onDelete={handleCommentDelete} />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-y-auto p-4">
+            <CommentSection comments={comments} onDelete={handleCommentDelete} />
+          </div>
+          <div className="border-t p-4">
+            <CommentCreate onSubmit={handleCommentSubmit} />
+          </div>
+        </div>
       </div>
     </div>
   );
-}
+};
+
+export default PostModal;
