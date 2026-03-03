@@ -146,7 +146,7 @@ class ProductIntegrationTest extends IntegrationTestBase {
         ProductDTO product = response.getBody();
         Assertions.assertNotNull(product);
         Assertions.assertEquals(dto.getDescription(),  product.description());
-        Assertions.assertEquals(artist.getId(), product.artistId());
+        Assertions.assertEquals(artist.getId(), product.artist().id());
     }
 
     @Test
