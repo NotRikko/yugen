@@ -35,7 +35,7 @@ export default function LoginForm() {
     setFormError(null);
     try {
       await handleLogin(values.username, values.password);
-      navigate("/feed");
+      navigate("/");
     } catch (err: unknown) {
       console.error(err);
       const message = err instanceof Error ? err.message : "Login failed";
