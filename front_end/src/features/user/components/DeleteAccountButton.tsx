@@ -1,7 +1,7 @@
 import { userApi } from "@/features/user/api/userApi";
 import { useUser } from "../useUserContext";
 import { useNavigate } from "react-router-dom";
-import DeleteButton from "@/shared/components/DeleteButton";
+import { DeleteButton } from "@/shared/DeleteButton";
 
 export default function DeleteAccountButton() {
   const { setUser, guestUser } = useUser();
@@ -15,5 +15,5 @@ export default function DeleteAccountButton() {
     navigate("/");
   }
 
-  return <DeleteButton type="account" onDelete={handleDelete} />;
+  return <DeleteButton onDelete={handleDelete} />;
 }
