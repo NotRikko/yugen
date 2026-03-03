@@ -11,10 +11,9 @@ import {
 } from "@/shared/ui/sidebar"
 import { useNavigate, Link } from "react-router-dom";
 import { useUser } from "../useUserContext";
-import { User } from "../types/userTypes";
-  
+import { UserDTO } from "../types";
 interface UserProps {
-  user: User;
+  user: UserDTO;
 }
 
 const guestItems = [
