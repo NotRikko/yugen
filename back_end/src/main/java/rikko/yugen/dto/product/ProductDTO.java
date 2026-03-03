@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import rikko.yugen.dto.artist.ArtistSummaryDTO;
 import rikko.yugen.model.Collection;
 import rikko.yugen.model.Image;
 import rikko.yugen.model.Product;
@@ -15,7 +16,7 @@ public record ProductDTO(
         String name,
         String description,
         Float price,
-        Long artistId,
+        ArtistSummaryDTO artist,
         Set<Long> seriesIds,
         Set<Long> collectionIds,
         Set<String> imageUrls,
@@ -28,7 +29,7 @@ public record ProductDTO(
                 product.getName(),
                 product.getDescription(),
                 product.getPrice(),
-                product.getArtist() != null ? product.getArtist().getId() : null,
+                product.getArtist() != null ? new ArtistSummaryDTO(product.getArtist()) : null,
                 product.getSeries() != null ? product.getSeries().stream().map(Series::getId).collect(Collectors.toSet()) : Collections.emptySet(),
                 product.getCollections() != null ? product.getCollections().stream().map(Collection::getId).collect(Collectors.toSet()) : Collections.emptySet(),
                 product.getImages() != null ? product.getImages().stream().map(Image::getUrl).collect(Collectors.toSet()) : Collections.emptySet(),
