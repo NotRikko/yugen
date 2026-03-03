@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { artistApi } from "../api/artistApi";
-import type { PartialArtist } from "../types/artistTypes";
+import type { ArtistDTO } from "../types";
 
 export function useArtist() {
-    const [trendingArtists, setTrendingArtists] = useState<PartialArtist[]>([]);
+    const [trendingArtists, setTrendingArtists] = useState<ArtistDTO[]>([]);
     const [loadingTrendingArtists, setLoadingTrendingArtists] = useState<boolean>(true);
 
     useEffect(() => {

@@ -2,14 +2,14 @@ import { useState, useEffect } from "react";
 import { artistApi } from "../api/artistApi";
 import { postApi } from "@/features/posts/api/postApi";
 import { productApi } from "@/features/products/api/productApi";
-import type { PartialArtist } from "../types/artistTypes";
-import type { PostDTO } from "@/features/posts/types/postTypes";
-import type { Product } from "@/features/products/types/productTypes";
+import type { ArtistDTO } from "../types";
+import type { PostDTO } from "@/features/posts/types";
+import type { ProductDTO } from "@/features/products/types";
 
 export function useArtistProfile(artistName: string | undefined) {
-  const [artist, setArtist] = useState<PartialArtist | null>(null);
+  const [artist, setArtist] = useState<ArtistDTO | null>(null);
   const [posts, setPosts] = useState<PostDTO[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductDTO[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -26,8 +26,8 @@ export function useArtistProfile(artistName: string | undefined) {
         setArtist(artistData);
 
         const [artistPosts, artistProducts] = await Promise.all([
-          postApi.getPostsByArtistId(artistData.id),
-          productApi.getProductsByArtistId(artistData.id),
+          postApi.getPostsByArtistId(artistData.id!),
+          productApi.getProductsByArtistId(artistData.id!),
         ]);
 
         setPosts(artistPosts ?? []);
