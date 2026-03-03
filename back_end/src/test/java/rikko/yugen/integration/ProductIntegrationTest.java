@@ -200,7 +200,7 @@ class ProductIntegrationTest extends IntegrationTestBase {
         Assertions.assertNotNull(firstProduct.get("name"));
         Assertions.assertNotNull(firstProduct.get("price"));
         Assertions.assertNotNull(firstProduct.get("description"));
-        Assertions.assertNotNull(firstProduct.get("artistId"));
+        Assertions.assertNotNull(firstProduct.get("artist"));
     }
 
     // Purchase tests
@@ -218,6 +218,7 @@ class ProductIntegrationTest extends IntegrationTestBase {
                 restTemplate.postForEntity("/products/" + product.getId() + "/purchase", request, String.class);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertNotNull(response.getBody());
         Assertions.assertTrue(response.getBody().contains("purchased"));
     }
 
