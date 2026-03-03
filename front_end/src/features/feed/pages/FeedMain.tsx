@@ -1,22 +1,15 @@
 import { useState, useEffect, useRef } from "react";
-import Post from "@/features/posts/components/Post";
-import PostCreate from "@/features/posts/components/PostCreate";
-import TrendingArtistsBar from "@/features/feed/components/TrendingArtistsBar";
 import { useFeed } from "../hooks/useFeed";
 import { usePost } from "../../posts/hooks/usePost";
-import { useArtist } from "@/features/artists/hooks/useArtist";
-
 import PostModalWrapper from "@/features/posts/components/PostModalWrapper";
+import FeedPost from "@/features/posts/components/FeedPost";
 
 function FeedMain(): JSX.Element {
-  const [userFeed, setUserFeed] = useState(false);
+  const [userFeed] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
 
   const { posts, loading, loadMore } = useFeed({ userFeed, size: 10 });
-  const { createPostOptimistic, deletePostOptimistic, updatePostOptimistic} = usePost();
-
-  const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
-  
-  const { trendingArtists, loadingTrendingArtists } = useArtist();
+  const { deletePostOptimistic, updatePostOptimistic } = usePost();
 
   const observer = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -37,54 +30,39 @@ function FeedMain(): JSX.Element {
   }, [loadMore, loading]);
 
   return (
-    <div className="grid grid-cols-[2fr_1fr] h-screen">
-      <div className="flex flex-col items-center px-4 xl:px-12 my-12 w-full overflow-y-auto">
-        <div className="flex gap-4 mb-4">
-          <button
-            className={`px-4 py-2 rounded ${!userFeed ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-            onClick={() => setUserFeed(false)}
-          >
-            Global Feed
-          </button>
-          <button
-            className={`px-4 py-2 rounded ${userFeed ? "bg-blue-500 text-white" : "bg-gray-200"}`}
-            onClick={() => setUserFeed(true)}
-          >
-            My Feed
-          </button>
-        </div>
+    <div className="grid grid-cols-[4fr_1fr] h-screen">
 
-        <div className="flex flex-col gap-4 w-full">
-          <PostCreate onSubmit={createPostOptimistic} />
+      <div className="overflow-y-auto px-6 py-10">
+
+        <div className="columns-2 sm:columns-3 md:columns-4 xl:columns-5 gap-6 space-y-6">
 
           {posts.map((post) => (
-            <Post 
-              key={post.id} 
-              post={post} 
-              onSelect={() => setSelectedPostId(post.id!)}
-              onUpdate={() => setSelectedPostId(post.id!)}
-              onDelete={() => deletePostOptimistic(post.id!)} />
+            <div
+              key={post.id}
+              className="break-inside-avoid cursor-pointer"
+              onClick={() => setSelectedPostId(post.id!)}
+            >
+              <FeedPost post={post} />
+            </div>
           ))}
 
-          {loading && <div className="text-center py-8">Loading posts...</div>}
-          {!loading && posts.length === 0 && (
-            <div className="text-center py-8">No posts found.</div>
-          )}
-
-          <div ref={loadMoreRef} />
         </div>
-      </div>
 
-      <TrendingArtistsBar
-        trendingArtists={trendingArtists}
-        loadingTrendingArtists={loadingTrendingArtists}
-      />
+        {loading && (
+          <div className="text-center py-10 text-gray-500">
+            Loading more posts...
+          </div>
+        )}
+
+        <div ref={loadMoreRef} />
+      </div>
 
       {selectedPostId && (
         <PostModalWrapper
           postId={selectedPostId}
           onClose={() => setSelectedPostId(null)}
           updatePost={updatePostOptimistic}
+          deletePost={deletePostOptimistic}
         />
       )}
     </div>
