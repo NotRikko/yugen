@@ -15,6 +15,7 @@ public record PostDetailsDTO(
         String content,
         int likeCount,
         int commentCount,
+        Boolean likedByCurrentUser,
         List<String> imageUrls,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
@@ -22,12 +23,13 @@ public record PostDetailsDTO(
         Long productId,
         Page<CommentDTO> comments
 ) {
-    public PostDetailsDTO(Post post, Page<Comment> commentsPage) {
+    public PostDetailsDTO(Post post, Page<Comment> commentsPage, Long currentUserId) {
         this(
                 post.getId(),
                 post.getContent(),
                 post.getLikes() != null ? post.getLikes().size() : 0,
                 post.getComments() != null ? post.getComments().size() : 0,
+                post.getLikes() != null && currentUserId != null && post.getLikes().stream().anyMatch(like -> like.getUser().getId().equals(currentUserId)),
                 post.getImages() != null ? post.getImages().stream().map(Image::getUrl).toList() : List.of(),
                 post.getCreatedAt(),
                 post.getUpdatedAt(),
