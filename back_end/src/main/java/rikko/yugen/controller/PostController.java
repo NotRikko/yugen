@@ -99,7 +99,7 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/{postId}/detail")
+    @GetMapping("/{postId}/details")
     public ResponseEntity<PostDetailsDTO> getPostDetails(
             @PathVariable Long postId,
             @PageableDefault(sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
