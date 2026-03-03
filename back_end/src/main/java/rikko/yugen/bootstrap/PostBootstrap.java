@@ -54,9 +54,11 @@ public class PostBootstrap {
             postRepository.saveAll(posts);
 
             List<Image> images = List.of(
-                    createImageForPost(posts.get(0), "https://preview.redd.it/sandrone-has-the-best-design-in-genshin-impact-even-for-a-v0-nhwu0ocd1r3e1.jpeg?auto=webp&s=0f977dadd3c544f05291a742d460dfbbd555fa15"),
+                    createImageForPost(posts.get(0), "https://i.redd.it/i-drew-sandrone-d-v0-uuput64sicc91.jpg?width=2354&format=pjpg&auto=webp&s=7d63c70ff50b626c54e3f67d2914bae1b7c75ba3"),
                     createImageForPost(posts.get(1), "https://preview.redd.it/columbina-fanart-v0-3r4bud3hp3sb1.jpg?auto=webp&s=558d1392a259475c16b5f48c9b2ebc970be61283"),
-                    createImageForPost(posts.get(1), "https://preview.redd.it/columbina-fan-art-v0-enci6vojneod1.jpg?width=1080&crop=smart&auto=webp&s=09a49a67c317e72fe1775aa5f773e190517b1243")
+                    createImageForPost(posts.get(2), "https://preview.redd.it/columbina-fan-art-v0-enci6vojneod1.jpg?width=1080&crop=smart&auto=webp&s=09a49a67c317e72fe1775aa5f773e190517b1243"),
+                    createImageForPost(posts.get(3), "https://paimon.moe/images/characters/full/columbina.png"),
+                    createImageForPost(posts.get(4), "https://static.icy-veins.com/wp/wp-content/uploads/2026/01/download.webp")
             );
 
             imageRepository.saveAll(images);
