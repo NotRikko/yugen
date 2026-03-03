@@ -1,5 +1,5 @@
 import PostFooter from "./PostFooter";
-import CustomDropdown from "@/shared/components/CustomDropDown";
+import { ReusableDropdown } from "@/shared/ReusableDropdown";
 import type { FeedPostDTO } from "@/features/feed/types";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "@/features/user/useUserContext";
@@ -60,9 +60,12 @@ function Post({ post, onSelect, onUpdate, onDelete }: PostProps) {
             </p>
           </div>
 
-          {post.artist?.id === user.id ? (
-            <CustomDropdown triggerLabel="⋯" items={postMenuItems} />
-          ) : null}
+          {post.artist?.id === user.id && (
+            <ReusableDropdown
+              triggerText="•••"
+              items={postMenuItems} 
+            />
+          )}
         </div>
 
         <p className="text-gray-800 text-sm my-2">{post.content || ""}</p>
