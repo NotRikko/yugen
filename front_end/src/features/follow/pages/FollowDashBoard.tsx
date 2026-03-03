@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useFollowers } from "../hooks/useFollowers";
 import { useFollowing } from "../hooks/useFollowing";
 import { useUser } from "@/features/user/useUserContext";
+import type { UserDTO } from "@/features/user/types";
+import type { ArtistSummaryDTO } from "@/features/artists/types";
 
 type ViewMode = "followers" | "followees";
 
@@ -15,23 +17,26 @@ function FollowDashBoard(): JSX.Element {
   const { user } = useUser();
   const [viewMode, setViewMode] = useState<ViewMode>("followers");
 
-  const { followers, loading: loadingFollowers } = useFollowers(user?.artistId ?? undefined);
+  const { followers, loading: loadingFollowers } = useFollowers(user?.artistId);
   const { following, loading: loadingFollowing } = useFollowing();
 
-  
   const usersToDisplay: DisplayUser[] =
   viewMode === "followers"
-    ? followers.map(f => ({
-        id: f.id,
-        name: f.displayName,
-        avatarUrl: f.image,
-      }))
-    : following.map(f => ({
-        id: f.id,
-        name: f.displayName,
-        avatarUrl: f.avatarUrl,
-      }));
-      
+    ? followers
+        .filter((f): f is UserDTO & { id: number; displayName: string } => f.id !== undefined && f.displayName !== undefined)
+        .map(f => ({
+          id: f.id,
+          name: f.displayName,
+          avatarUrl: f.image,
+        }))
+    : following
+        .filter((f): f is ArtistSummaryDTO & { id: number; artistName: string } => f.id !== undefined && f.artistName !== undefined)
+        .map(f => ({
+          id: f.id,
+          name: f.artistName,
+          avatarUrl: f.profilePictureUrl,
+        }));
+        
   const loading =
     viewMode === "followers" ? loadingFollowers : loadingFollowing;
 

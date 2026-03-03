@@ -1,21 +1,22 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useState } from "react";
+
 import { Button } from "@/shared/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
+  FormDescription,
   FormMessage,
 } from "@/shared/ui/form";
 import { Input } from "@/shared/ui/input";
 import { Textarea } from "@/shared/ui/textarea";
 
 import { useUser } from "@/features/user/useUserContext";
-import { useState } from "react";
-import type { ProductCreate } from "../types/productTypes";
+import type { ProductCreateDTO } from "../types";
 
 const formSchema = z.object({
   name: z.string().min(1, "Product name is required"),
@@ -27,11 +28,10 @@ const formSchema = z.object({
   files: z.array(z.instanceof(File)).optional(),
 });
 
-export default function ProductCreate({
-  onCreate,
-}: {
-  onCreate: (product: ProductCreate) => Promise<void>;
-}) {
+interface ProductCreateProps {
+  onCreate: (newProduct: ProductCreateDTO, files?: File[]) => Promise<void>;
+}
+export default function ProductCreate({ onCreate }: ProductCreateProps) {
   const { user } = useUser();
   const [previewImages, setPreviewImages] = useState<string[]>([]);
 
@@ -58,29 +58,38 @@ export default function ProductCreate({
     );
   }
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!user.artistId) return;
+  const handleFileChange = (files: FileList | null) => {
+    if (!files) return;
+    const selectedFiles = Array.from(files).slice(0, 4);
+    form.setValue("files", selectedFiles);
+    setPreviewImages(selectedFiles.map((file) => URL.createObjectURL(file)));
+  };
 
-    const payload: ProductCreate = {
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!user.artistId) return;
+  
+    const productData: ProductCreateDTO = {
       name: values.name,
-      description: values.description,
-      price: values.price,
-      quantityInStock: values.quantityInStock,
+      description: values.description ?? "",
+      price: values.price ?? 0,
+      quantityInStock: values.quantityInStock ?? 0,
       seriesIds: values.seriesIds ?? [],
       collectionIds: values.collectionIds ?? [],
-      files: values.files ?? [],
     };
-
-    await onCreate(payload);
-
-    form.reset();
-    setPreviewImages([]);
-  }
+  
+    try {
+      await onCreate(productData, values.files ?? []);
+      form.reset();
+      setPreviewImages([]);
+    } catch (err) {
+      console.error("Failed to create product:", err);
+    }
+  };
 
   return (
     <Form {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-6 py-8 w-5/6 mx-auto p-4 border rounded-lg shadow-md bg-white"
       >
         <FormField
@@ -118,7 +127,6 @@ export default function ProductCreate({
                 <Input
                   type="number"
                   placeholder="Price"
-                  {...field}
                   value={field.value || ""}
                   onChange={(e) => field.onChange(Number(e.target.value))}
                 />
@@ -137,7 +145,6 @@ export default function ProductCreate({
                 <Input
                   type="number"
                   placeholder="Quantity in Stock"
-                  {...field}
                   value={field.value || ""}
                   onChange={(e) => field.onChange(Number(e.target.value))}
                 />
@@ -150,24 +157,14 @@ export default function ProductCreate({
         <FormField
           control={form.control}
           name="files"
-          render={({ field }) => (
+          render={() => (
             <FormItem>
               <FormControl>
                 <Input
                   type="file"
                   accept="image/*"
                   multiple
-                  onChange={(e) => {
-                    const selectedFiles = e.target.files
-                      ? Array.from(e.target.files)
-                      : [];
-                    if (selectedFiles.length > 4) {
-                      alert("You can upload a maximum of 4 images.");
-                      return;
-                    }
-                    field.onChange(selectedFiles);
-                    setPreviewImages(selectedFiles.map((file) => URL.createObjectURL(file)));
-                  }}
+                  onChange={(e) => handleFileChange(e.target.files)}
                 />
               </FormControl>
               <FormDescription>Upload up to 4 images for your product.</FormDescription>
@@ -176,17 +173,18 @@ export default function ProductCreate({
           )}
         />
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {previewImages.map((src, index) => (
-            <div key={index} className="relative w-full h-32 md:h-40 lg:h-48">
+        {previewImages.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {previewImages.map((src, idx) => (
               <img
+                key={idx}
                 src={src}
-                alt={`Preview ${index + 1}`}
-                className="rounded-md border w-full h-full object-cover"
+                alt={`Preview ${idx + 1}`}
+                className="w-full h-32 md:h-40 lg:h-48 object-cover rounded border"
               />
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         <Button type="submit">Create Product</Button>
       </form>

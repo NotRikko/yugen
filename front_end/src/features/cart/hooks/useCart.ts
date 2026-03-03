@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { cartApi } from "../api/cartApi";
-import type { Cart } from "../types/cartTypes";
+import type { CartDTO } from "../types";
 
 export const useCartHook = () => {
-  const [cart, setCart] = useState<Cart | null>(null);
+  const [cart, setCart] = useState<CartDTO | null>(null);
 
   const fetchCart = async () => {
     const data = await cartApi.getCart();
@@ -32,7 +32,7 @@ export const useCartHook = () => {
   };
 
   const totalPrice =
-    cart?.items.reduce((sum, item) => sum + item.quantity * (item.product?.price || 0), 0) || 0;
+    cart?.items?.reduce((sum, item) => sum + item.quantity! * (item.product?.price || 0), 0) || 0;
 
   return { cart, totalPrice, fetchCart, addToCart, updateQuantity, removeFromCart, clearCart };
 };

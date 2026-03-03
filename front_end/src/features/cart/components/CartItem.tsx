@@ -1,7 +1,6 @@
-import type { CartItem } from "../types/cartTypes";
-
+import type { CartItemDTO } from "../types";
 interface CartItemProps {
-  item: CartItem;
+  item: CartItemDTO;
   onUpdateQuantity: (productId: number, newQuantity: number) => void;
   onRemove: (cartItemId: number) => void;
 }
@@ -9,10 +8,15 @@ interface CartItemProps {
 const CartItem: React.FC<CartItemProps> = ({ item, onUpdateQuantity, onRemove }) => {
   const { id, product, quantity } = item;
 
+  if (!product || product.price === undefined || id === undefined) return null;
+
+
   return (
     <div className="flex items-center justify-between border-b py-4">
-      {product.images && (
-        <img src={product.images[0].url} alt={product.name} className="w-16 h-16 object-cover rounded" />
+      {product.mainImageUrl && (
+        <img src={product.mainImageUrl} 
+        alt={product.name} 
+        className="w-16 h-16 object-cover rounded" />
       )}
       <div className="flex-1 ml-4">
         <h3 className="font-semibold">{product.name}</h3>

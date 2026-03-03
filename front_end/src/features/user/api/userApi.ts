@@ -1,5 +1,5 @@
 import { fetchClient } from "@/shared/api/fetchClient";
-import type { UserDTO } from "@/features/auth/types";
+import type { UserDTO } from "../types";
 
 interface UpdateUserPayload {
   username: string;
@@ -11,13 +11,13 @@ interface UpdateUserPayload {
 export const userApi = {
   getCurrentUser: () => fetchClient<UserDTO>("/users/me", { method: "GET", auth: true }),
 
-  updateUser: async (userId: number, data: UpdateUserPayload): Promise<UserDTO> => {
+  updateUser: async ( data: UpdateUserPayload): Promise<UserDTO> => {
     const formData = new FormData();
     const { file, ...rest } = data;
     formData.append("patch", new Blob([JSON.stringify(rest)], { type: "application/json" }));
     if (file) formData.append("file", file);
 
-    const res = await fetchClient<UserDTO>(`/users/update/${userId}`, {
+    const res = await fetchClient<UserDTO>(`/users/me}`, {
       method: "PATCH",
       body: formData,
       auth: true,

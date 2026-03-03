@@ -1,15 +1,15 @@
 import { fetchClient } from "@/shared/api/fetchClient";
-import type { Cart } from "../types/cartTypes";
+import type { CartDTO } from "../types";
 
 export const cartApi = {
-  getCart: async (): Promise<Cart> => {
-    const cart = await fetchClient<Cart>("/cart", { method: "GET", auth: true });
+  getCart: async (): Promise<CartDTO> => {
+    const cart = await fetchClient<CartDTO>("/cart", { method: "GET", auth: true });
     if (!cart) throw new Error("Cart not found");
     return cart;
   },
 
-  addToCart: async (productId: number, quantity: number): Promise<Cart> => {
-    const cart = await fetchClient<Cart>(
+  addToCart: async (productId: number, quantity: number): Promise<CartDTO> => {
+    const cart = await fetchClient<CartDTO>(
       `/cart/add?productId=${productId}&quantity=${quantity}`,
       { method: "POST", auth: true }
     );
@@ -17,8 +17,8 @@ export const cartApi = {
     return cart;
   },
 
-  updateCartItem: async (cartItemId: number, quantity: number): Promise<Cart> => {
-    const cart = await fetchClient<Cart>(
+  updateCartItem: async (cartItemId: number, quantity: number): Promise<CartDTO> => {
+    const cart = await fetchClient<CartDTO>(
       `/cart/update?cartItemId=${cartItemId}&quantity=${quantity}`,
       { method: "PATCH", auth: true }
     );
@@ -26,8 +26,8 @@ export const cartApi = {
     return cart;
   },
 
-  removeFromCart: async (cartItemId: number): Promise<Cart> => {
-    const cart = await fetchClient<Cart>(
+  removeFromCart: async (cartItemId: number): Promise<CartDTO> => {
+    const cart = await fetchClient<CartDTO>(
       `/cart/remove?cartItemId=${cartItemId}`,
       { method: "DELETE", auth: true }
     );
@@ -35,8 +35,8 @@ export const cartApi = {
     return cart;
   },
 
-  clearCart: async (): Promise<Cart> => {
-    const cart = await fetchClient<Cart>("/cart/clear", { method: "POST", auth: true });
+  clearCart: async (): Promise<CartDTO> => {
+    const cart = await fetchClient<CartDTO>("/cart/clear", { method: "POST", auth: true });
     if (!cart) throw new Error("Failed to clear cart");
     return cart;
   },

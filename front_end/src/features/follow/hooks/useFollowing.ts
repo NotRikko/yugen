@@ -1,15 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
-import type { PartialArtist } from "@/features/artists/types/artistTypes";
+import type { ArtistSummaryDTO } from "@/features/artists/types";
 import { followApi } from "../api/followApi";
 
 export const useFollowing = (userId?: number) => {
-  const [following, setFollowing] = useState<PartialArtist[]>([]);
+  const [following, setFollowing] = useState<ArtistSummaryDTO[]>([]);
   const [loading, setLoading] = useState(false);
 
   const fetchFollowing = useCallback(async () => {
     setLoading(true);
     try {
-      let res: PartialArtist[] = [];
+      let res: ArtistSummaryDTO[] = [];
       if (userId) {
         res = await followApi.getFollowing(userId);
       } else {

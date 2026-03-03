@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { commentApi } from "../api/commentApi";
-import type { PartialComment } from "../types/commentTypes";
-import { useUser } from "@/features/user/useUserContext";
+import type { CommentDTO } from "../types";
 
-export function useComment() {
-  const { user } = useUser();
-  const [comments, setComments] = useState<PartialComment[]>([]);
+export function useComment(initialComments: CommentDTO[] = []) {
+  const [comments, setComments] = useState<CommentDTO[]>(initialComments);
   const [loading, setLoading] = useState<boolean>(false);
 
   const deleteComment = async (commentId: number) => {
@@ -23,11 +21,9 @@ export function useComment() {
   };
 
   const createComment = async (postId: number, content: string) => {
-    if (!user || user.isGuest) return null;
     setLoading(true);
     try {
       const created = await commentApi.createPostComment({
-        userId: user.id,
         postId,
         content,
       });

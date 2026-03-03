@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import type { PartialUser } from "@/features/user/types/userTypes";
+import type { UserDTO } from "@/features/user/types";
 import { followApi } from "../api/followApi";
 
 export const useFollowers = (artistId?: number) => {
-  const [followers, setFollowers] = useState<PartialUser[]>([]);
+  const [followers, setFollowers] = useState<UserDTO[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {

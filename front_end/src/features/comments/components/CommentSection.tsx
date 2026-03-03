@@ -1,8 +1,8 @@
-import type { PartialComment } from "../types/commentTypes";
+import type { CommentDTO } from "../types";
 import { useUser } from "@/features/user/useUserContext";
 import Comment from "./Comment";
 interface CommentSectionProps {
-  comments: PartialComment[];
+  comments: CommentDTO[];
   onDelete?: (commentId: number) => void;
 }
 

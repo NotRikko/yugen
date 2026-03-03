@@ -1,10 +1,11 @@
 import { fetchClient } from "@/shared/api/fetchClient";
-import type { Follow } from "../types/followTypes";
-import type { PartialUser } from "@/features/user/types/userTypes";
-import type { PartialArtist } from "@/features/artists/types/artistTypes";
+import type { ArtistSummaryDTO } from "@/features/artists/types";
+import type { UserDTO } from "@/features/user/types";
+import type { FollowWithUserDTO } from "../types";
+
 export const followApi = {
-  followArtist: async (artistId: number) => {
-    return fetchClient<Follow>(`/artists/${artistId}/followers`, {
+  followArtist: async (artistId: number): Promise<FollowWithUserDTO> => {
+    return fetchClient<FollowWithUserDTO>(`/artists/${artistId}/followers`, {
       method: "POST",
       auth: true,
     });
@@ -25,19 +26,19 @@ export const followApi = {
   },
 
   getFollowers: async (artistId: number) => {
-    return fetchClient<PartialUser[]>(`/artists/${artistId}/followers`, {
+    return fetchClient<UserDTO[]>(`/artists/${artistId}/followers`, {
       method: "GET",
     });
   },
 
   getFollowing: async(userId: number) => {
-    return fetchClient<PartialArtist[]>(`/users/${userId}/following`, {
+    return fetchClient<ArtistSummaryDTO[]>(`/users/${userId}/following`, {
       method: "GET",
     })
   },
 
   getFollowingForCurrentUser: () => {
-    return fetchClient<PartialArtist[]>(`/users/me/following`, {
+    return fetchClient<ArtistSummaryDTO[]>(`/users/me/following`, {
       method: "GET",
       auth: true,
     });

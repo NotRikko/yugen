@@ -2,11 +2,12 @@ import { usePost } from "@/features/posts/hooks/usePost";
 import { postApi } from "@/features/posts/api/postApi";
 import { productApi } from "@/features/products/api/productApi";
 import { useEffect, useState } from "react";
-import type { Product } from "@/features/products/types/productTypes";
+import type { ProductDTO
 
+ } from "@/features/products/types";
 export default function useArtistDashboard(artistId: number) {
   const { posts, setPosts, createPostOptimistic, deletePostOptimistic } = usePost();
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductDTO[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

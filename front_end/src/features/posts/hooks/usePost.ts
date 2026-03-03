@@ -1,12 +1,20 @@
 import { useState } from "react";
-import type { PostDTO } from "@/features/posts/types/postTypes";
-import { postApi } from "@/features/posts/api/postApi";
+import { postApi } from "../api/postApi";
 import { useUser } from "@/features/user/useUserContext";
+import type { PostDTO } from "../types";
 
-export function usePost(initialPosts: PostDTO[] = []) {
+export function usePost(
+  initialPosts: PostDTO[] = [],
+  externalSetPosts?: (posts: PostDTO[]) => void
+) {
   const { user } = useUser();
   const [posts, setPosts] = useState<PostDTO[]>(initialPosts);
   const [loading, setLoading] = useState(false);
+
+  const updatePosts = (newPosts: PostDTO[]) => {
+    setPosts(newPosts);
+    if (externalSetPosts) externalSetPosts(newPosts);
+  };
 
   const createPostOptimistic = async (newPostData: { content: string; files?: File[] }) => {
     if (!user || user.isGuest) return;
@@ -14,24 +22,13 @@ export function usePost(initialPosts: PostDTO[] = []) {
     const tempPost: PostDTO = {
       id: Date.now(),
       content: newPostData.content,
-      images: [],
-      artist: {
-        id: user.artistId ?? 0,
-        artistName: user.displayName,
-        profilePictureUrl: user.image,
-        user: {
-          id: user.id,
-          username: user.username,
-          displayName: user.displayName,
-          email: user.email,
-          image: user.image,
-        },
-      },
-      likes: [],
-      comments: [],
+      imageUrls: [],
+      artistId: user.artistId,
+      likeCount: 0,
+      commentCount: 0,
     };
 
-    setPosts((prev) => [tempPost, ...prev]);
+    updatePosts([tempPost, ...posts]);
 
     try {
       const createdPost = await postApi.createPost({
@@ -39,9 +36,9 @@ export function usePost(initialPosts: PostDTO[] = []) {
         content: newPostData.content,
         files: newPostData.files,
       });
-      setPosts((prev) => prev.map((p) => (p.id === tempPost.id ? createdPost : p)));
+      updatePosts(posts.map((p) => (p.id === tempPost.id ? createdPost : p)));
     } catch (error) {
-      setPosts((prev) => prev.filter((p) => p.id !== tempPost.id));
+      updatePosts(posts.filter((p) => p.id !== tempPost.id));
       console.error("Failed to create post:", error);
     }
   };
@@ -49,21 +46,16 @@ export function usePost(initialPosts: PostDTO[] = []) {
   const updatePostOptimistic = async (postId: number, updatedContent: string) => {
     const postToUpdate = posts.find((p) => p.id === postId);
     if (!postToUpdate) return;
-  
+
     const originalPost = { ...postToUpdate };
-  
-    setPosts((prev) =>
-      prev.map((p) => (p.id === postId ? { ...p, content: updatedContent } : p))
-    );
-  
+    updatePosts(posts.map((p) => (p.id === postId ? { ...p, content: updatedContent } : p)));
+
     try {
       const updatedPost = await postApi.updatePost(postId, updatedContent);
-  
-      setPosts((prev) => prev.map((p) => (p.id === postId ? updatedPost : p)));
+      updatePosts(posts.map((p) => (p.id === postId ? updatedPost : p)));
     } catch (error) {
       console.error("Failed to update post:", error);
-  
-      setPosts((prev) => prev.map((p) => (p.id === postId ? originalPost : p)));
+      updatePosts(posts.map((p) => (p.id === postId ? originalPost : p)));
     }
   };
 
@@ -71,15 +63,23 @@ export function usePost(initialPosts: PostDTO[] = []) {
     const postToDelete = posts.find((p) => p.id === postId);
     if (!postToDelete) return;
 
-    setPosts((prev) => prev.filter((p) => p.id !== postId));
+    updatePosts(posts.filter((p) => p.id !== postId));
 
     try {
       await postApi.deletePost(postId);
     } catch (error) {
       console.error("Failed to delete post:", error);
-      setPosts((prev) => [postToDelete, ...prev]);
+      updatePosts([postToDelete, ...posts]);
     }
   };
 
-  return { posts, setPosts, loading, setLoading, createPostOptimistic, updatePostOptimistic, deletePostOptimistic };
+  return {
+    posts,
+    setPosts: updatePosts,
+    loading,
+    setLoading,
+    createPostOptimistic,
+    updatePostOptimistic,
+    deletePostOptimistic,
+  };
 }

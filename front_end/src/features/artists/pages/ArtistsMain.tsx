@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react'
-import type { PartialArtist } from '../types/artistTypes';
+import { useState, useEffect } from 'react';
+import type { ArtistSummaryDTO } from '../types';
 
 function ArtistsMain(): JSX.Element {
-    const [artists, setArtists] = useState<PartialArtist[]>([
+    const [artists, setArtists] = useState<ArtistSummaryDTO[]>([
         ]);
         
         useEffect(() => {

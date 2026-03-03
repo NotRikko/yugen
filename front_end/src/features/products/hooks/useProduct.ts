@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { productApi } from "../api/productApi";
 import { useUser } from "@/features/user/useUserContext";
-import type { Product, ProductCreate } from "../types/productTypes";
+import type { ProductDTO, ProductCreateDTO } from "../types";
 
 export const useProductHook = () => {
   const { user } = useUser();
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductDTO[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,37 +24,35 @@ export const useProductHook = () => {
     }
   };
 
-  const createProductOptimistic = async (newProduct: ProductCreate) => {
+  const createProductOptimistic = async (newProduct: ProductCreateDTO, files?: File[]) => {
     const tempId = Date.now();
   
-    const optimisticProduct: Product = {
-        id: tempId,
-        name: newProduct.name,
-        description: newProduct.description ?? "",
-        price: newProduct.price,
-        quantityInStock: newProduct.quantityInStock,
-        images: [],
-        artist: {
-          id: user.artistId!,
-          user: user,
-          artistName: user.displayName ?? "Unknown Artist", 
-        },
-        series: [],
-        collections: [],
-      };
+    const optimisticProduct: ProductDTO = {
+      id: tempId,
+      name: newProduct.name,
+      description: newProduct.description ?? "",
+      price: newProduct.price,
+      quantityInStock: newProduct.quantityInStock,
+      imageUrls: [], 
+      artist: {
+        id: user.artistId!,
+        artistName: user.displayName ?? "Unknown Artist",
+      },
+      seriesIds: newProduct.seriesIds ?? [],
+      collectionIds: newProduct.collectionIds ?? [],
+    };
   
     setProducts(prev => [optimisticProduct, ...prev]);
   
     try {
       const savedProduct = await productApi.createProduct({
-        artistId: user?.artistId ?? null,
         name: newProduct.name,
-        description: newProduct.description ?? "", 
-        price: newProduct.price,
-        quantityInStock: newProduct.quantityInStock,
+        description: newProduct.description ?? "",
+        price: newProduct.price!,
+        quantityInStock: newProduct.quantityInStock!,
         seriesIds: newProduct.seriesIds ?? [],
         collectionIds: newProduct.collectionIds ?? [],
-        files: newProduct.files,
+        files, 
       });
   
       setProducts(prev =>

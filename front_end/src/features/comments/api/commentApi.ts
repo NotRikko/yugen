@@ -1,14 +1,13 @@
 import { fetchClient } from "@/shared/api/fetchClient";
-import { PartialComment } from "../types/commentTypes";
+import type { CommentDTO } from "../types";
 
 export const commentApi = {
   createPostComment: async (data: {
-    userId: number | null;
     postId: number;
     content: string;
-  }): Promise<PartialComment> => {
+  }): Promise<CommentDTO> => {
 
-    const result = await fetchClient<PartialComment>("/comments/post", {
+    const result = await fetchClient<CommentDTO>("/comments/post", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

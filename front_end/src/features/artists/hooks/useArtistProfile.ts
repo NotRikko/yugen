@@ -42,41 +42,12 @@ export function useArtistProfile(artistName: string | undefined) {
     fetchData();
   }, [artistName]);
 
-  const deletePostOptimistic = async (postId: number) => {
-    const postToDelete = posts.find((p) => p.id === postId);
-    if (!postToDelete) return;
-
-    setPosts((prev) => prev.filter((p) => p.id !== postId));
-
-    try {
-      await postApi.deletePost(postId); 
-    } catch (error) {
-      console.error("Failed to delete post:", error);
-      setPosts((prev) => [postToDelete, ...prev]);
-    }
-  };
-
-  const deleteProductOptimistic = async (productId: number) => {
-    const productToDelete = products.find((p) => p.id === productId);
-    if (!productToDelete || !artist) return;
-
-    setProducts((prev) => prev.filter((p) => p.id !== productId));
-
-    try {
-      await productApi.deleteProduct(productId);
-    } catch (error) {
-      console.error("Failed to delete product:", error);
-      setProducts((prev) => [productToDelete, ...prev]);
-    }
-  };
 
   return {
     artist,
     posts,
     products,
     loading,
-    deletePostOptimistic,
-    deleteProductOptimistic,
     setPosts,
     setProducts,
   };
