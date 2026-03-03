@@ -1,25 +1,29 @@
 import { useState } from "react";
-import type { User } from "../types/userTypes";
-import type { Cart } from "@/features/cart/types/cartTypes";
+import type { UserDTO } from "../types";
+import type { CartDTO } from "@/features/cart/types";
 import { tokenService } from "@/shared/services/tokenService";
 
-export const guestUser: User = {
+interface FrontendUserDTO extends UserDTO {
+  isGuest?: boolean;
+}
+
+export const guestUser: FrontendUserDTO = {
   id: 0,
   username: "Guest",
   displayName: "Guest User",
   email: "",
   image: "https://i.pinimg.com/736x/18/c2/f7/18c2f7a303ad5b05d8a41c6b7e4c062b.jpg",
-  artistId: null,
+  artistId: undefined,
   isGuest: true,
 };
 
 export const useUserHook = () => {
-  const [user, setUser] = useState<User>(() => {
+  const [user, setUser] = useState<FrontendUserDTO>(() => {
     const cached = localStorage.getItem("user");
     return cached ? JSON.parse(cached) : guestUser;
   });
 
-  const [cart, setCart] = useState<Cart | null>(null);
+  const [cart, setCart] = useState<CartDTO | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem("accessToken"));
 
   const handleLogin = async (username: string, password: string) => {
