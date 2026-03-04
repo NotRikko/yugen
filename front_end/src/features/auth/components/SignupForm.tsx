@@ -205,15 +205,12 @@ async function onSubmit(values: z.infer<typeof formSchema>) {
           >
             Already have an account? Sign in here.
           </p>
-          <div className="mt-4">
-          <button
-            type="button"
-            className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 text-sm"
+          <p 
+            className="text-xs cursor-pointer text-blue-500 hover:underline"
             onClick={() => navigate("/")}
           >
-            Home
-          </button>
-        </div>
+            Return home.
+          </p>
         </form>
       </Form>
     )

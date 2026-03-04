@@ -97,6 +97,12 @@ export default function LoginForm() {
         >
           Don’t have an account? Signup here.
         </p>
+        <p
+          className="text-xs cursor-pointer text-blue-500 hover:underline text-center"
+          onClick={() => navigate("/")}
+        >
+          Return home.
+        </p>
       </form>
     </Form>
   );
