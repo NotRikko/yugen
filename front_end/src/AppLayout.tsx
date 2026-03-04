@@ -1,0 +1,16 @@
+import { Outlet } from "react-router-dom";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/shared/AppSidebar";
+
+export default function AppLayout() {
+  return (
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full">
+        <AppSidebar />
+        <main className="flex-1">
+          <Outlet />
+        </main>
+      </div>
+    </SidebarProvider>
+  );
+}
