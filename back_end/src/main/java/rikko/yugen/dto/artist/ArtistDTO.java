@@ -7,7 +7,9 @@ public record ArtistDTO(
         String profilePictureUrl,
         String bannerPictureUrl,
         String bio,
-        Long userId
+        Long userId,
+        String username,
+        String displayName
 ) {
     public ArtistDTO(Artist artist) {
         this(
@@ -15,7 +17,9 @@ public record ArtistDTO(
                 artist.getProfileImage() != null ? artist.getProfileImage().getUrl() : null,
                 artist.getBannerImage() != null ? artist.getBannerImage().getUrl() : null,
                 artist.getBio(),
-                artist.getUser() != null ? artist.getUser().getId() : null
+                artist.getUser() != null ? artist.getUser().getId() : null,
+                artist.getUser() != null ? artist.getUser().getUsername() : null,
+                artist.getUser() != null ? artist.getUser().getDisplayName() : null
         );
     }
 }
