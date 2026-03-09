@@ -5,7 +5,6 @@ import rikko.yugen.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProductRepository extends JpaRepository<Product, Long>{
-    Page<Product> findByArtist_ArtistName(String artistName, Pageable pageable);
     Page<Product> findByArtistId(Long artistId, Pageable pageable);
     Page<Product> findByCollections_Name(String collectionName, Pageable pageable);
     Page<Product> findByName(String name, Pageable pageable);

@@ -4,13 +4,13 @@ import rikko.yugen.model.Artist;
 
 public record ArtistSummaryDTO(
         Long id,
-        String artistName,
+        String username,
         String profilePictureUrl
 ) {
     public ArtistSummaryDTO(Artist artist) {
         this(
                 artist.getId(),
-                artist.getArtistName(),
+                artist.getUser().getUsername(),
                 artist.getProfileImage() != null ? artist.getProfileImage().getUrl() : null
         );
     }

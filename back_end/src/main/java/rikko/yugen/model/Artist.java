@@ -14,8 +14,7 @@ import lombok.*;
 @AllArgsConstructor
 public class Artist extends BaseModel {
 
-    public Artist(String artistName, String bio, User user, Image profileImage, Image bannerImage) {
-        this.artistName = artistName;
+    public Artist(String bio, User user, Image profileImage, Image bannerImage) {
         this.bio = bio;
         this.user = user;
 
@@ -29,9 +28,6 @@ public class Artist extends BaseModel {
             bannerImage.setBannerForArtist(this);
         }
     }
-
-    @Column(name = "artist_name")
-    private String artistName;
 
     private String bio;
 

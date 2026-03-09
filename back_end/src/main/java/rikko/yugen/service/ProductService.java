@@ -43,7 +43,7 @@ public class ProductService {
 
     private Artist getCurrentArtist() {
         User currentUser = currentUserHelper.getCurrentUser();
-        return artistRepository.findByUserId(currentUser.getId())
+        return artistRepository.findByUser_Id(currentUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Artist", "userId", currentUser.getId()));
     }
 
@@ -69,12 +69,6 @@ public class ProductService {
         return productRepository.findByArtistId(currentArtist.getId(), pageable)
                 .map(ProductDTO::new);
 
-    }
-
-    @Transactional(readOnly = true)
-    public Page<ProductDTO> getProductsByArtistName(String artistName, Pageable pageable) {
-        return productRepository.findByArtist_ArtistName(artistName, pageable)
-                .map(ProductDTO::new);
     }
 
     @Transactional(readOnly = true)

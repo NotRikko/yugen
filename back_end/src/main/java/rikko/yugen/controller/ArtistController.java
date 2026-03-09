@@ -44,15 +44,15 @@ public class ArtistController {
         return ResponseEntity.ok(new PageResponseDTO<>(page));
     }
 
-    @GetMapping("/{artistId}")
+    @GetMapping("/id/{artistId}")
     public ResponseEntity<ArtistDTO> getArtistById(@PathVariable Long artistId) {
         ArtistDTO artist = artistService.getArtistById(artistId);
         return ResponseEntity.ok(artist);
     }
 
-    @GetMapping("/by-name/{artistName}")
-    public ResponseEntity<ArtistDTO> getArtistByName(@PathVariable String artistName) {
-        ArtistDTO artist = artistService.getArtistByArtistName(artistName);
+    @GetMapping("/{username}")
+    public ResponseEntity<ArtistDTO> getArtistByUsername(@PathVariable String username) {
+        ArtistDTO artist = artistService.getArtistByUsername(username);
         return ResponseEntity.ok(artist);
     }
 

@@ -70,11 +70,11 @@ class SignupIntegrationTest extends IntegrationTestBase {
         Assertions.assertTrue(savedUser.getIsArtist());
 
         Artist artist = artistRepository
-                .findByUserId(savedUser.getId())
+                .findByUser_Id(savedUser.getId())
                 .orElseThrow();
 
-        Assertions.assertEquals("Rikko",
-                artist.getArtistName(),
+        Assertions.assertEquals("rikko123",
+                artist.getUser().getUsername(),
                 "Artist should be created when setIsArtist is true.");
     }
 
@@ -100,7 +100,7 @@ class SignupIntegrationTest extends IntegrationTestBase {
         Assertions.assertFalse(savedUser.getIsArtist());
 
         Assertions.assertTrue(
-                artistRepository.findByUserId(savedUser.getId()).isEmpty(),
+                artistRepository.findByUser_Id(savedUser.getId()).isEmpty(),
                 "Artist should not be created when setIsArtist is false."
         );
     }

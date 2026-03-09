@@ -66,7 +66,6 @@ class ArtistIntegrationTest extends IntegrationTestBase {
         otherUser.setRole(Role.USER);
 
         artist = new Artist();
-        artist.setArtistName("TestArtist");
         artist.setUser(user);
 
         product = new Product();
@@ -137,20 +136,19 @@ class ArtistIntegrationTest extends IntegrationTestBase {
 
         ArtistDTO first = body.content().get(0);
         Assertions.assertNotNull(first.id());
-        Assertions.assertNotNull(first.artistName());
     }
 
     @Test
     void getArtistById_returns200_whenExists() {
-        ResponseEntity<ArtistDTO> response = restTemplate.getForEntity("/artists/" + artist.getId(), ArtistDTO.class);
+        ResponseEntity<ArtistDTO> response = restTemplate.getForEntity("/artists/id/" + artist.getId(), ArtistDTO.class);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertNotNull(response.getBody());
-        Assertions.assertEquals(artist.getArtistName(), response.getBody().artistName());
+        Assertions.assertEquals(artist.getUser().getId(), response.getBody().userId());
     }
 
     @Test
-    void getArtistByName_returns200_whenExists() {
-        ResponseEntity<ArtistDTO> response = restTemplate.getForEntity("/artists/by-name/" + artist.getArtistName(), ArtistDTO.class);
+    void getArtistByUsername_returns200_whenExists() {
+        ResponseEntity<ArtistDTO> response = restTemplate.getForEntity("/artists/" + artist.getUser().getUsername(), ArtistDTO.class);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertNotNull(response.getBody());
         Assertions.assertEquals(artist.getId(), response.getBody().id());
@@ -167,7 +165,6 @@ class ArtistIntegrationTest extends IntegrationTestBase {
         testUser = userRepository.save(testUser);
 
         ArtistCreateDTO dto = new ArtistCreateDTO();
-        dto.setArtistName("NewArtist");
         dto.setProfilePictureUrl("https://example.com/profile.jpg");
 
         ResponseEntity<ArtistDTO> response = createArtist(dto, testUser);
@@ -176,21 +173,9 @@ class ArtistIntegrationTest extends IntegrationTestBase {
 
         ArtistDTO body = response.getBody();
         Assertions.assertNotNull(body);
-        Assertions.assertEquals(dto.getArtistName(), body.artistName());
         Assertions.assertEquals(dto.getProfilePictureUrl(), body.profilePictureUrl());
 
         Assertions.assertEquals(testUser.getId(), body.userId());
-    }
-
-    @Test
-    void createArtist_throwsWhenDuplicateName() {
-        ArtistCreateDTO dto = new ArtistCreateDTO();
-        dto.setArtistName(artist.getArtistName());
-
-        String token = getToken(user, Role.USER);
-        HttpEntity<ArtistCreateDTO> request = new HttpEntity<>(dto, createJsonHeaders(token));
-        ResponseEntity<String> response = restTemplate.postForEntity("/artists", request, String.class);
-        Assertions.assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
     }
 
     // Get posts tests

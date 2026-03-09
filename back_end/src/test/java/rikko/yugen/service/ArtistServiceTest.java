@@ -61,7 +61,6 @@ class ArtistServiceTest {
 
         artist = new Artist();
         artist.setId(1L);
-        artist.setArtistName("Rikko");
         artist.setBio("I am a test");
         artist.setUser(mockUser);
         mockUser.setIsArtist(true);
@@ -69,7 +68,6 @@ class ArtistServiceTest {
 
         artist2 = new Artist();
         artist2.setId(2L);
-        artist2.setArtistName("Rikko2");
         artist2.setBio("I am a test2");
         artist2.setUser(mockUser2);
         mockUser2.setIsArtist(true);
@@ -89,7 +87,6 @@ class ArtistServiceTest {
 
             assertNotNull(result);
             assertEquals(1L, result.id());
-            assertEquals("Rikko", result.artistName());
             assertEquals("I am a test", result.bio());
 
             verify(artistRepository).findById(1L);
@@ -105,26 +102,25 @@ class ArtistServiceTest {
         }
 
         @Test
-        void shouldReturnArtistDTO_whenArtistExistsByName() {
-            when(artistRepository.findByArtistName("Rikko")).thenReturn(Optional.of(artist));
+        void shouldReturnArtistDTO_whenArtistExistsByUsername() {
+            when(artistRepository.findByUser_Username("Rikko")).thenReturn(Optional.of(artist));
 
-            ArtistDTO result = artistService.getArtistByArtistName("Rikko");
+            ArtistDTO result = artistService.getArtistByUsername("Rikko");
 
             assertNotNull(result);
             assertEquals(1L, result.id());
-            assertEquals("Rikko", result.artistName());
             assertEquals("I am a test", result.bio());
 
-            verify(artistRepository).findByArtistName("Rikko");
+            verify(artistRepository).findByUser_Username("Rikko");
         }
 
         @Test
         void shouldThrowException_whenArtistDoesNotExistByName() {
-            when(artistRepository.findByArtistName("Rikko")).thenReturn(Optional.empty());
+            when(artistRepository.findByUser_Username("Rikko")).thenReturn(Optional.empty());
 
-            assertThrows(ResourceNotFoundException.class, () -> artistService.getArtistByArtistName("Rikko"));
+            assertThrows(ResourceNotFoundException.class, () -> artistService.getArtistByUsername("Rikko"));
 
-            verify(artistRepository).findByArtistName("Rikko");
+            verify(artistRepository).findByUser_Username("Rikko");
         }
 
         @Test
@@ -137,7 +133,6 @@ class ArtistServiceTest {
 
             assertNotNull(result);
             assertEquals(2, result.getContent().size());
-            assertEquals("Rikko", result.getContent().get(0).artistName());
             assertEquals("I am a test2", result.getContent().get(1).bio());
 
             verify(artistRepository).findAll(pageable);
@@ -159,15 +154,13 @@ class ArtistServiceTest {
             mockUser.setRole(Role.USER);
 
             ArtistCreateDTO dto = new ArtistCreateDTO();
-            dto.setArtistName("Rikko3");
             dto.setBio("I am a created test");
 
             when(currentUserHelper.getCurrentUser()).thenReturn(mockUser);
-            when(artistRepository.existsByArtistName("Rikko3")).thenReturn(false);
+            when(artistRepository.existsByUser_Id(3L)).thenReturn(false);
 
             Artist savedArtist = new Artist();
             savedArtist.setId(3L);
-            savedArtist.setArtistName("Rikko3");
             savedArtist.setBio("I am a created test");
             savedArtist.setUser(mockUser);
 
@@ -177,11 +170,10 @@ class ArtistServiceTest {
 
             assertNotNull(result);
             assertEquals(3L, result.id());
-            assertEquals("Rikko3", result.artistName());
             assertEquals("I am a created test", result.bio());
             assertEquals(3L, result.userId());
 
-            verify(artistRepository).existsByArtistName("Rikko3");
+            verify(artistRepository).existsByUser_Id(3L);
             verify(artistRepository).save(any(Artist.class));
         }
     }

@@ -70,7 +70,6 @@ class PostServiceTest {
 
         artist = new Artist();
         artist.setId(1L);
-        artist.setArtistName("Rikko");
         artist.setUser(user);
         user.setArtist(artist);
 
@@ -136,19 +135,6 @@ class PostServiceTest {
         }
 
         @Test
-        void getPostsByArtistName_shouldReturnPage() {
-            Pageable pageable = PageRequest.of(0, 2);
-            Page<Post> page = new PageImpl<>(List.of(post1, post2), pageable, 2);
-            when(postRepository.findByArtist_ArtistName("Rikko", pageable)).thenReturn(page);
-
-            Page<PostDTO> result = postService.getPostsByArtistName("Rikko", pageable);
-
-            assertEquals(2, result.getContent().size());
-            assertEquals("Post 1", result.getContent().get(0).content());
-            assertEquals("Post 2", result.getContent().get(1).content());
-        }
-
-        @Test
         void getAllPosts_shouldReturnPage() {
             Pageable pageable = PageRequest.of(0, 10);
             Page<Post> page = new PageImpl<>(List.of(post1, post2));
@@ -168,7 +154,7 @@ class PostServiceTest {
         @Test
         void createPost_shouldReturnPostDTO() {
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
-            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
+            when(artistRepository.findByUser_Id(user.getId())).thenReturn(Optional.of(artist));
 
             PostCreateDTO dto = createPostCreateDTO("New Post");
 
@@ -197,7 +183,7 @@ class PostServiceTest {
             PostUpdateDTO dto = createPostUpdateDTO("New");
 
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
-            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
+            when(artistRepository.findByUser_Id(user.getId())).thenReturn(Optional.of(artist));
             when(postRepository.findById(1L)).thenReturn(Optional.of(existingPost));
             when(postRepository.save(any(Post.class))).thenAnswer(i -> i.getArgument(0));
 
@@ -218,7 +204,7 @@ class PostServiceTest {
             otherUser.setArtist(otherArtist);
 
             when(currentUserHelper.getCurrentUser()).thenReturn(otherUser);
-            when(artistRepository.findByUserId(otherUser.getId())).thenReturn(Optional.of(otherArtist));
+            when(artistRepository.findByUser_Id(otherUser.getId())).thenReturn(Optional.of(otherArtist));
             when(postRepository.findById(1L)).thenReturn(Optional.of(existingPost));
 
             assertThrows(AccessDeniedException.class, () ->
@@ -242,7 +228,7 @@ class PostServiceTest {
 
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
             when(postRepository.findById(1L)).thenReturn(Optional.of(existingPost));
-            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
+            when(artistRepository.findByUser_Id(user.getId())).thenReturn(Optional.of(artist));
 
             PostDTO resultNull = postService.updatePost(1L, new PostUpdateDTO());
             assertEquals("Post 1", resultNull.content());
@@ -265,7 +251,7 @@ class PostServiceTest {
         void deletePost_shouldDelete_whenOwner() {
             when(postRepository.findById(1L)).thenReturn(Optional.of(post1));
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
-            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
+            when(artistRepository.findByUser_Id(user.getId())).thenReturn(Optional.of(artist));
 
             postService.deletePost(1L);
 
@@ -281,7 +267,7 @@ class PostServiceTest {
 
             when(postRepository.findById(1L)).thenReturn(Optional.of(post1));
             when(currentUserHelper.getCurrentUser()).thenReturn(otherUser);
-            when(artistRepository.findByUserId(otherUser.getId())).thenReturn(Optional.of(otherArtist));
+            when(artistRepository.findByUser_Id(otherUser.getId())).thenReturn(Optional.of(otherArtist));
 
             assertThrows(AccessDeniedException.class, () -> postService.deletePost(1L));
             verify(postRepository, never()).delete(any());

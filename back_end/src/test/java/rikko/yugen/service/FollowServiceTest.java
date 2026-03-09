@@ -51,7 +51,6 @@ class FollowServiceTest {
 
         mockArtist = new Artist();
         mockArtist.setId(1L);
-        mockArtist.setArtistName("CoolArtist");
 
         User artistUser = new User();
         artistUser.setId(2L);

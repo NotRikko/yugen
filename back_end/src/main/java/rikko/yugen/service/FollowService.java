@@ -46,7 +46,7 @@ public class FollowService {
             return new FollowWithUserDTO(
                     followee.getId(),
                     followee.getUser().getUsername(),
-                    followee.getArtistName(),
+                    followee.getUser().getDisplayName(),
                     followee.getProfileImage() != null ? followee.getProfileImage().getUrl() : null,
                     follow.getFollowedAt()
             );

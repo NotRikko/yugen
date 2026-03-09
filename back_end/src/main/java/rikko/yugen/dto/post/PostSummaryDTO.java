@@ -22,7 +22,7 @@ public record PostSummaryDTO(
                 post.getLikes() != null ? post.getLikes().size() : 0,
                 post.getComments() != null ? post.getComments().size() : 0,
                 post.getArtist() != null ? post.getArtist().getId() : null,
-                post.getArtist() != null ? post.getArtist().getArtistName() : null,
+                post.getArtist() != null ? post.getArtist().getUser().getDisplayName() : null,
                 post.getCreatedAt()
         );
     }

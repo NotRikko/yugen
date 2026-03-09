@@ -43,7 +43,7 @@ public class PostService {
 
     private Artist getCurrentArtist() {
         User currentUser = currentUserHelper.getCurrentUser();
-        return artistRepository.findByUserId(currentUser.getId())
+        return artistRepository.findByUser_Id(currentUser.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Artist", "userId", currentUser.getId()));
     }
 
@@ -55,12 +55,6 @@ public class PostService {
                 .map(PostDTO::new);
     }
 
-
-    @Transactional(readOnly = true)
-    public Page<PostDTO> getPostsByArtistName(String artistName, Pageable pageable) {
-        return postRepository.findByArtist_ArtistName(artistName, pageable)
-                .map(PostDTO::new);
-    }
 
     @Transactional(readOnly = true)
     public Page<PostDTO> getPostsByArtistId(Long artistId, Pageable pageable) {

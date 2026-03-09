@@ -178,7 +178,7 @@ class ProductServiceTest {
         @Test
         void createProduct_shouldReturnProductDTO() {
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
-            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
+            when(artistRepository.findByUser_Id(user.getId())).thenReturn(Optional.of(artist));
 
             ProductCreateDTO dto = createProductDTO("New Product", 10F);
 
@@ -198,7 +198,7 @@ class ProductServiceTest {
         @Test
         void createProduct_shouldAttachSeriesAndCollections() {
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
-            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
+            when(artistRepository.findByUser_Id(user.getId())).thenReturn(Optional.of(artist));
 
             ProductCreateDTO dto = createProductDTO("With Series", 15F);
             dto.setSeriesIds(Set.of(1L));
@@ -228,7 +228,7 @@ class ProductServiceTest {
         @Test
         void updateProduct_shouldUpdateFieldsAndImages() {
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
-            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
+            when(artistRepository.findByUser_Id(user.getId())).thenReturn(Optional.of(artist));
 
             product1.setDescription("Old Desc");
             product1.setPrice(10F);
@@ -275,7 +275,7 @@ class ProductServiceTest {
 
             when(productRepository.findById(1L)).thenReturn(Optional.of(product));
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
-            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
+            when(artistRepository.findByUser_Id(user.getId())).thenReturn(Optional.of(artist));
 
             ProductUpdateDTO dto = new ProductUpdateDTO();
             dto.setName("Should Fail");
@@ -289,7 +289,7 @@ class ProductServiceTest {
         @Test
         void updateProduct_shouldUploadNewFilesAndDeleteOldImages() throws Exception {
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
-            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
+            when(artistRepository.findByUser_Id(user.getId())).thenReturn(Optional.of(artist));
 
             product1.setImages(new ArrayList<>(List.of(image1, image2)));
             when(productRepository.findById(1L)).thenReturn(Optional.of(product1));
@@ -342,7 +342,7 @@ class ProductServiceTest {
         @Test
         void deleteProduct_shouldDeleteProductAndImagesWhenUserOwnsProduct() {
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
-            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
+            when(artistRepository.findByUser_Id(user.getId())).thenReturn(Optional.of(artist));
 
             Product product = new Product();
             product.setArtist(artist);
@@ -361,7 +361,7 @@ class ProductServiceTest {
         @Test
         void deleteProduct_shouldThrowAccessDenied_whenUserDoesNotOwnProduct() {
             when(currentUserHelper.getCurrentUser()).thenReturn(user);
-            when(artistRepository.findByUserId(user.getId())).thenReturn(Optional.of(artist));
+            when(artistRepository.findByUser_Id(user.getId())).thenReturn(Optional.of(artist));
 
             User otherUser = new User();
             otherUser.setId(2L);

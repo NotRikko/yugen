@@ -67,7 +67,6 @@ class CartIntegrationTest extends IntegrationTestBase {
         userRepository.save(otherUser);
 
         Artist artist = new Artist();
-        artist.setArtistName("test");
         artist.setUser(user);
         artistRepository.save(artist);
 

@@ -40,10 +40,10 @@ public class ArtistService {
         return artistToArtistDTO(artist);
     }
 
-    public ArtistDTO getArtistByArtistName(String artistName) {
-        Artist artist = artistRepository.findByArtistName(artistName)
+    public ArtistDTO getArtistByUsername(String username) {
+        Artist artist = artistRepository.findByUser_Username(username)
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Artist", "artistName", artistName));
+                        new ResourceNotFoundException("Artist", "username", username));
         return artistToArtistDTO(artist);
     }
 
@@ -58,14 +58,12 @@ public class ArtistService {
     public ArtistDTO createArtist(ArtistCreateDTO dto) {
         User currentUser = currentUserHelper.getCurrentUser();
 
-        String normalizedName = dto.getArtistName().trim();
 
-        if (artistRepository.existsByArtistName(normalizedName)) {
-            throw new ResourceAlreadyExistsException("Artist", "artistName", normalizedName);
+        if (artistRepository.existsByUser_Id(currentUser.getId())) {
+            throw new ResourceAlreadyExistsException("Artist", "id", currentUser.getId());
         }
 
         Artist artist = new Artist();
-        artist.setArtistName(normalizedName);
 
         if (dto.getProfilePictureUrl() != null) {
             Image profileImage = new Image();
@@ -87,7 +85,7 @@ public class ArtistService {
             Artist savedArtist = artistRepository.save(artist);
             return artistToArtistDTO(savedArtist);
         } catch (DataIntegrityViolationException e) {
-            throw new ResourceAlreadyExistsException("Artist", "artistName", normalizedName);
+            throw new ResourceAlreadyExistsException("Artist", "id", currentUser.getId());
         }
     }
 

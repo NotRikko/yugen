@@ -63,7 +63,6 @@ class ProductIntegrationTest extends IntegrationTestBase {
         userRepository.save(user);
 
         artist = new Artist();
-        artist.setArtistName("test");
         artist.setUser(user);
         artistRepository.save(artist);
 
@@ -261,7 +260,6 @@ class ProductIntegrationTest extends IntegrationTestBase {
         userRepository.save(otherUser);
 
         Artist otherArtist = new Artist();
-        otherArtist.setArtistName("other");
         otherArtist.setUser(otherUser);
         artistRepository.save(otherArtist);
         otherUser.setArtist(otherArtist);
@@ -318,7 +316,6 @@ class ProductIntegrationTest extends IntegrationTestBase {
         userRepository.save(otherUser);
 
         Artist otherArtist = new Artist();
-        otherArtist.setArtistName("other");
         otherArtist.setUser(otherUser);
         artistRepository.save(otherArtist);
         otherUser.setArtist(otherArtist);

@@ -65,7 +65,6 @@ class CommentIntegrationTest extends IntegrationTestBase {
         userRepository.save(user);
 
         Artist artist = new Artist();
-        artist.setArtistName("testArtist");
         artist.setUser(user);
         artistRepository.save(artist);
 

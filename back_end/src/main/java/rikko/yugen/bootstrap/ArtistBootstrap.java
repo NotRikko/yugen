@@ -68,7 +68,6 @@ public class ArtistBootstrap {
 
     private Artist createArtist(String name, String bio, String profileUrl, String bannerUrl, User user) {
         Artist artist = new Artist();
-        artist.setArtistName(name);
         artist.setBio(bio);
         artist.setUser(user);
 

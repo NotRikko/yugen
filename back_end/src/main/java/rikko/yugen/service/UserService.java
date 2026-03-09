@@ -126,7 +126,6 @@ public class UserService implements UserDetailsService {
 
         if (dto.getIsArtist()) {
             Artist artist = new Artist();
-            artist.setArtistName(dto.getDisplayName());
             artist.setUser(savedUser);
             artistRepository.save(artist);
         }
