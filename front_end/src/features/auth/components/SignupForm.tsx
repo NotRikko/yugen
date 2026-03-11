@@ -74,7 +74,7 @@ async function onSubmit(values: z.infer<typeof formSchema>) {
     }
 
     navigate("/login");
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Signup error:", error);
     form.setError("username", { type: "server", message: error?.message || "Signup failed" });
   }
