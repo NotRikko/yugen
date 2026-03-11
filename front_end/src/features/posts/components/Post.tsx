@@ -27,8 +27,8 @@ function Post({ post, onSelect, onUpdate, onDelete }: PostProps) {
 
   const handleArtistClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (post.artist?.artistName) {
-      navigate(`/artist/${post.artist.artistName}`);
+    if (post.artist?.username) {
+      navigate(`/artist/${post.artist.username}`);
     }
   };
 
@@ -56,7 +56,7 @@ function Post({ post, onSelect, onUpdate, onDelete }: PostProps) {
               onClick={handleArtistClick}
               className="text-blue-500 text-sm font-semibold"
             >
-              {post.artist?.artistName || "Unknown Artist"}
+              {post.artist?.displayName || "Unknown Artist"}
             </p>
           </div>
 
