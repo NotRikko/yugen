@@ -1,5 +1,6 @@
 import { fetchClient } from "@/shared/api/fetchClient";
 import type { ProductDTO } from "../types";
+import type { ProductPageDTO } from "../types";
 
 export const productApi = {
     createProduct: async (data: {
@@ -39,21 +40,27 @@ export const productApi = {
         return result;
     },
 
-    fetchCurrentArtistProducts: async () : Promise<ProductDTO[]> => {
-        const products = await fetchClient<ProductDTO[]>("/artists/me/products", {
-            method: "GET",
-            auth: true
-        });
-
-        if (!products) throw new Error("Products not found");
-        return products;
+    fetchCurrentArtistProducts: async (): Promise<ProductDTO[]> => {
+      const response = await fetchClient<ProductPageDTO>("/artists/me/products", {
+        method: "GET",
+        auth: true,
+      });
+  
+      if (!response) throw new Error("Products not found");
+      return response.content ?? [];
     },
-
+  
     getProductById: ( id: number) =>
         fetchClient<ProductDTO>(`products/${id}`, { method: "GET" }),
 
-    getProductsByArtistId: (artistId: number) =>
-        fetchClient<ProductDTO[]>(`/artists/${artistId}/products`, { method: "GET" }),
+    getProductsByArtistId: async (artistId: number): Promise<ProductDTO[]> => {
+      const response = await fetchClient<ProductPageDTO>(`/artists/${artistId}/products`, {
+        method: "GET",
+      });
+  
+      if (!response) throw new Error("Products not found");
+      return response.content ?? [];
+    },
     
     deleteProduct: async (productId: number) : Promise<void> => {
         await fetchClient<void>(`/products/${productId}`, {
