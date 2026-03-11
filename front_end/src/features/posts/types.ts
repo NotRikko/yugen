@@ -4,3 +4,4 @@ export type PostDTO = Schema<"PostDTO">;
 export type PostDetailsDTO = Schema<"PostDetailsDTO">
 export type PostCreateDTO = Schema<"PostCreateDTO">;
 export type PostUpdateDTO = Schema<"PostUpdateDTO">;
+export type PostPageDTO = Schema<"PagePostDTO">;
