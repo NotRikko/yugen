@@ -18,7 +18,7 @@ export function useArtistProfile(artistName: string | undefined) {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const artistData = await artistApi.getByArtistName(artistName);
+        const artistData = await artistApi.getByUsername(artistName);
         if (!artistData) {
           setArtist(null);
           return;
@@ -26,11 +26,11 @@ export function useArtistProfile(artistName: string | undefined) {
         setArtist(artistData);
 
         const [artistPosts, artistProducts] = await Promise.all([
-          postApi.getPostsByArtistId(artistData.id!),
+          postApi.getPostsByArtistId(artistData.id!),       
           productApi.getProductsByArtistId(artistData.id!),
         ]);
-
-        setPosts(artistPosts ?? []);
+        
+        setPosts(artistPosts ?? []);     
         setProducts(artistProducts ?? []);
       } catch (error) {
         console.error("Failed to fetch artist profile:", error);
