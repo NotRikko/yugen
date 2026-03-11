@@ -37,7 +37,7 @@ const PostModal = ({ post, updatePost }: PostModalProps) => {
 
   const handleArtistClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (post.artist?.artistName) navigate(`/artist/${post.artist.artistName}`);
+    if (post.artist?.username) navigate(`/artist/${post.artist.username}`);
   };
 
   const handleSaveClick = () => {
@@ -87,7 +87,7 @@ const PostModal = ({ post, updatePost }: PostModalProps) => {
               onClick={handleArtistClick}
               className="cursor-pointer font-semibold text-gray-900"
             >
-              {post.artist?.artistName ?? "Unknown Artist"}
+              {post.artist?.displayName ?? "Unknown Artist"}
             </p>
             {post.artist?.id && <FollowButton artistId={post.artist.id} />}
           </div>
