@@ -1,5 +1,5 @@
 import { fetchClient } from "@/shared/api/fetchClient";
-import { PostDetailsDTO, type PostDTO } from "../types";
+import { type PostDetailsDTO, type PostDTO, type PostPageDTO } from "../types";
 
 export const postApi = {
   createPost: async (data: {
@@ -56,12 +56,16 @@ export const postApi = {
   getPostDetails: (id: number) =>
     fetchClient<PostDetailsDTO>(`/posts/${id}/details`, { method: "GET" }),
 
-  getPostsByArtistName: (artistName: string) =>
-    fetchClient<PostDTO[]>(`/artists/${artistName}/posts`, { method: "GET" }),
   
-  getPostsByArtistId: (artistId: number) =>
-    fetchClient<PostDTO[]>(`/artists/${artistId}/posts`, { method: "GET" }),
+  getPostsByArtistId: async (artistId: number): Promise<PostDTO[]> => {
+    const response = await fetchClient<PostPageDTO>(
+      `/artists/${artistId}/posts`,
+      { method: "GET" }
+    );
 
+    if (!response) throw new Error("Posts not found");
+    return response.content ?? [];
+  },
 
   deletePost: (postId: number) =>
     fetchClient<void>(`/posts/${postId}` , {
