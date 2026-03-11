@@ -14,11 +14,11 @@ function FeedPost({ post }: FeedPostProps) {
       <div className="flex items-center gap-3 p-3">
         <img
           src={post.artist?.profilePictureUrl || "/default-avatar.png"}
-          alt={post.artist?.artistName}
+          alt={post.artist?.displayName}
           className="w-8 h-8 rounded-full object-cover"
         />
         <span className="text-sm font-semibold text-gray-800 truncate">
-          {post.artist?.artistName}
+          {post.artist?.displayName}
         </span>
       </div>
 
