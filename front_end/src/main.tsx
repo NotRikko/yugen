@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './index.css';
 import ArtistMain from './features/artists/pages/ArtistMain.tsx'; 
-import ArtistsMain from './features/artists/pages/ArtistsMain.tsx';
+import ArtistProfilePage from "./features/artists/pages/ArtistProfilePage.tsx";
 import SignupPage from './features/auth/pages/SignupPage.tsx';
 import LoginPage from './features/auth/pages/LoginPage.tsx';
 import { UserProvider } from './features/user/UserProvider.tsx';
@@ -18,7 +18,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <FeedMain /> },
       { path: "artist", element: <ArtistMain /> },
-      { path: "artists", element: <ArtistsMain /> },
+      { path: "artist/:username", element: <ArtistProfilePage /> },
     ],
   },
   { path: "/signup", element: <SignupPage /> },
