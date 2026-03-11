@@ -5,10 +5,10 @@ export const artistApi = {
     fetchClient<ArtistDTO[]>("/artists", { method: "GET"}),
 
   getById: (artistId: number) =>
-    fetchClient<ArtistDTO>(`/artists/${artistId}`, { method: "GET" }),
+    fetchClient<ArtistDTO>(`/artists/id/${artistId}`, { method: "GET" }),
 
-  getByArtistName: (artistName: string) =>
-    fetchClient<ArtistDTO>(`/artists/name/${artistName}`, { method: "GET" }),
+  getByUsername: (artistName: string) =>
+    fetchClient<ArtistDTO>(`/artists/${artistName}`, { method: "GET" }),
 
   updateArtist: (artistId: number, updates: Partial<ArtistDTO>) =>
     fetchClient<ArtistDTO>(`/artists/${artistId}`, {
