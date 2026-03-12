@@ -10,7 +10,6 @@ function FeedPost({ post }: FeedPostProps) {
   return (
     <div className="bg-white rounded-2xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200">
       
-      {/* Top Artist Section */}
       <div className="flex items-center gap-3 p-3">
         <img
           src={post.artist?.profilePictureUrl || "/default-avatar.png"}
@@ -22,7 +21,6 @@ function FeedPost({ post }: FeedPostProps) {
         </span>
       </div>
 
-      {/* Main Image Section */}
       {imageUrl && (
         <div className="w-full">
           <img
