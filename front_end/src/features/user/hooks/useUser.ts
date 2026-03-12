@@ -6,7 +6,6 @@ import { tokenService } from "@/shared/services/tokenService";
 interface FrontendUserDTO extends UserDTO {
   isGuest?: boolean;
 }
-
 export const guestUser: FrontendUserDTO = {
   id: 0,
   username: "Guest",
@@ -26,9 +25,9 @@ export const useUserHook = () => {
   const [cart, setCart] = useState<CartDTO | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem("accessToken"));
 
-  const handleLogin = async (username: string, password: string) => {
-    const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
 
+  const handleLogin = async (username: string, password: string) => {
     const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -36,8 +35,8 @@ export const useUserHook = () => {
       credentials: "include",
     });
 
-    const data = await res.json();
-    if (!res.ok) throw new Error(data?.message || "Invalid username or password");
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data?.error || "Invalid username or password");
 
     tokenService.set(data.accessToken);
     localStorage.setItem("accessToken", data.accessToken);
@@ -46,26 +45,24 @@ export const useUserHook = () => {
       headers: { Authorization: `Bearer ${data.accessToken}` },
     });
 
-    const userData = await userRes.json();
-    if (!userRes.ok) throw new Error(userData.message || "Failed to fetch user");
+    const userData = await userRes.json().catch(() => ({}));
+    if (!userRes.ok) throw new Error(userData?.error || "Failed to fetch user");
 
-    localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
     setIsLoggedIn(true);
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
   const handleLogout = () => {
     tokenService.remove();
     localStorage.removeItem("accessToken");
     localStorage.removeItem("user");
+
     setUser(guestUser);
     setCart(null);
     setIsLoggedIn(false);
 
-    fetch(`${import.meta.env.VITE_API_URL}/auth/logout`, {
-      method: "POST",
-      credentials: "include",
-    }).catch(() => {});
+    fetch(`${API_URL}/auth/logout`, { method: "POST", credentials: "include" }).catch(() => {});
   };
 
   return { user, setUser, cart, setCart, isLoggedIn, handleLogin, handleLogout };
