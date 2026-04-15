@@ -11,7 +11,7 @@ import {
 import { useUser } from "@/features/user/useUserContext"
 
 import { NavLink } from "react-router-dom"
-import { Home, Users, LogOut, LogIn, UserPlus } from "lucide-react"
+import { Home, LogOut, LogIn, UserPlus } from "lucide-react"
 
 export function AppSidebar() {
   const { user } = useUser() 
@@ -19,7 +19,6 @@ export function AppSidebar() {
 
   const mainNavItems = [
     { to: "/", icon: Home },
-    { to: "/artist/artists", icon: Users },
   ]
 
   const footerNavItems = [
@@ -43,7 +42,7 @@ export function AppSidebar() {
             />
           ) : (
             <div className="h-full w-full bg-gray-300 flex items-center justify-center text-white font-bold">
-              {user?.username?.[0].toUpperCase() || "U"}
+             {user?.username?.charAt(0)?.toUpperCase() || "U"}
             </div>
           )}
         </NavLink>
